@@ -20,8 +20,8 @@ required return = risk-free rate + market risk + concentration risk + mortality 
 The site has three sections: Bitcoin, the equation and the census of deaths. **Bitcoin** has five tabs:
 
 1. **Overview.** The required return and what was delivered, by three-year period, and why the two
-   differed: the premium holders required, what the equity market added beyond its own premium, and
-   alpha.
+   differed: the premium holders required, what came with the equity market, and what the equation
+   leaves unexplained.
 2. **Required return.** How the band is built, which holder sets each edge, and the three risks
    (market, concentration, mortality), each with its formula and the inputs that move it.
 3. **Tests.** How much of the delivered return the CAPM explains, how much the MCM equation explains,
