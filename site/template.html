@@ -72,6 +72,7 @@ h2{font-size:17px;margin:0 0 2px}
 .eq div b{display:block;font-size:20px;font-weight:650}
 .eq div span{font-size:12.5px;color:var(--ink2);display:flex;align-items:center;gap:6px}
 .eq div span i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.eq div small{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}
 .eq em{align-self:center;font-style:normal;color:var(--mut);font-size:18px}
 .facts{display:flex;flex-wrap:wrap;gap:8px 28px;margin:8px 0 6px}
 .facts div{max-width:300px}
@@ -136,7 +137,9 @@ text{font-family:inherit}
   <section class="card" id="sec-why">
     <h2>Why delivered differed from required</h2>
     <p class="sub">Read each period in two moves. <b>First, the gap.</b> The blue bar is the premium holders required over the risk-free rate, and the circle is what Bitcoin delivered. The black line between them is the gap: delivered minus required. <b>Then, where the gap came from.</b> Part of it came with the equity market: equities paid more, or less, than the 4% a year the equation assumes, and Bitcoin moves with them in proportion to its beta. The rest is alpha, the part specific to Bitcoin. Percent a year.</p>
-    <p class="sub" id="why-example" style="color:var(--ink);font-weight:600"></p>
+    <div class="mini" style="margin:4px 0 12px"><h3 id="why-title"></h3><p>percent a year over the risk-free rate</p>
+      <div class="eq" id="why-eq"></div>
+      <p class="sub" style="margin-top:10px"><b>Gap</b> = <span id="why-gap"></span><br><b>Alpha</b> = delivered − required − beta × (equity market return − risk-free rate − 4%). It is how far Bitcoin ran ahead of, or behind, what its risks and the equity market's own run account for.</p></div>
     <div class="legend"><span><i style="background:var(--blue)"></i>required premium</span><span><i class="dot"></i>delivered</span><span><i class="ln" style="border-color:var(--ink)"></i>gap: delivered minus required</span><span><i style="background:var(--violet)"></i>of the gap: came with the equity market</span><span><i style="background:var(--ink2)"></i>of the gap: alpha, specific to Bitcoin</span></div>
     <div class="chart" id="c-why"></div>
     <div class="scroll"><table id="t-why"></table></div>
@@ -418,8 +421,17 @@ function whyChart(){
     if(wide) txt(xg+10,ye+4,lab,{w:650,z:12,a:"start"}); else txt(xg,up?ye-10:ye+18,lab,{w:650,z:12}); });
   table("t-why",["Period","Required premium","Delivered","Gap","of which equities","of which alpha","Standard error of alpha"],
     p=>[p.p,p.prem.toFixed(0),p.ex.toFixed(0),sgn(gapOf(p)),sgn(p.eq),sgn(p.alpha),"±"+p.se.toFixed(0)]);
-  const s=totals().slice(-1)[0];
-  document.getElementById("why-example").textContent=(s.p.startsWith("2018")?"Since 2018":"Since 2012")+": holders required "+s.prem.toFixed(0)+" and Bitcoin delivered "+s.ex.toFixed(0)+", a gap of "+sgn(gapOf(s))+". Of that gap, "+sgn(s.eq)+" came with the equity market and "+sgn(s.alpha)+" is alpha.";
+  const s=totals().slice(-1)[0], E=document.getElementById("why-eq"); E.textContent="";
+  document.getElementById("why-title").textContent="The whole sample "+(s.p.startsWith("2018")?"since 2018":"since 2012")+", as an equation";
+  const cell=(v,lab,c,sub)=>{const d=document.createElement("div"), b=document.createElement("b"), l=document.createElement("span"); b.textContent=v;
+    if(c){const i=document.createElement("i"); i.style.background=css(c); l.appendChild(i);} l.appendChild(document.createTextNode(lab)); d.appendChild(b); d.appendChild(l);
+    if(sub){const m=document.createElement("small"); m.textContent=sub; d.appendChild(m);} E.appendChild(d);};
+  const op=o=>{const e=document.createElement("em"); e.textContent=o; E.appendChild(e);};
+  cell(s.ex.toFixed(0),"delivered",null,"Bitcoin's return over the risk-free rate");
+  op("="); cell(s.prem.toFixed(0),"required","--blue","market + concentration + mortality");
+  op("+"); cell(sgn(s.eq),"came with the equity market","--violet","beta × (equities − risk-free − 4%)");
+  op("+"); cell(sgn(s.alpha),"alpha","--ink2","specific to Bitcoin");
+  document.getElementById("why-gap").textContent="delivered − required = "+s.ex.toFixed(0)+" − "+s.prem.toFixed(0)+" = "+sgn(gapOf(s))+", made of "+sgn(s.eq)+" with the equity market and "+sgn(s.alpha)+" alpha.";
 }
 function lines(id,h,d,S,fmt,endfmt){
   const el=document.getElementById(id), f=frame(el,h,{l:50,r:46,t:12,b:26});
