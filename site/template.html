@@ -219,7 +219,8 @@ text{font-family:inherit}
 
   <footer>
     <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold", working paper. Paper and replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. The alphas here are average unexplained returns with the rolling beta; the regression intercepts in the paper are 37 and 1 points a year for the MCM equation (whole sample, and since 2018).</p>
-    <p>Data: Coin Metrics community data (CC BY-NC 4.0); S&amp;P 500 ETF total return and the ten-year Treasury yield; survey and filing anchors as cited in the paper. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>.</p>
+    <p id="asof"></p>
+    <p>Data: Coin Metrics community data (CC BY-NC 4.0); the US equity market return from the Kenneth R. French data library; the ten-year yield from the US Treasury's daily par yield curve rates; survey and filing anchors as cited in the paper. The paper itself used an S&amp;P 500 ETF and the CBOE ten-year yield index, so figures here can differ slightly from the paper's. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>.</p>
     <p>Independent research, for informational and academic purposes only. Not financial, investment, tax or legal advice, and not a recommendation to buy or sell any financial instrument.</p>
   </footer>
 </div>
@@ -450,6 +451,7 @@ function tiles(){
   const el=document.getElementById("tiles"); el.textContent="";
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c; s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
   document.getElementById("stamp").textContent="Bitcoin · data to "+d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(m.data_to));
+  document.getElementById("asof").textContent="Dates of the data: prices and the Treasury yield to "+d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(m.data_to))+"; equity market returns, and so the tests, to "+fmtM(parse(m.market_to))+" (the beta is carried forward from that month); ownership survey to "+fmtM(parse(m.anchors.ownership_survey))+"; fund and treasury holdings to "+fmtM(parse(m.anchors.fund_and_treasury_holdings))+", held flat after.";
 }
 function draw(){
   bandChart(); termsChart(); perChart(); trailChart(); cumChart();

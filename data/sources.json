@@ -1,0 +1,23 @@
+{
+ "coinmetrics": {
+  "source": "Coin Metrics Community API",
+  "last_observation": "2026-11-19",
+  "rows_added": 180,
+  "overlap_days_checked": 15,
+  "revisions": [],
+  "note": "History to 2026-05-23 is the public archive (github.com/coinmetrics/data, last commit f1a36afb); later days are from the Community API. Where the two overlap, PriceUSD and IssTotNtv are identical; the API's SplyCur and CapMrktCurUSD are higher by 100 BTC (0.0005% to 0.0009%) and its AdrBalCnt lower by up to 1.0%."
+ },
+ "treasury": {
+  "source": "US Treasury, daily par yield curve rates",
+  "last_observation": "2026-11-19",
+  "rows_added": 3972
+ },
+ "market": {
+  "source": "Kenneth R. French data library, Fama/French 3 factors (Mkt-RF plus RF)",
+  "last_observation": "2026-09",
+  "rows_added": 201,
+  "revisions": [],
+  "note": "This file was created using the 202609 CRSP database."
+ },
+ "retrieved": "2026-11-20"
+}

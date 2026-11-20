@@ -1,0 +1,51 @@
+name: update
+
+on:
+  schedule:
+    - cron: "23 6 3 * *"   # third of each month, after the month-end data are in
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download the latest data into data/
+        run: python3 update.py
+
+      - name: Reproduce the paper's stored results on the frozen snapshot
+        run: python3 -I tests/test_continuity.py
+
+      - name: Build the page and the data file
+        run: |
+          python3 -I build.py
+          test -s _site/index.html
+
+      - name: Store the new data in the repository
+        run: |
+          if git diff --quiet -- data; then echo "No new data."; exit 0; fi
+          git config user.name "Agisilaos Papadogiannis"
+          git config user.email "apapadogiannis@gmail.com"
+          git add data
+          git commit -m "Data to $(python3 -I -c "import json; print(json.load(open('_site/data.json'))['meta']['data_to'])")"
+          git push
+
+      - name: Upload the built page
+        uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: _site/
+          retention-days: 30

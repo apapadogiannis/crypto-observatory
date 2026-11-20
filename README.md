@@ -32,9 +32,9 @@ It reports required returns. It forecasts nothing.
 
 ## Status
 
-First version: Bitcoin, with data to 24 May 2026. The scheduled update is not switched on yet,
-because the public Coin Metrics archive this data came from stopped updating on that date; see
-`data/README.md`. Other assets follow once the update runs.
+First version: Bitcoin. The data are updated on the third of each month by a scheduled job, which
+downloads the new days, stores them in `data/`, reruns the check and rebuilds the page. Other assets
+and a live census of deaths are to follow.
 
 ## Quickstart
 
@@ -44,6 +44,7 @@ Python 3.11 or later.
 pip install -r requirements.txt
 python3 -I tests/test_continuity.py    # reproduces the paper's stored results
 python3 -I build.py                    # writes _site/index.html and _site/data.json
+python3 update.py                      # optional: downloads the latest data into data/
 ```
 
 Open `_site/index.html` in a browser. The page loads one library (d3) from a public CDN and
@@ -56,6 +57,7 @@ observatory/mcm.py            the required-return band, month by month
 observatory/tests_of_fit.py   the monthly test, CAPM and MCM alpha, shares explained
 observatory/build.py          builds the page and the data file from the stored data
 observatory/inputs.py         reads the stored files
+observatory/update.py         downloads the latest data into data/ (the only code that uses the network)
 config/model.toml             constants and hand-entered anchors, each with its source
 data/                         all input data (see data/README.md)
 site/template.html            the page
@@ -96,6 +98,9 @@ with the paper's stored outputs (`reference/`):
 The page is built only if this passes. The check shows that the code reproduces the paper. It does
 not show that the data or the argument is right.
 
+The live page uses sources that can be downloaded on a schedule, which differ slightly from the
+paper's for the equity market and the Treasury yield. `data/README.md` states the differences.
+
 ## Configuration
 
 `config/model.toml` holds every constant of the equation and every anchor that is entered by hand:
@@ -114,6 +119,7 @@ only outside request is for the d3 library.
 - The page's numbers (`data.json`): CC BY 4.0, cite the paper.
 - Coin Metrics community data in `data/coinmetrics`: CC BY-NC 4.0, non-commercial use with
   attribution. It is not covered by the two licenses above.
+- Equity market returns in `data/market`: copyright Kenneth R. French.
 - Other sources are listed in `data/README.md`.
 
 ## Citation

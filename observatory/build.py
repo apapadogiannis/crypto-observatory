@@ -81,7 +81,11 @@ def build(data: Path, out: Path) -> dict:
             "latest_month_complete": bool(month_complete),
             "units": "percent a year unless stated; next_month figures are percent a month",
             "method": "Papadogiannis (2026), Bitcoin's Required Return. https://doi.org/10.2139/ssrn.7705239",
-            "sources": ["Coin Metrics community data (CC BY-NC 4.0)", "S&P 500 ETF total return", "US ten-year Treasury yield",
+            "equity_market_to": mkt.dropna().index[-1].strftime("%Y-%m"),
+            "tests_to": (t.index[-1] + pd.offsets.MonthEnd(1)).strftime("%Y-%m"),
+            "anchors_to": {"ownership_survey": max(cfg["ownership"])[:7], "fund_and_treasury_holdings": max(cfg["fund_and_treasury_btc"])[:7]},
+            "sources": ["Coin Metrics community data (CC BY-NC 4.0)", "US equity market return, Kenneth R. French data library",
+                        "US Treasury daily par yield curve rates (ten-year)",
                         "ownership surveys and fund holdings as listed in config/model.toml"],
         },
         "latest": {
@@ -133,6 +137,7 @@ def _page_payload(doc: dict) -> dict:
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
     meta = {"data_to": doc["meta"]["data_to"], "complete": doc["meta"]["latest_month_complete"],
+            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],
