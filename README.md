@@ -1,6 +1,9 @@
 # Crypto observatory
 
-Required returns, risks and survival of cryptoassets, measured from public data.
+What return should a cryptoasset's holders require, and did they get it? Recomputed every month from
+public data.
+
+**Live page: https://apapadogiannis.github.io/crypto-observatory/**
 
 ![The page](docs/screenshot.png)
 

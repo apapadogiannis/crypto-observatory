@@ -48,9 +48,9 @@ h2{font-size:17px;margin:0 0 2px}
 .site nav button[aria-current="page"]{color:var(--surface);background:var(--ink)}
 .site nav button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 .view{display:none}.view.on{display:block}
-.paper{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;margin:-10px 0 22px;padding:10px 14px;border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:8px;background:var(--surface);font-size:13.5px;color:var(--ink2)}
-.paper b{color:var(--ink);font-weight:650}
-.paper a{color:var(--blue);white-space:nowrap}
+.method{font-size:12.5px;color:var(--mut);margin:8px 0 18px}
+.method a{color:var(--ink2)}
+.stamp + .method{margin-top:-8px}
 .formula{font-size:19px;line-height:2.1;font-weight:600;margin:6px 0 2px}
 .formula span{white-space:nowrap;padding:5px 9px;border-radius:7px;border:1px solid var(--line);border-bottom-width:3px}
 .formula em{font-style:normal;color:var(--mut);font-weight:400;padding:0 3px}
@@ -151,15 +151,11 @@ text{font-family:inherit}
     <div class="brand">Crypto Observatory<small>required returns, risks and survival</small></div>
     <nav aria-label="Sections"><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="equation">The equation</button><button type="button" data-view="census">Census of deaths</button></nav>
   </header>
-  <div class="paper"><span>Every number here follows the paper <b>"Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold"</b>, A. Papadogiannis (2026), working paper.</span>
-    <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Read the paper (SSRN)</a>
-    <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">Replication package</a>
-    <a href="https://doi.org/10.5281/zenodo.24003938" target="_blank" rel="noopener">Archive (Zenodo)</a></div>
-
   <div class="view" id="view-bitcoin">
-  <h1>Bitcoin: required and delivered return</h1>
-  <p class="lede">What Bitcoin's holders should require for the risks they carry, set against what Bitcoin delivered. Built on the MCM equation: the risk-free rate plus market, concentration and mortality risk.</p>
+  <h1>What return should Bitcoin's holders require?</h1>
+  <p class="lede" id="lede-btc">What Bitcoin's holders should require for the market, concentration and mortality risk they carry, set against what Bitcoin delivered.</p>
   <div class="stamp" id="stamp"></div>
+  <p class="method">Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
   <div class="stale" id="stale" role="status"></div>
 
   <nav class="tabs" role="tablist" aria-label="Sections">
@@ -355,6 +351,7 @@ text{font-family:inherit}
   <div class="view" id="view-equation">
   <h1>The MCM equation</h1>
   <p class="lede">Every required return on this site comes from one equation. It is the CAPM plus the two risks the CAPM assumes away: that the holder has a lot of her wealth in one asset, and that the asset can die.</p>
+  <p class="method">Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
 
   <section class="card">
     <h2>The equation</h2>
@@ -422,6 +419,7 @@ text{font-family:inherit}
   <h1>The census of cryptoasset deaths</h1>
   <p class="lede">How often cryptoassets die, whether surviving makes them safer, and what protects them. The census is where the mortality term of the required return comes from.</p>
   <div class="stamp" id="census-stamp"></div>
+  <p class="method">Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
   <div class="tiles" id="census-tiles"></div>
 
   <section class="card" id="sec-c-age">
@@ -940,6 +938,9 @@ function tiles(){
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c; s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
   const day=d3.timeParse("%Y-%m-%d"), longDate=d3.timeFormat("%-d %B %Y"), monthEnd=day(m.month_end);
   document.getElementById("stamp").textContent="Bitcoin · month-end "+longDate(monthEnd)+" · updated monthly";
+  { const n=DATA.meta.now, s=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
+    document.getElementById("lede-btc").textContent=n.mid.toFixed(1)+"% a year at the end of "+d3.timeFormat("%B %Y")(parse(n.asof))+", for the market, concentration and mortality risk they carry."
+      +(s?" Over "+s.p.replace("–"," to 20")+" Bitcoin delivered "+s.real.toFixed(0)+"% a year against an average requirement of "+s.mid.toFixed(0)+"%.":""); }
   const age=Math.floor((Date.now()-monthEnd.getTime())/864e5), stale=document.getElementById("stale");
   if(age>50){ stale.textContent="These figures are for "+longDate(monthEnd)+", "+age+" days ago. The monthly update has not run since, so they may be out of date."; stale.style.display="block"; }
   document.getElementById("asof").textContent="Dates of the data: prices and the Treasury yield to "+longDate(monthEnd)+"; equity market returns, and so the tests, to "+fmtM(parse(m.market_to))+" (the beta is carried forward from that month); ownership survey to "+fmtM(parse(m.anchors.ownership_survey))+"; fund and treasury holdings to "+fmtM(parse(m.anchors.fund_and_treasury_holdings))+", held flat after.";
