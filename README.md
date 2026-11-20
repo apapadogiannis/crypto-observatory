@@ -17,16 +17,16 @@ required return = risk-free rate + market risk + concentration risk + mortality 
                 = r_f + beta x ERP + gamma x sigma^2 x w + lambda x (1 - delta)
 ```
 
-The page shows:
+The page has four tabs:
 
-1. **The required return and what was delivered.** The band and its midpoint at each month-end,
-   with the delivered and required averages of each three-year period.
-2. **How the band is built.** The lower edge, the two candidates for the upper edge, and which
-   holder sets it in each month.
-3. **The three risks.** Market, concentration and mortality, each with its formula, the points a
-   year it adds, and the inputs that move it.
-4. **The tests.** How much of the delivered return the CAPM explains, how much the MCM equation
-   explains, and the alpha each leaves, by period and through time.
+1. **Overview.** The required return and what was delivered, by three-year period, and why the two
+   differed: the premium holders required, what the equity market added beyond its own premium, and
+   alpha.
+2. **Required return.** How the band is built, which holder sets each edge, and the three risks
+   (market, concentration, mortality), each with its formula and the inputs that move it.
+3. **Tests.** How much of the delivered return the CAPM explains, how much the MCM equation explains,
+   and the alpha each leaves, by period and through time.
+4. **Data and notes.** Supply and holders for context, and what the page does not claim.
 
 It reports required returns. It forecasts nothing.
 

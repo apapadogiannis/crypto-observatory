@@ -35,6 +35,7 @@ def monthly_test(band: pd.DataFrame, market_return: pd.Series, start: str = "201
     })
     t["excess"] = t.ret - t.rf
     t["market_part"] = t.beta * (t.market_ret - t.rf)                                  # what the CAPM explains
+    t["market_required"] = band["market_term"] / 12                                    # of which holders required: beta x ERP
     t["concentration_mortality_part"] = monthly(band["midpoint"] - band["market_term"]) - t.rf  # what MCM adds
     t["capm_unexplained"] = t.excess - t.market_part
     t["mcm_unexplained"] = t.capm_unexplained - t.concentration_mortality_part
@@ -54,6 +55,9 @@ def summarize(t: pd.DataFrame) -> dict:
         "gap": a(gap), "gap_se": se(gap),
         "excess": a(t.excess), "market_part": a(t.market_part),
         "concentration_mortality_part": a(t.concentration_mortality_part),
+        # the observatory's own split of the same sum: what holders required, and what equities added beyond their premium
+        "required_premium": a(t.market_required + t.concentration_mortality_part),
+        "equity_beyond_premium": a(t.market_part - t.market_required),
         "mcm_alpha": a(t.mcm_unexplained), "mcm_alpha_se": se(t.mcm_unexplained),
         "capm_alpha": a(t.capm_unexplained),
         "explained_capm": float(100 - 100 * t.capm_unexplained.mean() / t.excess.mean()),

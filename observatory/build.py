@@ -131,7 +131,7 @@ def _page_payload(doc: dict) -> dict:
                      "vol": i["volatility"], "beta": i["beta"], "corr": i["correlation"], "wlo": i["weight_with_funds"], "whi": i["weight_surveyed"],
                      "we": i["weight_early_holder"], "iss": s["issuance_rate"], "inst": s["fund_and_treasury_share"]})
     per = [{"p": p["period"], "n": p["months"], "a": p["from"], "b": p["to"], "sum": p["summary"], "real": p["delivered"], "mid": p["required_mid"],
-            "gap": p["gap"], "gse": p["gap_se"], "ex": p["excess"], "mk": p["market_part"], "cm": p["concentration_mortality_part"],
+            "gap": p["gap"], "gse": p["gap_se"], "ex": p["excess"], "prem": p["required_premium"], "eq": p["equity_beyond_premium"], "mk": p["market_part"], "cm": p["concentration_mortality_part"],
             "alpha": p["mcm_alpha"], "se": p["mcm_alpha_se"], "calpha": p["capm_alpha"],
             "s_capm": round(p["explained_capm"]), "s_mcm": round(p["explained_mcm"])} for p in doc["periods"]]
     w, lt = doc["latest"]["worked"], doc["latest"]
