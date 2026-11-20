@@ -311,6 +311,12 @@ text{font-family:inherit}
     <p class="sub">The popular "Lindy" idea says the longer an asset has lived, the longer it will live, which would make the death rate fall like one over age: the dashed line. The data reject it. The death rate rises over the first years of an asset's life and stays high. Deaths per hundred assets a year, by age; whiskers are 95% intervals, and the number of deaths in each group is at the foot of its bar.</p>
     <div class="legend"><span><i style="background:var(--blue)"></i>death rate</span><span><i class="ln" style="border-color:var(--orange);border-top-style:dashed"></i>what Lindy would predict</span></div>
     <div class="chart" id="c-age"></div>
+    <div class="eq">
+      <div><span>Lindy says</span><b>death rate = k / age</b><small>double the age, halve the death rate</small></div>
+      <div><span>The test</span><b>death rate ∝ age<sup>b</sup></b><small>Lindy requires b = −1</small></div>
+      <div><span>The census finds</span><b>b = +0.42</b><small>standard error 0.04, with calendar-year effects</small></div>
+    </div>
+    <p class="sub" style="margin-top:10px">The dashed line is k / age drawn through the bar for ages 2 to 3 years. The estimate of b comes from a regression of monthly deaths on the logarithm of age.</p>
   </section>
 
   <section class="card" id="sec-c-size">
@@ -657,6 +663,9 @@ function comparedTab(){
   set("cmp-sample","For the equity series, beta (to the US stock market) and volatility are measured on monthly returns from "+fmtM(parse(c.equity_sample.from))+" to "+fmtM(parse(c.equity_sample.to))+", and the required return uses the ten-year Treasury yield of "+c.risk_free.toFixed(2)+"%.");
 }
 const longDateOf=s=>d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(s));
+function ageLab(a,short){ const mo=v=>Math.round(v*12);
+  if(a.age_to<=1) return mo(a.age_from)+"–"+mo(a.age_to)+(short?"m":" months");
+  return a.age_from+"–"+a.age_to+(short?"y":" years"); }
 function censusView(){
   const C=DATA.meta.census, set=(id,s)=>{document.getElementById(id).textContent=s;}, taken=longDateOf(C.census_date);
   set("census-stamp","Census taken on "+taken+" · from the paper · not yet updated monthly");
@@ -671,7 +680,7 @@ function censusView(){
     const x=d3.scaleBand().domain(A.map((_,i)=>i)).range([0,f.iw]).padding(0.28), top=31, y=d3.scaleLinear().domain([0,top]).range([f.ih,0]).clamp(true);
     const g=axes(f,{},y,{yticks:[0,10,20,30],yfmt:v=>v+"%"});
     const mid=A.map(a=>Math.sqrt(a.age_from*a.age_to)), i2=A.findIndex(a=>a.age_from===2), lind=A.map((_,i)=>A[i2].rate*mid[i2]/mid[i]);
-    const tipFor=a=>{const n=f.tip.node(); n.textContent=""; const t=document.createElement("div"); t.className="t"; t.textContent="Age "+a.age_from+" to "+a.age_to+" years"; n.appendChild(t);
+    const tipFor=a=>{const n=f.tip.node(); n.textContent=""; const t=document.createElement("div"); t.className="t"; t.textContent="Age "+ageLab(a,false).replace("–"," to "); n.appendChild(t);
       [["death rate",a.rate.toFixed(1)+"% a year"],["95% interval",a.ci_low.toFixed(1)+"% to "+a.ci_high.toFixed(1)+"%"],["deaths",a.deaths],["asset-years followed",Math.round(a.asset_years).toLocaleString("en-US")]].forEach(([k,v])=>{const d=document.createElement("div"); d.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v; d.appendChild(l); d.appendChild(b); n.appendChild(d);});
       f.tip.style("display","block"); const X=f.m.l+x(A.indexOf(a))+x.bandwidth()+8, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+x(A.indexOf(a))-tw-8:X))+"px").style("top",(f.m.t+4)+"px");};
     A.forEach((a,i)=>{ const G=g.append("g").attr("tabindex",0).on("pointermove focus",()=>tipFor(a)).on("pointerleave blur",()=>f.tip.style("display","none")), cx=x(i)+x.bandwidth()/2;
@@ -679,7 +688,7 @@ function censusView(){
       G.append("rect").attr("x",x(i)).attr("width",x.bandwidth()).attr("y",y(a.rate)).attr("height",f.ih-y(a.rate)).attr("fill",css("--blue")).attr("opacity",a.deaths<10?0.45:1).attr("rx",3);
       G.append("line").attr("x1",cx).attr("x2",cx).attr("y1",y(a.ci_low)).attr("y2",y(a.ci_high)).attr("stroke",css("--ink")).attr("stroke-width",1.3);
       G.append("text").attr("x",cx-4).attr("y",y(a.rate)-6).attr("text-anchor","end").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(a.rate.toFixed(1)+(narrow(f)?"":"%"));
-      g.append("text").attr("x",cx).attr("y",f.ih+16).attr("text-anchor","middle").attr("font-size",narrow(f)?9.5:11.5).attr("fill",css("--ink2")).text(narrow(f)&&i===0?"<"+a.age_to:a.age_from+"–"+a.age_to);
+      g.append("text").attr("x",cx).attr("y",f.ih+16).attr("text-anchor","middle").attr("font-size",narrow(f)?9.5:11.5).attr("fill",css("--ink2")).text(ageLab(a,narrow(f)));
       g.append("text").attr("x",cx).attr("y",f.ih+31).attr("text-anchor","middle").attr("font-size",11).attr("fill",css("--mut")).text(a.deaths); });
     g.append("text").attr("x",-8).attr("y",f.ih+16).attr("text-anchor","end").attr("font-size",11).attr("fill",css("--mut")).text("age");
     g.append("text").attr("x",-8).attr("y",f.ih+31).attr("text-anchor","end").attr("font-size",11).attr("fill",css("--mut")).text("deaths");
