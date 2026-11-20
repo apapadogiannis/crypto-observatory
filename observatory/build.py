@@ -117,6 +117,7 @@ def build(data: Path, out: Path) -> dict:
     doc = {
         "meta": {
             "asset": "btc", "name": "Bitcoin",
+            "author": "Agisilaos Papadogiannis, https://github.com/apapadogiannis",
             "data_to": last_day.strftime("%Y-%m-%d"), "latest_month_end": band.index[-1].strftime("%Y-%m-%d"),
             "units": "percent a year unless stated; next_month figures are percent a month",
             "method": "Papadogiannis (2026), Bitcoin's Required Return. https://doi.org/10.2139/ssrn.7705239",

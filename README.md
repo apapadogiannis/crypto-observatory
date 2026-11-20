@@ -8,6 +8,8 @@ public data.
 
 **Live page: https://apapadogiannis.github.io/crypto-observatory/**
 
+By [Agisilaos Papadogiannis](https://github.com/apapadogiannis).
+
 ![The page](docs/screenshot.png)
 
 ## What it is
