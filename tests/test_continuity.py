@@ -71,6 +71,15 @@ for label, key in (("whole sample", "2012–26"), ("since 2018", "2018–26")):
     m = re.search(rf"explained, {label}: CAPM (\d+)%, MCM (\d+)%", txt)
     check(f"{key} share explained, CAPM", rows[key]["explained_capm"], float(m.group(1)), 0.5)
     check(f"{key} share explained, MCM", rows[key]["explained_mcm"], float(m.group(2)), 0.5)
+for label, key in (("2012–26, all", "2012–26"), ("2018–26", "2018–26"), ("2015–17", "2015–17"), ("2021–23", "2021–23")):
+    m = re.search(rf"^alpha {label}\s+([+-]\d+) \(\s*(\d+); ([+-][\d.]+); [+-][\d.]+\)\s+([\d.]+) \|\s+([+-]\d+) \(\s*(\d+); ([+-][\d.]+); [+-][\d.]+\)\s+([\d.]+)", txt, re.M)
+    ca, cse, ct, cb, ma, mse, mt, mb = map(float, m.groups())
+    g = rows[key]["regression"]
+    check(f"{key} regression alpha, CAPM", g["capm"]["alpha"], ca, 0.5)
+    check(f"{key} regression alpha, CAPM, standard error", g["capm"]["se"], cse, 0.5)
+    check(f"{key} regression alpha, MCM", g["mcm"]["alpha"], ma, 0.5)
+    check(f"{key} regression alpha, MCM, standard error", g["mcm"]["se"], mse, 0.5)
+    check(f"{key} regression slope, MCM", g["mcm"]["slope"], mb, 0.005)
 for label in ("2012–14", "2015–17", "2018–20", "2021–23", "2024–26"):
     m = re.search(rf"share explained {label}: CAPM (\d+)%, MCM (\d+)%", txt)
     check(f"{label} share explained, MCM", rows[label]["explained_mcm"], float(m.group(2)), 0.5)

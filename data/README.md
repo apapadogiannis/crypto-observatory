@@ -6,7 +6,7 @@ every published number can be recomputed from what is stored.
 
 | File | What it is | Source and license |
 |---|---|---|
-| `coinmetrics/btc.csv` | Daily funded addresses, market value, issuance, price and supply of Bitcoin | Coin Metrics community data, CC BY-NC 4.0 (non-commercial, with attribution). Days to 23 May 2026 are from the public archive at github.com/coinmetrics/data, which stopped updating on 24 May 2026 (last commit `f1a36afb`). Later days are from the Coin Metrics Community API. |
+| `coinmetrics/btc.csv` | Daily funded addresses, market value, flows into and out of exchanges, issuance, price and supply of Bitcoin | Coin Metrics community data, CC BY-NC 4.0 (non-commercial, with attribution). Days to 23 May 2026 are from the public archive at github.com/coinmetrics/data, which stopped updating on 24 May 2026 (last commit `f1a36afb`). Later days are from the Coin Metrics Community API. |
 | `rates/treasury_10y_daily.csv` | Daily ten-year par yield | US Department of the Treasury, Daily Treasury Par Yield Curve Rates |
 | `market/us_market_monthly.csv` | Monthly excess return of the US equity market (`mkt_rf`) and the one-month bill rate (`rf`), in percent | Kenneth R. French data library, Fama/French 3 Factors. Copyright Kenneth R. French. Published with a lag of one to two months. |
 | `census/ever_top20.csv` | Every cryptoasset that was ever in the top twenty by trading volume, with the date and kind of its death if it died | Result table of the paper's replication package (CC BY 4.0), census taken on 24 May 2026 |

@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CM_API = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
-CM_METRICS = ["AdrBalCnt", "CapMrktCurUSD", "IssTotNtv", "PriceUSD", "SplyCur"]
+CM_METRICS = ["AdrBalCnt", "CapMrktCurUSD", "FlowInExUSD", "FlowOutExUSD", "IssTotNtv", "PriceUSD", "SplyCur"]
 TREASURY = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/"
             "{y}/all?type=daily_treasury_yield_curve&field_tdr_date_value={y}&page&_format=csv")
 FRENCH = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_CSV.zip"

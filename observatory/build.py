@@ -24,6 +24,18 @@ def _r(v, n=2):
     return None if v is None or pd.isna(v) else round(float(v), n)
 
 
+def _round(p: dict) -> dict:
+    out = {}
+    for k, v in p.items():
+        if k in ("average_beta", "average_correlation"):
+            out[k] = round(v, 2)
+        elif k == "regression":
+            out[k] = v and {m: {"alpha": round(x["alpha"], 1), "se": round(x["se"], 1), "t": round(x["t"], 1), "slope": round(x["slope"], 2)} for m, x in v.items()}
+        else:
+            out[k] = round(v, 1) if isinstance(v, float) else v
+    return out
+
+
 def build(data: Path, out: Path) -> dict:
     cfg = inputs.config()
     btc = inputs.bitcoin(data)
@@ -37,6 +49,7 @@ def build(data: Path, out: Path) -> dict:
         band = band.iloc[:-1]
     t = tests_of_fit.monthly_test(band, mkt)
     periods = tests_of_fit.period_table(t)
+    page_notes = tests_of_fit.notes(band, t, btc)
 
     supply = btc["SplyCur"].dropna().resample("ME").last()
     issuance = btc["IssTotNtv"].resample("ME").sum() * 12 / supply
@@ -105,7 +118,8 @@ def build(data: Path, out: Path) -> dict:
             },
         },
         "months": months,
-        "periods": [{k: (round(v, 1) if isinstance(v, float) else v) for k, v in p.items()} for p in periods],
+        "periods": [_round(p) for p in periods],
+        "notes": page_notes,
         "census": {"ever_top_twenty": int(len(census)), "died": int(len(dead)), "deaths_by_year": deaths,
                    "as_of": "2026-05-24"},
     }
@@ -133,11 +147,12 @@ def _page_payload(doc: dict) -> dict:
     per = [{"p": p["period"], "n": p["months"], "a": p["from"], "b": p["to"], "sum": p["summary"], "real": p["delivered"], "mid": p["required_mid"],
             "gap": p["gap"], "gse": p["gap_se"], "ex": p["excess"], "prem": p["required_premium"], "eq": p["equity_beyond_premium"], "mk": p["market_part"], "cm": p["concentration_mortality_part"],
             "alpha": p["mcm_alpha"], "se": p["mcm_alpha_se"], "calpha": p["capm_alpha"],
+            "beta": p["average_beta"], "corr": p["average_correlation"], "reg": p["regression"],
             "s_capm": round(p["explained_capm"]), "s_mcm": round(p["explained_mcm"])} for p in doc["periods"]]
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
     meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"],
-            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"],
+            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "notes": doc["notes"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],

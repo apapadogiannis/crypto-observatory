@@ -136,14 +136,14 @@ text{font-family:inherit}
 
   <section class="card" id="sec-why">
     <h2>Why delivered differed from required</h2>
-    <p class="sub">Read each period in two moves. <b>First, the gap.</b> The blue bar is the premium holders required over the risk-free rate, and the circle is what Bitcoin delivered. The black line between them is the gap: delivered minus required. <b>Then, where the gap came from.</b> Part of it came with the equity market: equities paid more, or less, than the 4% a year the equation assumes, and Bitcoin moves with them in proportion to its beta. The rest is alpha, the part specific to Bitcoin. Percent a year.</p>
+    <p class="sub">Read each period in two moves. <b>First, the gap.</b> The blue bar is the premium holders required over the risk-free rate, and the circle is what Bitcoin delivered. The black line between them is the gap: delivered minus required. <b>Then, where the gap came from.</b> Part of it came with the equity market: equities paid more, or less, than the 4% a year the equation assumes, and Bitcoin moves with them in proportion to its beta. The rest is left unexplained by the equation: it is the part specific to Bitcoin. Percent a year.</p>
     <div class="mini" style="margin:4px 0 12px"><h3 id="why-title"></h3><p>percent a year over the risk-free rate</p>
       <div class="eq" id="why-eq"></div>
-      <p class="sub" style="margin-top:10px"><b>Gap</b> = <span id="why-gap"></span><br><b>Alpha</b> = delivered − required − beta × (equity market return − risk-free rate − 4%). Put another way, it is what Bitcoin delivered beyond the pay for all three risks, with the market part counted at what equities actually paid instead of the assumed 4%: delivered − beta × (equities' actual return over the risk-free rate) − concentration − mortality.</p></div>
-    <div class="legend"><span><i style="background:var(--blue)"></i>required premium</span><span><i class="dot"></i>delivered</span><span><i class="ln" style="border-color:var(--ink)"></i>gap: delivered minus required</span><span><i style="background:var(--violet)"></i>of the gap: came with the equity market</span><span><i style="background:var(--ink2)"></i>of the gap: alpha, specific to Bitcoin</span></div>
+      <p class="sub" style="margin-top:10px"><b>Gap</b> = <span id="why-gap"></span><br><b>Unexplained</b> = delivered − required − beta × (equity market return − risk-free rate − 4%). Put another way, it is what Bitcoin delivered beyond the pay for all three risks, with the market part counted at what equities actually paid instead of the assumed 4%: delivered − beta × (equities' actual return over the risk-free rate) − concentration − mortality.</p></div>
+    <div class="legend"><span><i style="background:var(--blue)"></i>required premium</span><span><i class="dot"></i>delivered</span><span><i class="ln" style="border-color:var(--ink)"></i>gap: delivered minus required</span><span><i style="background:var(--violet)"></i>of the gap: came with the equity market</span><span><i style="background:var(--ink2)"></i>of the gap: left unexplained, specific to Bitcoin</span></div>
     <div class="chart" id="c-why"></div>
     <div class="scroll"><table id="t-why"></table></div>
-    <p class="sub" style="margin-top:10px">The gap is the paper's monthly test, and alpha is the alpha of its regression test (both under Tests). Showing one inside the other is the observatory's own reading and involves no new estimate. The split depends on the 4% equity premium, which is a convention: with a higher premium, more of the gap would count as required and less as coming with the equity market.</p>
+    <p class="sub" style="margin-top:10px">The gap is the paper's monthly test. The unexplained return is the quantity behind the paper's "share explained", and its regression alpha is within a point or two of it (both under Tests). Showing one inside the other is the observatory's own reading and involves no new estimate. Two cautions. The split depends on the 4% equity premium, which is a convention: with a higher premium, more of the gap would count as required and less as coming with the equity market. And the equity part is only as firm as the beta: where the correlation with equities is low, as in the early periods, the beta is poorly measured and so is the split.</p>
   </section>
 
   </div>
@@ -212,10 +212,13 @@ text{font-family:inherit}
   <div class="pane" id="pane-tests">
   <section class="card" id="sec-per">
     <h2>How much of the delivered return each model explains</h2>
-    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the US equity market's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is alpha, in the lower panel: the circle less the top of the bar.</p>
-    <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--ink2)"></i>MCM alpha, with ± one standard error</span></div>
+    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the US equity market's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is the unexplained return, in the lower panel: the circle less the top of the bar.</p>
+    <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--ink2)"></i>left unexplained by the MCM equation, with ± one standard error</span></div>
     <div class="chart" id="c-per"></div>
     <div class="scroll"><table id="t-per"></table></div>
+    <div class="mini" style="margin-top:18px"><h3>The same test as a regression</h3><p>percent a year</p>
+      <p class="sub">The standard test of a pricing model regresses the asset's return over the risk-free rate on the equity market's and asks whether the intercept, alpha, is zero. For the MCM equation the concentration and mortality terms are subtracted from Bitcoin's return first. Here the slope is fitted by the regression; in the table above the beta is the rolling one known at each month-end, which is why the two differ slightly.</p>
+      <div class="scroll"><table id="t-reg"></table></div></div>
   </section>
 
   <section class="card" id="sec-trail">
@@ -246,16 +249,16 @@ text{font-family:inherit}
   <section class="card" id="sec-claims">
     <h2>What this page does not claim</h2>
     <ul class="note">
-      <li><b>Alpha is not a supply and demand measure.</b> It is what the equation leaves over. In the data to May 2026, against monthly issuance, net exchange flows and changes in fund holdings together, it shows no reliable link (R² 0.19, no coefficient with a t-statistic above 1.7).</li>
-      <li><b>Repricing is not shown as a separate part.</b> The month-to-month change in the required return moves with the return itself (correlation 0.90 in the data to May 2026), because volatility and the holder's weight are computed from the price.</li>
-      <li><b>Short windows say little.</b> Month by month, the required return and the next month's return are uncorrelated. The tests are informative over years, not months.</li>
+      <li><b>The unexplained return is not a supply and demand measure.</b> It is what the equation leaves over. <span id="n-flows"></span></li>
+      <li><b>Repricing is not shown as a separate part.</b> <span id="n-repricing"></span></li>
+      <li><b>Short windows say little.</b> <span id="n-short"></span> The tests are informative over years, not months.</li>
       <li><b>Nothing here is a forecast.</b> A required return is what holders should ask for given the risk, not what the asset will deliver.</li>
     </ul>
   </section>
   </div>
 
   <footer>
-    <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold", working paper. Paper and replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. The alphas here are average unexplained returns with the rolling beta; the regression intercepts in the paper are 37 and 1 points a year for the MCM equation (whole sample, and since 2018).</p>
+    <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold", working paper. Paper and replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. On data to May 2026 the paper reports an MCM alpha of 37 points a year over the whole sample and 1 since 2018.</p>
     <p id="asof"></p>
     <p>Data: Coin Metrics community data (CC BY-NC 4.0); the US equity market return from the Kenneth R. French data library; the ten-year yield from the US Treasury's daily par yield curve rates; survey and filing anchors as cited in the paper. The paper itself used an S&amp;P 500 ETF and the CBOE ten-year yield index, so figures here can differ slightly from the paper's. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>.</p>
     <p>Independent research, for informational and academic purposes only. Not financial, investment, tax or legal advice, and not a recommendation to buy or sell any financial instrument.</p>
@@ -366,12 +369,12 @@ function perChart(){
     g.append("text").attr("x",-8).attr("y",sc(v)).attr("dy","0.32em").attr("text-anchor","end").attr("font-size",11.5).attr("fill",css("--mut")).text(fmt(v));});};
   grid(y,y.ticks(4),v=>v+"%"); grid(y2,y2.ticks(4),v=>sgn(v));
   const cap=(yy,s)=>g.append("text").attr("x",0).attr("y",yy).attr("font-size",12).attr("font-weight",600).attr("fill",css("--ink2")).text(s);
-  cap(-12,"Delivered, and what the models explain"); cap(Y2-20,narrow(f)?"MCM alpha, points a year":"MCM alpha: delivered less explained, points a year");
+  cap(-12,"Delivered, and what the models explain"); cap(Y2-20,narrow(f)?"Left unexplained by MCM":"Left unexplained by the MCM equation: delivered less explained, points a year");
   g.selectAll("text.x").data(P).join("text").attr("x",p=>x(p.p)+x.bandwidth()/2).attr("y",f.ih+19).attr("text-anchor","middle").attr("font-size",12).attr("fill",css("--ink2")).text(p=>narrow(f)?"’"+p.p.slice(2):p.p);
   const bw=Math.min(x.bandwidth(),64), bx=p=>x(p.p)+(x.bandwidth()-bw)/2, cx=p=>bx(p)+bw/2;
   const tipFor=(e,p)=>{const n=f.tip.node(); n.textContent="";
     const t=document.createElement("div"); t.className="t"; t.textContent=p.p+" · "+p.n+" months"; n.appendChild(t);
-    [["delivered over risk-free",sgn(p.ex)+" pts"],["market (CAPM)",sgn(p.mk)+" pts"],["concentration and mortality",sgn(p.cm)+" pts"],["MCM alpha",sgn(p.alpha)+" pts"],["standard error",(" ±"+p.se.toFixed(0)+" pts")],["CAPM alpha",sgn(p.calpha)+" pts"],["explained: CAPM / MCM",p.s_capm+"% / "+p.s_mcm+"%"]].forEach(([k,v])=>{const r=document.createElement("div"); r.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v; r.appendChild(l); r.appendChild(b); n.appendChild(r);});
+    [["delivered over risk-free",sgn(p.ex)+" pts"],["market (CAPM)",sgn(p.mk)+" pts"],["concentration and mortality",sgn(p.cm)+" pts"],["left unexplained by MCM",sgn(p.alpha)+" pts"],["its standard error",(" ±"+p.se.toFixed(0)+" pts")],["left unexplained by the CAPM",sgn(p.calpha)+" pts"],["explained: CAPM / MCM",p.s_capm+"% / "+p.s_mcm+"%"]].forEach(([k,v])=>{const r=document.createElement("div"); r.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v; r.appendChild(l); r.appendChild(b); n.appendChild(r);});
     f.tip.style("display","block"); const X=f.m.l+bx(p)+bw+10, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+bx(p)-tw-10:X))+"px").style("top",(f.m.t+4)+"px");};
   const grp=g.selectAll("g.p").data(P).join("g").attr("tabindex",0).on("pointermove",(e,p)=>tipFor(e,p)).on("focus",(e,p)=>tipFor(e,p)).on("pointerleave blur",()=>f.tip.style("display","none"));
   grp.append("rect").attr("x",p=>x(p.p)).attr("width",x.bandwidth()).attr("y",0).attr("height",f.ih).attr("fill","transparent");
@@ -384,8 +387,11 @@ function perChart(){
   grp.append("line").attr("x1",cx).attr("x2",cx).attr("y1",p=>y2(p.alpha-p.se)).attr("y2",p=>y2(p.alpha+p.se)).attr("stroke",css("--ink")).attr("stroke-width",1.5);
   grp.append("text").attr("x",p=>narrow(f)?cx(p):cx(p)+bw/2+6).attr("y",p=>narrow(f)?y2(p.alpha+p.se)-6:y2(p.alpha)).attr("dy",narrow(f)?null:"0.32em").attr("text-anchor",narrow(f)?"middle":"start").attr("font-size",12).attr("font-weight",650).attr("fill",css("--ink")).text(p=>sgn(p.alpha));
   const sh=v=>Math.min(v,100)+"%"+(v>100?" (over)":"");
-  table("t-per",["Period","Delivered over risk-free","Market (CAPM)","Concentration and mortality","MCM alpha","Standard error","CAPM alpha","Explained by CAPM","Explained by MCM"],
+  table("t-per",["Period","Delivered over risk-free","Market (CAPM)","Concentration and mortality","Unexplained, MCM","Standard error","Unexplained, CAPM","Explained by CAPM","Explained by MCM"],
     p=>[p.p,p.ex.toFixed(0),p.mk.toFixed(0),p.cm.toFixed(0),sgn(p.alpha),"±"+p.se.toFixed(0),sgn(p.calpha),sh(p.s_capm),sh(p.s_mcm)]);
+  const R=x=>x?sgn(x.alpha)+" (±"+x.se.toFixed(0)+")":"";
+  table("t-reg",["Period","CAPM alpha (standard error)","MCM alpha (standard error)","t-statistic, MCM","Slope on the equity market"],
+    p=>p.reg?[p.p,R(p.reg.capm),R(p.reg.mcm),p.reg.mcm.t.toFixed(1).replace("-","−"),p.reg.mcm.slope.toFixed(2)]:[p.p,"","","",""]);
 }
 function whyChart(){
   const el=document.getElementById("c-why"), f=frame(el,360,{l:44,r:14,t:26,b:30}), P=periods();
@@ -398,7 +404,7 @@ function whyChart(){
   const gapOf=p=>p.ex-p.prem;
   const tipFor=(e,p)=>{const n=f.tip.node(); n.textContent="";
     const t=document.createElement("div"); t.className="t"; t.textContent=p.p+" · "+p.n+" months"; n.appendChild(t);
-    [["required premium",p.prem.toFixed(0)],["delivered over risk-free",p.ex.toFixed(0)],["gap: delivered minus required",sgn(gapOf(p))],["  came with the equity market",sgn(p.eq)],["  alpha, specific to Bitcoin",sgn(p.alpha)],["  standard error of alpha","±"+p.se.toFixed(0)]].forEach(([k,v])=>{const r=document.createElement("div"); r.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v+" pts"; r.appendChild(l); r.appendChild(b); n.appendChild(r);});
+    [["required premium",p.prem.toFixed(0)],["delivered over risk-free",p.ex.toFixed(0)],["gap: delivered minus required",sgn(gapOf(p))],["  came with the equity market",sgn(p.eq)],["  left unexplained",sgn(p.alpha)],["  its standard error","±"+p.se.toFixed(0)],["average beta",p.beta.toFixed(2)+" "],["average correlation with equities",p.corr.toFixed(2)+" "]].forEach(([k,v])=>{const r=document.createElement("div"); r.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v.endsWith(" ")?v.trim():v+" pts"; r.appendChild(l); r.appendChild(b); n.appendChild(r);});
     f.tip.style("display","block"); const X=f.m.l+x(p.p)+x.bandwidth()+8, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+x(p.p)-tw-8:X))+"px").style("top",(f.m.t+4)+"px");};
   const grp=g.selectAll("g.p").data(P).join("g").attr("tabindex",0).on("pointermove focus",(e,p)=>tipFor(e,p)).on("pointerleave blur",()=>f.tip.style("display","none"));
   grp.append("rect").attr("x",p=>x(p.p)).attr("width",x.bandwidth()).attr("y",0).attr("height",f.ih).attr("fill","transparent");
@@ -419,8 +425,8 @@ function whyChart(){
     G.append("circle").attr("cx",xg).attr("cy",ye).attr("r",5).attr("fill",css("--surface")).attr("stroke",css("--ink")).attr("stroke-width",2);
     const up=gapOf(p)>=0, lab=(wide?"gap ":"")+sgn(gapOf(p));
     if(wide) txt(xg+10,ye+4,lab,{w:650,z:12,a:"start"}); else txt(xg,up?ye-10:ye+18,lab,{w:650,z:12}); });
-  table("t-why",["Period","Required premium","Delivered","Gap","of which equities","of which alpha","Standard error of alpha"],
-    p=>[p.p,p.prem.toFixed(0),p.ex.toFixed(0),sgn(gapOf(p)),sgn(p.eq),sgn(p.alpha),"±"+p.se.toFixed(0)]);
+  table("t-why",["Period","Required premium","Delivered","Gap","of which equities","of which unexplained","Standard error of the unexplained","Average beta","Correlation with equities"],
+    p=>[p.p,p.prem.toFixed(0),p.ex.toFixed(0),sgn(gapOf(p)),sgn(p.eq),sgn(p.alpha),"±"+p.se.toFixed(0),p.beta.toFixed(2),p.corr.toFixed(2)]);
   const s=totals().slice(-1)[0], E=document.getElementById("why-eq"); E.textContent="";
   document.getElementById("why-title").textContent="The whole sample "+(s.p.startsWith("2018")?"since 2018":"since 2012")+", as an equation";
   const cell=(v,lab,c,sub)=>{const d=document.createElement("div"), b=document.createElement("b"), l=document.createElement("span"); b.textContent=v;
@@ -430,8 +436,8 @@ function whyChart(){
   cell(s.ex.toFixed(0),"delivered",null,"Bitcoin's return over the risk-free rate");
   op("="); cell(s.prem.toFixed(0),"required","--blue","market + concentration + mortality");
   op("+"); cell(sgn(s.eq),"came with the equity market","--violet","beta × (equities − risk-free − 4%)");
-  op("+"); cell(sgn(s.alpha),"alpha","--ink2","specific to Bitcoin");
-  document.getElementById("why-gap").textContent="delivered − required = "+s.ex.toFixed(0)+" − "+s.prem.toFixed(0)+" = "+sgn(gapOf(s))+", made of "+sgn(s.eq)+" with the equity market and "+sgn(s.alpha)+" alpha.";
+  op("+"); cell(sgn(s.alpha),"left unexplained","--ink2","specific to Bitcoin");
+  document.getElementById("why-gap").textContent="delivered − required = "+s.ex.toFixed(0)+" − "+s.prem.toFixed(0)+" = "+sgn(gapOf(s))+", made of "+sgn(s.eq)+" with the equity market and "+sgn(s.alpha)+" left unexplained.";
 }
 function lines(id,h,d,S,fmt,endfmt){
   const el=document.getElementById(id), f=frame(el,h,{l:50,r:46,t:12,b:26});
@@ -525,12 +531,18 @@ function deathsChart(){
   grp.append("rect").attr("x",d=>x(d.y)).attr("width",x.bandwidth()).attr("y",d=>y(d.fade+d.jump)).attr("height",d=>Math.max(0,y(d.fade)-y(d.fade+d.jump)-(d.fade?2:0))).attr("fill",css("--ink"));
   grp.filter(d=>d.fade+d.jump>0).append("text").attr("x",d=>x(d.y)+x.bandwidth()/2).attr("y",d=>y(d.fade+d.jump)-5).attr("text-anchor","middle").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(d=>d.fade+d.jump);
 }
+function notesText(){
+  const n=DATA.meta.notes, to=fmtM(parse(n.to)), set=(id,s)=>{document.getElementById(id).textContent=s;};
+  set("n-flows","In the "+n.months+" months to "+to+", against monthly issuance, net exchange flows and changes in fund holdings together, it shows no reliable link (R² "+n.flows_r2.toFixed(2)+", no coefficient with a t-statistic above "+n.flows_largest_t.toFixed(1)+").");
+  set("n-repricing","The month-to-month change in the required return moves with the return itself (correlation "+n.repricing_correlation.toFixed(2)+"), because volatility and the holder's weight are computed from the price. Using only inputs that do not depend on the price, the fit is "+(100*n.repricing_r2_price_free_inputs).toFixed(0)+"%.");
+  set("n-short","Month by month, the correlation between the required return and the next month's return is "+n.monthly_correlation_required_delivered.toFixed(2)+".");
+}
 function tiles(){
   const m=DATA.meta, a=DATA.per.find(p=>p.sum&&p.p.startsWith("2012")), b=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
   const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% a year · at the latest month-end"],
            ["Explained by the MCM equation, since 2018",b.s_mcm+"%","of Bitcoin's return over the risk-free rate · CAPM alone "+b.s_capm+"%"],
            ["Explained by the MCM equation, since 2012",a.s_mcm+"%","of Bitcoin's return over the risk-free rate · CAPM alone "+a.s_capm+"%"],
-           ["MCM alpha, last three years",sgn(m.tmcm)+" pts","a year, to "+fmtM(parse(m.to))+" · CAPM alpha "+sgn(m.tcapm)]];
+           ["Left unexplained by MCM, last three years",sgn(m.tmcm)+" pts","a year, to "+fmtM(parse(m.to))+" · by the CAPM "+sgn(m.tcapm)]];
   const el=document.getElementById("tiles"); el.textContent="";
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c; s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
   const day=d3.timeParse("%Y-%m-%d"), longDate=d3.timeFormat("%-d %B %Y"), monthEnd=day(m.month_end);
@@ -547,7 +559,7 @@ function draw(){
   mini("m-conc",[{k:"conc",n:"concentration term",c:"--orange"}],v=>v.toFixed(v<10?1:0));
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
-  edgesChart(); deathsChart(); eqStrip();
+  edgesChart(); deathsChart(); eqStrip(); notesText();
   mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
   mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
 }

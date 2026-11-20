@@ -76,7 +76,8 @@ can read it without scraping the page.
 | `meta` | asset, date of the data, units, method, sources |
 | `latest` | the required return of the latest month, worked out term by term at both edges and the midpoint |
 | `months` | one entry per month-end: the band, the terms at the midpoint, the inputs, supply measures, and the next month's return with what each model leaves unexplained |
-| `periods` | three-year periods and the two summary samples: delivered, required, gap, the part each model explains, alpha with its standard error |
+| `periods` | three-year periods and the two summary samples: delivered, required, the gap and its split, the part each model explains and leaves unexplained, the regression alphas, the average beta and correlation |
+| `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
 | `census` | deaths among assets that were ever in the top twenty, by year and kind |
 
 Figures are percent a year unless the key says otherwise.
@@ -93,7 +94,8 @@ with the paper's stored outputs (`reference/`):
 
 1. the monthly band: 173 months and nine columns, each within the four decimals the paper stores;
 2. the monthly test: delivered, required, gap and its standard error for every period;
-3. the CAPM and MCM alpha, the cumulative unexplained return and the share explained.
+3. the unexplained return of the CAPM and of the MCM equation, added up and as a share explained;
+4. the regression alphas, their standard errors and slopes.
 
 The page is built only if this passes. The check shows that the code reproduces the paper. It does
 not show that the data or the argument is right.
