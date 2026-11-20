@@ -1,0 +1,38 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Reproduce the paper's stored results on the frozen snapshot
+        run: python3 -I tests/test_continuity.py
+
+      - name: Build the page and the data file
+        run: |
+          python3 -I build.py
+          test -s _site/index.html
+          python3 -I -c "import json; d=json.load(open('_site/data.json')); assert d['months'] and d['periods'] and d['latest']['required']['midpoint'] > 0; print('data to', d['meta']['data_to'])"
+
+      - name: Upload the built page
+        uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: _site/
+          retention-days: 30

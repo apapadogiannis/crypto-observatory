@@ -1,0 +1,51 @@
+# Constants and hand-entered anchors of the required-return (MCM) equation.
+# Every value here is taken from "Bitcoin's Required Return" (Papadogiannis 2026); the section is named beside it.
+# Anchors are the only inputs that are not read from a data feed. Edit them here, never in the code.
+
+[constants]
+equity_risk_premium = 0.04        # a convention (Section 4)
+risk_aversion_low   = 1.0         # log utility (Table 3)
+risk_aversion_high  = 2.8         # upper household estimate (Table 3)
+market_scale_low    = 0.85        # market term cut by 15% at the lower edge (Section 5)
+market_scale_high   = 1.15        # and raised by 15% at the upper edge
+mortality_low       = 0.003       # sudden collapses only: 0.30% a year at a 95% loss (Section 3)
+mortality_high      = 0.035       # every death of a top-twenty asset as a total loss (Section 3)
+fund_investor_weight = 0.015      # Bitcoin's share of the wealth of fund and treasury investors (Appendix B)
+owner_weight_2021    = 0.19       # crypto share of owners' financial assets, Cleveland Fed survey 2021
+weight_cap           = 0.9
+few_hands_ownership  = 0.012      # ownership at or below this: the early holder is all-in (2018 survey)
+volatility_halflife_months = 9
+beta_window_months   = 48
+beta_min_months      = 18
+beta_cap             = 3.0
+genesis              = "2009-01-03"
+anchor_date          = "2021-09-30"   # the survey date the holder weight is carried back from
+
+[ownership]   # share of US adults who own crypto (Fed SHED/SCPC, Pew; Candia et al. 2026). Log-linear in between.
+"2014-06-30" = 0.004
+"2018-06-30" = 0.012
+"2021-09-30" = 0.11
+"2023-06-30" = 0.12
+"2025-06-30" = 0.12
+
+[wealth_per_owner]   # relative to 2021, an assumed path (Appendix B). Linear in between, by mid-year.
+"2012-06-30" = 0.25
+"2021-06-30" = 1.0
+"2026-06-30" = 1.4
+
+[fund_and_treasury_btc]   # million BTC held through funds and by public companies (Appendix B). Linear in between.
+"2013-09-30" = 0.0
+"2013-12-31" = 0.069735
+"2014-12-31" = 0.134777
+"2015-12-31" = 0.141101
+"2016-12-31" = 0.172095
+"2017-12-31" = 0.175839
+"2018-12-31" = 0.204277
+"2019-12-31" = 0.281192
+"2020-12-31" = 0.703039
+"2021-12-31" = 0.860810
+"2022-12-31" = 0.856542
+"2023-12-31" = 0.900676
+"2024-06-30" = 1.15
+"2025-06-30" = 2.1
+"2026-06-30" = 2.5

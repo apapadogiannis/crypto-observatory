@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crypto observatory · Bitcoin: required and delivered return</title>
+<style>
+:root{
+  color-scheme:light;
+  --page:#f6f5f1;--surface:#fcfcfb;--line:#e1e0d9;--axis:#c3c2b7;
+  --ink:#0b0b0b;--ink2:#52514e;--mut:#898781;
+  --blue:#2a78d6;--band:#cde2fb;--orange:#eb6834;--aqua:#1baf7a;--violet:#6250d6;--rf:#b9b8ae;--yellow:#eda100;--magenta:#e87ba4;
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --page:#121211;--surface:#1a1a19;--line:#2e2e2b;--axis:#52514e;
+    --ink:#f0efec;--ink2:#c3c2b7;--mut:#898781;
+    --blue:#3987e5;--band:#173a66;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--rf:#6b6a64;--yellow:#c98500;--magenta:#d55181;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#121211;--surface:#1a1a19;--line:#2e2e2b;--axis:#52514e;
+  --ink:#f0efec;--ink2:#c3c2b7;--mut:#898781;
+  --blue:#3987e5;--band:#173a66;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--rf:#6b6a64;--yellow:#c98500;--magenta:#d55181;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:26px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 2px}
+.lede{color:var(--ink2);max-width:720px;margin:0 0 6px}
+.stamp{display:inline-block;font-size:12.5px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:8px 0 18px;background:var(--surface)}
+.sub{color:var(--ink2);font-size:13.5px;margin:0 0 10px;max-width:760px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 18px 12px;margin:0 0 16px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:0 0 16px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.tile .k{font-size:12.5px;color:var(--ink2)}
+.tile .v{font-size:28px;font-weight:650;letter-spacing:-.02em;line-height:1.25}
+.tile .n{font-size:12.5px;color:var(--mut)}
+.filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 14px;font-size:13.5px;color:var(--ink2)}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:inherit;color:var(--ink2);background:none;border:0;padding:6px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.seg button:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12.5px;color:var(--ink2);margin:2px 0 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:14px;height:10px;border-radius:2px}
+.legend i.ln{height:0;border-top:2.5px solid;border-radius:0}
+.legend i.dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);background:var(--surface)}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;overflow:visible}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px 22px}
+.mini h3{font-size:13.5px;margin:8px 0 0;font-weight:600}
+.mini p{font-size:12.5px;color:var(--mut);margin:0}
+
+.risk{border-top:1px solid var(--line);margin-top:18px;padding-top:16px}
+.risk>h3{font-size:16px;margin:0;display:flex;align-items:center;gap:9px}
+.risk>h3 i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.risk>h3 span{font-weight:400;color:var(--ink2);font-size:13.5px}
+.risk>p{font-size:13.5px;color:var(--ink2);max-width:760px;margin:6px 0 8px}
+.eq{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:stretch;margin:10px 0 2px;font-variant-numeric:tabular-nums}
+.eq div{border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:104px}
+.eq div b{display:block;font-size:20px;font-weight:650}
+.eq div span{font-size:12.5px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.eq div span i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.eq em{align-self:center;font-style:normal;color:var(--mut);font-size:18px}
+.facts{display:flex;flex-wrap:wrap;gap:8px 28px;margin:8px 0 6px}
+.facts div{max-width:300px}
+.facts div b{font-size:18px;font-weight:650;display:block}
+table.now td small,table.now th small{display:block;color:var(--mut);font-size:12px;font-weight:400}
+table.now td:first-child i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:7px}
+table.now td{vertical-align:top}
+.facts div span{font-size:12.5px;color:var(--ink2)}
+.mini p.sub{font-size:13.5px;color:var(--ink2);margin:8px 0 10px}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--axis);border-radius:8px;padding:8px 10px;font-size:12.5px;box-shadow:0 4px 14px rgba(0,0,0,.12);min-width:150px;z-index:5;display:none}
+.tip .t{color:var(--ink2);margin-bottom:4px}
+.tip .r{display:flex;align-items:center;gap:7px;justify-content:space-between;white-space:nowrap}
+.tip .r b{font-weight:650}
+.tip .r span{color:var(--ink2);display:inline-flex;align-items:center;gap:6px}
+.tip .r i{display:inline-block;width:12px;border-top:2.5px solid}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;white-space:nowrap}
+th{font-weight:600;color:var(--ink2);font-size:12.5px;vertical-align:bottom}
+tr.tot td{font-weight:650;border-top:1.5px solid var(--axis)}
+.scroll{overflow-x:auto}
+.note{font-size:13.5px;color:var(--ink2);max-width:760px}
+.note li{margin:0 0 6px}
+footer{font-size:12.5px;color:var(--mut);margin-top:22px;max-width:820px}
+footer a,.note a{color:var(--blue)}
+text{font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Bitcoin: required and delivered return</h1>
+  <p class="lede">What Bitcoin's holders should require for the risks they carry, set against what Bitcoin delivered. Built on the MCM equation: the risk-free rate plus market, concentration and mortality risk.</p>
+  <div class="stamp" id="stamp"></div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="filters"><span>Period</span>
+    <div class="seg" role="group" aria-label="Period">
+      <button type="button" data-from="2012" aria-pressed="true">Since 2012</button>
+      <button type="button" data-from="2018" aria-pressed="false">Since 2018</button>
+    </div>
+    <span>applies to every chart and table below</span>
+  </div>
+
+  <section class="card" id="sec-band">
+    <h2>The required return, and what Bitcoin delivered</h2>
+    <p class="sub">The band and its midpoint are the equation at each month-end. A single month's return is too noisy to set beside them, so the comparison is by three-year period, named along the top and separated by dotted lines. In each period the circle is the average delivered return and the thick blue bar is the average required return (midpoint) over the same months. The last period is shorter while it is still running. Percent a year, log scale.</p>
+    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i style="background:var(--blue);height:5px"></i>required, three-year average</span><span><i class="dot"></i>delivered, three-year average</span></div>
+    <div class="chart" id="c-band"></div>
+    <div class="scroll"><table id="t-gap"></table></div>
+  </section>
+
+  <section class="card" id="sec-edges">
+    <h2>How the band is built</h2>
+    <p class="sub">The band prices three holders. The <b>lower edge</b> is the average owner when fund and treasury investors are counted, with the low inputs. The <b>upper edge</b> is the larger of two candidates: the average surveyed owner with the high inputs, or the early holder, who was all-in while few people owned Bitcoin. Each candidate is solid while it sets the upper edge and dashed while it does not, and the strip along the top names the holder who sets it. The <b>midpoint</b> is the simple average of the two edges; it is the required return used in the tests. Percent a year, log scale.</p>
+    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint</span><span><i class="ln" style="border-color:var(--magenta)"></i>lower edge: average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>upper candidate: average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>upper candidate: early holder</span></div>
+    <div class="chart" id="m-edges"></div>
+  </section>
+
+  <section class="card" id="sec-terms">
+    <h2>What the required return is made of</h2>
+    <p class="sub">The four terms of the equation at the midpoint of the band, and their sum, at each month-end. Percent a year, log scale. A term below 1% is drawn at 1%.</p>
+    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>required return (sum)</span><span><i class="ln" style="border-color:var(--orange)"></i>concentration risk</span><span><i class="ln" style="border-color:var(--violet)"></i>market risk</span><span><i class="ln" style="border-color:var(--rf)"></i>risk-free rate</span><span><i class="ln" style="border-color:var(--aqua)"></i>mortality risk</span></div>
+    <div class="chart" id="c-terms"></div>
+  </section>
+
+  <section class="card" id="sec-per">
+    <h2>How much of the delivered return each model explains</h2>
+    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the S&amp;P 500's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is alpha, in the lower panel: the circle less the top of the bar.</p>
+    <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--blue)"></i>MCM alpha, with ± one standard error</span></div>
+    <div class="chart" id="c-per"></div>
+    <div class="scroll"><table id="t-per"></table></div>
+  </section>
+
+  <section class="card" id="sec-trail">
+    <h2>What each model leaves unexplained, through time</h2>
+    <p class="sub">Trailing three-year averages, percent a year. The grey line is the return to be explained: what Bitcoin delivered over the risk-free rate. The other two are what the CAPM and the MCM equation leave over.</p>
+    <div class="legend"><span><i class="ln" style="border-color:var(--mut)"></i>delivered over the risk-free rate</span><span><i class="ln" style="border-color:var(--orange)"></i>left unexplained by the CAPM</span><span><i class="ln" style="border-color:var(--blue)"></i>left unexplained by the MCM equation</span></div>
+    <div class="chart" id="c-trail"></div>
+  </section>
+
+  <section class="card" id="sec-cum">
+    <h2>Unexplained return, added up</h2>
+    <p class="sub">Each month's return less what the model allows, summed from the start of the period. Percentage points. A flat line means the model accounts for what Bitcoin delivered.</p>
+    <div class="legend"><span><i class="ln" style="border-color:var(--orange)"></i>CAPM</span><span><i class="ln" style="border-color:var(--blue)"></i>MCM equation</span></div>
+    <div class="chart" id="c-cum"></div>
+  </section>
+
+  <section class="card" id="sec-risk">
+    <h2>The three risks</h2>
+    <p class="sub">The required return is the risk-free rate plus one term for each risk. Each block below shows one risk: its formula, what it adds at the midpoint of the band, and the inputs that move it.</p>
+    <div class="eq" id="eq"></div>
+    <div class="mini" style="margin-top:16px"><h3 id="now-title">The band worked out</h3><p>each term at the lower edge, the upper edge and the midpoint, in points a year, with the inputs used</p>
+      <div class="scroll"><table id="t-now" class="now"></table></div></div>
+
+    <div class="risk">
+      <h3><i style="background:var(--violet)"></i>Market risk <span>beta × equity risk premium (4% a year)</span></h3>
+      <p>The risk Bitcoin shares with the stock market, the one risk the CAPM prices. It rises when Bitcoin moves more closely with equities.</p>
+      <div class="grid2">
+        <div class="mini"><h3>Market term</h3><p>points a year added to the required return</p><div class="chart" id="m-mkt"></div></div>
+        <div class="mini"><h3>Input: beta to the S&amp;P 500</h3><p>rolling four years</p><div class="chart" id="m-beta"></div></div>
+        <div class="mini"><h3>Behind beta: correlation with the S&amp;P 500</h3><p>rolling four years</p><div class="chart" id="m-corr"></div></div>
+      </div>
+    </div>
+
+    <div class="risk">
+      <h3><i style="background:var(--orange)"></i>Concentration risk <span>risk aversion (γ) × variance (σ²) × holder's weight (w)</span></h3>
+      <p>Bitcoin's holders keep a large share of their wealth in one volatile asset and must be paid for it. Three inputs set the term. Variance and the holder's weight move through time and are charted below. Risk aversion is held constant and is bounded, not measured: 1 at the lower edge and 2.8 at the upper edge.</p>
+      <div class="facts"><div><b>γ = 1.0</b><span>lower edge: log utility. Crypto owners tolerate more risk than other households.</span></div><div><b>γ = 2.8</b><span>upper edge: the upper part of the 2 to 3 range common in household finance.</span></div><div><b>γ = 1.0</b><span>early holder, whose weight is what makes the term large.</span></div></div>
+      <div class="grid2">
+        <div class="mini"><h3>Concentration term</h3><p>points a year added to the required return</p><div class="chart" id="m-conc"></div></div>
+        <div class="mini"><h3>Input: volatility</h3><p>percent a year</p><div class="chart" id="m-vol"></div></div>
+      </div>
+      <div class="mini" style="margin-top:12px"><h3>Input: holder's weight in Bitcoin</h3><p>percent of the holder's wealth held in Bitcoin, for the three holders the band prices</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--magenta)"></i>average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>early holder</span></div>
+        <div class="chart" id="m-w"></div></div>
+    </div>
+
+    <div class="risk">
+      <h3><i style="background:var(--aqua)"></i>Mortality risk <span>probability of death a year (λ) × share lost on death (1 − δ)</span></h3>
+      <p>A holder must be paid the loss she can expect from the asset dying: the chance it dies in a year, times the share of her money she loses if it does. Both come from the census of cryptoasset deaths, read two ways. The term is the same at every date, because the census shows no fall in the death rate with age.</p>
+      <div class="facts">
+        <div><b>0.30% × 95% ≈ 0.3 pts</b><span>low reading: sudden collapses only (LUNA, UST, FTT), with 95% lost.</span></div>
+        <div><b>3.5% × 100% = 3.5 pts</b><span>high reading: every death of a top-twenty asset, slow fades included, counted as a total loss.</span></div>
+        <div><b>(0.3 + 3.5) ÷ 2 = 1.9 pts</b><span>midpoint, the figure in the required return.</span></div>
+      </div>
+      <p>The death rates are measured on assets that were ever in the top twenty: <span id="facts"></span>. The census is the paper's, taken on 24 May 2026.</p>
+      <div class="mini"><h3>Deaths among assets that were ever in the top twenty</h3><p>number per year</p>
+        <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
+        <div class="chart" id="m-deaths"></div></div>
+    </div>
+  </section>
+
+  <section class="card" id="sec-supply">
+    <h2>Supply and holders, for context</h2>
+    <p class="sub">Measured series, shown beside the tests and not as part of them.</p>
+    <div class="grid2">
+      <div class="mini"><h3>New issuance</h3><p>percent of supply a year</p><div class="chart" id="m-iss"></div></div>
+      <div class="mini"><h3>Held through funds and by public companies</h3><p>percent of supply</p><div class="chart" id="m-inst"></div></div>
+    </div>
+  </section>
+
+  <section class="card" id="sec-claims">
+    <h2>What this page does not claim</h2>
+    <ul class="note">
+      <li><b>Alpha is not a supply and demand measure.</b> It is what the equation leaves over. In the data to May 2026, against monthly issuance, net exchange flows and changes in fund holdings together, it shows no reliable link (R² 0.19, no coefficient with a t-statistic above 1.7).</li>
+      <li><b>Repricing is not shown as a separate part.</b> The month-to-month change in the required return moves with the return itself (correlation 0.90 in the data to May 2026), because volatility and the holder's weight are computed from the price.</li>
+      <li><b>Short windows say little.</b> Month by month, the required return and the next month's return are uncorrelated. The tests are informative over years, not months.</li>
+      <li><b>Nothing here is a forecast.</b> A required return is what holders should ask for given the risk, not what the asset will deliver.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold", working paper. Paper and replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. The alphas here are average unexplained returns with the rolling beta; the regression intercepts in the paper are 37 and 1 points a year for the MCM equation (whole sample, and since 2018).</p>
+    <p>Data: Coin Metrics community data (CC BY-NC 4.0); S&amp;P 500 ETF total return and the ten-year Treasury yield; survey and filing anchors as cited in the paper. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>.</p>
+    <p>Independent research, for informational and academic purposes only. Not financial, investment, tax or legal advice, and not a recommendation to buy or sell any financial instrument.</p>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const DATA=__DATA__;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const parse=d3.timeParse("%Y-%m"), fmtM=d3.timeFormat("%b %Y");
+DATA.rows.forEach(r=>{r.t=parse(r.asof); r.tr=parse(r.d);});   // t: month-end the required return is set at; tr: month the return is earned in
+let FROM="2012";
+const sgn=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(0);
+const rows=()=>DATA.rows.filter(r=>r.asof>=FROM+"-01");
+const periods=()=>DATA.per.filter(p=>!p.sum&&p.p.slice(0,4)>=FROM);
+const totals=()=>DATA.per.filter(p=>p.sum&&!(FROM=="2018"&&p.p.startsWith("2012")));
+const narrow=f=>f.iw<420;
+function frame(el,h,m){
+  const w=el.clientWidth||600; el.innerHTML="";
+  const svg=d3.select(el).append("svg").attr("height",h).attr("viewBox",`0 0 ${w} ${h}`).attr("role","img");
+  const tip=d3.select(el).append("div").attr("class","tip");
+  return {svg,tip,w,h,iw:w-m.l-m.r,ih:h-m.t-m.b,m};
+}
+function axes(f,x,y,o){
+  const {svg,m,iw,ih}=f, g=svg.append("g").attr("transform",`translate(${m.l},${m.t})`);
+  const ticks=o.yticks||y.ticks(4);
+  g.selectAll("line.g").data(ticks).join("line").attr("x1",0).attr("x2",iw).attr("y1",d=>y(d)).attr("y2",d=>y(d)).attr("stroke",css("--line")).attr("stroke-width",1);
+  g.selectAll("text.y").data(ticks).join("text").attr("x",-8).attr("y",d=>y(d)).attr("dy","0.32em").attr("text-anchor","end").attr("font-size",11.5).attr("fill",css("--mut")).text(d=>(o.yfmt||(v=>v))(d));
+  if(x.ticks){
+    const xt=x.ticks(Math.max(3,Math.min(8,Math.floor(iw/90))));
+    g.selectAll("text.x").data(xt).join("text").attr("x",d=>x(d)).attr("y",ih+18).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--mut")).text(d3.timeFormat("%Y"));
+  }
+  g.append("line").attr("x1",0).attr("x2",iw).attr("y1",ih).attr("y2",ih).attr("stroke",css("--axis"));
+  return g;
+}
+function hover(f,g,x,data,series,fmt){
+  const {iw,ih,tip,m,w}=f;
+  const hair=g.append("line").attr("y1",0).attr("y2",ih).attr("stroke",css("--mut")).attr("stroke-width",1).style("display","none");
+  const dots=g.append("g");
+  const bis=d3.bisector(d=>d.t).center;
+  function show(px){
+    const d=data[bis(data,x.invert(px))]; if(!d) return;
+    const X=x(d.t); hair.attr("x1",X).attr("x2",X).style("display",null);
+    dots.selectAll("circle").data(series.filter(s=>s.y&&d[s.k]!=null)).join("circle").attr("cx",X).attr("cy",s=>s.y(d[s.k+"_y"]??d[s.k])).attr("r",4).attr("fill",s=>css(s.c)).attr("stroke",css("--surface")).attr("stroke-width",2);
+    const n=tip.node(); n.textContent="";
+    const t=document.createElement("div"); t.className="t"; t.textContent=fmtM(d.t); n.appendChild(t);
+    series.forEach(s=>{ if(d[s.k]==null) return;
+      const r=document.createElement("div"); r.className="r";
+      const l=document.createElement("span"); const i=document.createElement("i"); i.style.borderColor=css(s.c); l.appendChild(i); l.appendChild(document.createTextNode(s.n));
+      const b=document.createElement("b"); b.textContent=(s.fmt||fmt)(d[s.k]); r.appendChild(l); r.appendChild(b); n.appendChild(r); });
+    tip.style("display","block");
+    const tw=n.offsetWidth, left=m.l+X+14+tw>w? m.l+X-14-tw : m.l+X+14;
+    tip.style("left",Math.max(0,left)+"px").style("top",(m.t+6)+"px");
+  }
+  g.append("rect").attr("width",iw).attr("height",ih).attr("fill","transparent")
+    .on("pointermove",e=>show(d3.pointer(e)[0])).on("pointerleave",()=>{hair.style("display","none");dots.selectAll("*").remove();tip.style("display","none");});
+}
+const pct=v=>v.toFixed(v<10?1:0)+"%";
+
+
+function table(id,head,rowsOf){
+  const T=document.getElementById(id); T.textContent="";
+  const tr=T.insertRow(); head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; tr.appendChild(th);});
+  periods().concat(totals()).forEach(p=>{const r=T.insertRow(); if(p.n>36) r.className="tot"; rowsOf(p).forEach(v=>{r.insertCell().textContent=v;});});
+}
+function bandChart(){
+  const el=document.getElementById("c-band"), f=frame(el,376,{l:44,r:14,t:30,b:26}), d=rows(), P=periods();
+  const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
+  const hiMax=Math.max(d3.max(d,r=>r.hi),d3.max(P,p=>p.real));
+  const y=d3.scaleLog().domain([5,hiMax*1.12]).range([f.ih,0]).clamp(true);
+  const g=axes(f,x,y,{yticks:[5,10,20,50,100,200,400].filter(v=>v<=hiMax*1.12),yfmt:v=>v+"%"});
+  g.append("path").datum(d).attr("fill",css("--band")).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.lo)).y1(r=>y(r.hi)));
+  g.append("path").datum(d).attr("fill","none").attr("stroke",css("--blue")).attr("stroke-width",1.5).attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r.mid)));
+  hover(f,g,x,d,[{k:"mid",n:"required, midpoint",c:"--blue",y},{k:"hi",n:"band, upper edge",c:"--band"},{k:"lo",n:"band, lower edge",c:"--band"}],pct);
+  const pg=g.append("g").style("pointer-events","none");
+  P.forEach((p,i)=>{ const x0=x(parse(p.a))+3, x1=x(parse(p.b))-3, xc=(x0+x1)/2;
+    if(i>0) pg.append("line").attr("x1",x0-3).attr("x2",x0-3).attr("y1",-18).attr("y2",f.ih).attr("stroke",css("--mut")).attr("stroke-width",1).attr("stroke-dasharray","2 4");
+    pg.append("text").attr("x",xc).attr("y",-12).attr("text-anchor","middle").attr("font-size",12).attr("font-weight",600).attr("fill",css("--ink2")).text((narrow(f)?"’"+p.p.slice(2):p.p)+(p.n<36&&!narrow(f)?" ("+p.n+" months)":""));
+    pg.append("line").attr("x1",x0).attr("x2",x1).attr("y1",y(p.mid)).attr("y2",y(p.mid)).attr("stroke",css("--surface")).attr("stroke-width",9).attr("stroke-linecap","round");
+    pg.append("line").attr("x1",x0).attr("x2",x1).attr("y1",y(p.mid)).attr("y2",y(p.mid)).attr("stroke",css("--blue")).attr("stroke-width",5).attr("stroke-linecap","round");
+    pg.append("line").attr("x1",xc).attr("x2",xc).attr("y1",y(p.mid)).attr("y2",y(p.real)).attr("stroke",css("--ink")).attr("stroke-width",1.2).attr("stroke-dasharray","3 3");
+    pg.append("circle").attr("cx",xc).attr("cy",y(p.real)).attr("r",6).attr("fill",css("--surface")).attr("stroke",css("--ink")).attr("stroke-width",2);
+    const lab=(yy,s,w)=>{pg.append("text").attr("x",xc+10).attr("y",yy).attr("dy","0.32em").attr("font-size",12).attr("font-weight",w).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(s);};
+    const close=Math.abs(y(p.real)-y(p.mid))<15, up=y(p.real)<=y(p.mid);
+    lab(y(p.real)+(close&&!up?12:close?-6:0),p.real.toFixed(0)+"%",650);
+    pg.append("text").attr("x",x1).attr("y",y(p.mid)+(close&&!up?-9:15)).attr("text-anchor","end").attr("font-size",12).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(p.mid.toFixed(0)+"%"); });
+  table("t-gap",["Period","Delivered","Required, midpoint","Gap","Standard error of the gap"],p=>[p.p,p.real.toFixed(0),p.mid.toFixed(0),sgn(p.gap),"±"+p.gse.toFixed(0)]);
+}
+function termsChart(){
+  const el=document.getElementById("c-terms"), f=frame(el,320,{l:44,r:14,t:10,b:26}), d=rows();
+  const S=[{k:"mid",n:"required return (sum)",c:"--ink",w:2.2},{k:"conc",n:"concentration risk",c:"--orange",w:2},{k:"mkt",n:"market risk",c:"--violet",w:2},{k:"rf",n:"risk-free rate",c:"--rf",w:2},{k:"mort",n:"mortality risk",c:"--aqua",w:2}];
+  const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
+  const top=d3.max(d,r=>r.mid)*1.1, y=d3.scaleLog().domain([1,top]).range([f.ih,0]).clamp(true);
+  const g=axes(f,x,y,{yticks:[1,2,5,10,20,50,100,200].filter(v=>v<=top),yfmt:v=>v+"%"});
+  S.slice().reverse().forEach(s=>{ s.y=v=>y(Math.max(v,1));
+    g.append("path").datum(d).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",s.w).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>s.y(r[s.k])));});
+  hover(f,g,x,d,S,pct);
+}
+function perChart(){
+  const el=document.getElementById("c-per"), f=frame(el,470,{l:44,r:14,t:26,b:30}), P=periods();
+  const H1=Math.round(f.ih*0.56), Y2=H1+56;
+  const x=d3.scaleBand().domain(P.map(p=>p.p)).range([0,f.iw]).padding(0.45);
+  const y=d3.scaleLinear().domain([0,d3.max(P,p=>Math.max(p.ex,p.mk+p.cm))*1.12]).nice(4).range([H1,0]);
+  const y2=d3.scaleLinear().domain([Math.min(0,d3.min(P,p=>p.alpha-p.se)),Math.max(0,d3.max(P,p=>p.alpha+p.se))]).nice(4).range([f.ih,Y2]);
+  const g=f.svg.append("g").attr("transform",`translate(${f.m.l},${f.m.t})`);
+  const grid=(sc,ticks,fmt)=>{ticks.forEach(v=>{g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",sc(v)).attr("y2",sc(v)).attr("stroke",v===0?css("--axis"):css("--line"));
+    g.append("text").attr("x",-8).attr("y",sc(v)).attr("dy","0.32em").attr("text-anchor","end").attr("font-size",11.5).attr("fill",css("--mut")).text(fmt(v));});};
+  grid(y,y.ticks(4),v=>v+"%"); grid(y2,y2.ticks(4),v=>sgn(v));
+  const cap=(yy,s)=>g.append("text").attr("x",0).attr("y",yy).attr("font-size",12).attr("font-weight",600).attr("fill",css("--ink2")).text(s);
+  cap(-12,"Delivered, and what the models explain"); cap(Y2-20,"MCM alpha: delivered less explained, points a year");
+  g.selectAll("text.x").data(P).join("text").attr("x",p=>x(p.p)+x.bandwidth()/2).attr("y",f.ih+19).attr("text-anchor","middle").attr("font-size",12).attr("fill",css("--ink2")).text(p=>narrow(f)?"’"+p.p.slice(2):p.p);
+  const bw=Math.min(x.bandwidth(),64), bx=p=>x(p.p)+(x.bandwidth()-bw)/2, cx=p=>bx(p)+bw/2;
+  const tipFor=(e,p)=>{const n=f.tip.node(); n.textContent="";
+    const t=document.createElement("div"); t.className="t"; t.textContent=p.p+" · "+p.n+" months"; n.appendChild(t);
+    [["delivered over risk-free",sgn(p.ex)+" pts"],["market (CAPM)",sgn(p.mk)+" pts"],["concentration and mortality",sgn(p.cm)+" pts"],["MCM alpha",sgn(p.alpha)+" pts"],["standard error",(" ±"+p.se.toFixed(0)+" pts")],["CAPM alpha",sgn(p.calpha)+" pts"],["explained: CAPM / MCM",p.s_capm+"% / "+p.s_mcm+"%"]].forEach(([k,v])=>{const r=document.createElement("div"); r.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v; r.appendChild(l); r.appendChild(b); n.appendChild(r);});
+    f.tip.style("display","block"); const X=f.m.l+bx(p)+bw+10, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+bx(p)-tw-10:X))+"px").style("top",(f.m.t+4)+"px");};
+  const grp=g.selectAll("g.p").data(P).join("g").attr("tabindex",0).on("pointermove",(e,p)=>tipFor(e,p)).on("focus",(e,p)=>tipFor(e,p)).on("pointerleave blur",()=>f.tip.style("display","none"));
+  grp.append("rect").attr("x",p=>x(p.p)).attr("width",x.bandwidth()).attr("y",0).attr("height",f.ih).attr("fill","transparent");
+  grp.append("rect").attr("x",bx).attr("width",bw).attr("y",p=>y(p.mk)).attr("height",p=>y(0)-y(p.mk)).attr("fill",css("--violet"));
+  grp.append("rect").attr("x",bx).attr("width",bw).attr("y",p=>y(p.mk+p.cm)).attr("height",p=>Math.max(0,y(p.mk)-y(p.mk+p.cm)-2)).attr("fill",css("--orange")).attr("rx",3);
+  grp.append("text").attr("x",p=>bx(p)-6).attr("y",p=>y(p.mk+p.cm)).attr("dy","0.32em").attr("text-anchor","end").attr("font-size",11.5).attr("fill",css("--ink2")).text(p=>narrow(f)?"":(p.mk+p.cm).toFixed(0));
+  grp.append("circle").attr("cx",cx).attr("cy",p=>y(p.ex)).attr("r",5.5).attr("fill",css("--surface")).attr("stroke",css("--ink")).attr("stroke-width",2);
+  grp.append("text").attr("x",p=>cx(p)+bw/2+6).attr("y",p=>y(p.ex)).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(p=>p.ex.toFixed(0));
+  grp.append("rect").attr("x",bx).attr("width",bw).attr("y",p=>Math.min(y2(0),y2(p.alpha))).attr("height",p=>Math.max(1,Math.abs(y2(p.alpha)-y2(0)))).attr("fill",css("--blue")).attr("rx",3);
+  grp.append("line").attr("x1",cx).attr("x2",cx).attr("y1",p=>y2(p.alpha-p.se)).attr("y2",p=>y2(p.alpha+p.se)).attr("stroke",css("--ink")).attr("stroke-width",1.5);
+  grp.append("text").attr("x",p=>narrow(f)?cx(p):cx(p)+bw/2+6).attr("y",p=>narrow(f)?y2(p.alpha+p.se)-6:y2(p.alpha)).attr("dy",narrow(f)?null:"0.32em").attr("text-anchor",narrow(f)?"middle":"start").attr("font-size",12).attr("font-weight",650).attr("fill",css("--ink")).text(p=>sgn(p.alpha));
+  const sh=v=>Math.min(v,100)+"%"+(v>100?" (over)":"");
+  table("t-per",["Period","Delivered over risk-free","Market (CAPM)","Concentration and mortality","MCM alpha","Standard error","CAPM alpha","Explained by CAPM","Explained by MCM"],
+    p=>[p.p,p.ex.toFixed(0),p.mk.toFixed(0),p.cm.toFixed(0),sgn(p.alpha),"±"+p.se.toFixed(0),sgn(p.calpha),sh(p.s_capm),sh(p.s_mcm)]);
+}
+function lines(id,h,d,S,fmt,endfmt){
+  const el=document.getElementById(id), f=frame(el,h,{l:50,r:46,t:12,b:26});
+  const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
+  const all=d.flatMap(r=>S.map(s=>r[s.k])).filter(v=>v!=null);
+  const y=d3.scaleLinear().domain([Math.min(0,d3.min(all)),Math.max(0,d3.max(all))]).nice().range([f.ih,0]);
+  const g=axes(f,x,y,{yfmt:fmt});
+  g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(0)).attr("y2",y(0)).attr("stroke",css("--axis"));
+  const L=d[d.length-1]; let ends=[];
+  S.forEach(s=>{ s.y=y;
+    g.append("path").datum(d.filter(r=>r[s.k]!=null)).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",2).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k])));
+    if(s.end) ends.push({y:y(L[s.k]),s:fmt(L[s.k])});});
+  ends.sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<14) ends[i].y=ends[i-1].y+14;
+  ends.forEach(e=>g.append("text").attr("x",f.iw+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",12).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
+  hover(f,g,x,d,S,endfmt);
+}
+function trailChart(){
+  const d=rows().filter(r=>r.tmcm!=null).map(r=>({...r,t:r.tr}));
+  lines("c-trail",280,d,[{k:"tex",n:"delivered over risk-free",c:"--mut"},{k:"tcapm",n:"unexplained, CAPM",c:"--orange",end:1},{k:"tmcm",n:"unexplained, MCM",c:"--blue",end:1}],v=>sgn(v),v=>sgn(v)+" pts");
+}
+function cumChart(){
+  const d=rows().filter(r=>r.mcm!=null).map(r=>({...r,t:r.tr})); let a=0,b=0; d.forEach(r=>{a+=r.capm; b+=r.mcm; r.ccapm=a; r.cmcm=b;});
+  lines("c-cum",280,d,[{k:"ccapm",n:"CAPM",c:"--orange",end:1},{k:"cmcm",n:"MCM equation",c:"--blue",end:1}],v=>sgn(v),v=>sgn(v)+" pts");
+}
+function mini(id,series,fmt,h){
+  const el=document.getElementById(id), f=frame(el,h||170,{l:40,r:40,t:8,b:24}), d=rows();
+  const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
+  const all=d.flatMap(r=>series.map(s=>r[s.k])).filter(v=>v!=null);
+  const y=d3.scaleLinear().domain([Math.min(0,d3.min(all)),d3.max(all)]).nice(3).range([f.ih,0]);
+  const g=axes(f,x,y,{yticks:y.ticks(3),yfmt:fmt});
+  const L=d[d.length-1], ends=[];
+  series.forEach(s=>{ s.y=y;
+    g.append("path").datum(d.filter(r=>r[s.k]!=null)).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",2).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k])));
+    const Ls=d.filter(r=>r[s.k]!=null).pop(); if(Ls) ends.push({y:y(Ls[s.k]),s:fmt(Ls[s.k]),x:x(Ls.t)});});
+  ends.sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<13) ends[i].y=ends[i-1].y+13;
+  ends.forEach(e=>g.append("text").attr("x",e.x+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
+  hover(f,g,x,d,series,fmt);
+}
+function edgesChart(){
+  const el=document.getElementById("m-edges"), f=frame(el,330,{l:44,r:14,t:30,b:26}), d=rows();
+  const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
+  const top=d3.max(d,r=>r.hi)*1.1, y=d3.scaleLog().domain([5,top]).range([f.ih,0]).clamp(true);
+  const g=axes(f,x,y,{yticks:[5,10,20,50,100,200,400].filter(v=>v<=top),yfmt:v=>v+"%"});
+  g.append("path").datum(d).attr("fill",css("--band")).attr("opacity",.6).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.lo)).y1(r=>y(r.hi)));
+  const ln=(k,c,w,dash,def)=>g.append("path").datum(d).attr("fill","none").attr("stroke",css(c)).attr("stroke-width",w).attr("stroke-dasharray",dash).attr("stroke-linejoin","round").attr("d",d3.line().defined(def||(()=>true)).x(r=>x(r.t)).y(r=>y(r[k])));
+  ln("ua","--blue",1.3,"4 4"); ln("ub","--yellow",1.3,"4 4");
+  ln("ua","--blue",2.6,null,r=>!r.eb); ln("ub","--yellow",2.6,null,r=>r.eb); ln("lo","--magenta",2.2,null); ln("mid","--ink",1.5,null);
+  // strip: who sets the upper edge
+  const runs=[]; d.forEach((r,i)=>{ if(!runs.length||runs[runs.length-1].eb!==r.eb) runs.push({eb:r.eb,a:i,b:i}); else runs[runs.length-1].b=i; });
+  const step=d.length>1?(x(d[1].t)-x(d[0].t)):0;
+  runs.forEach(u=>{ const x0=x(d[u.a].t)-(u.a?step/2:0), x1=x(d[u.b].t)+(u.b<d.length-1?step/2:0);
+    g.append("rect").attr("x",x0).attr("width",Math.max(1,x1-x0-1)).attr("y",-22).attr("height",8).attr("rx",2).attr("fill",css(u.eb?"--yellow":"--blue"));
+    const s=u.eb?"early holder":"average surveyed owner"; if(x1-x0>s.length*6.4) g.append("text").attr("x",(x0+x1)/2).attr("y",-4).attr("text-anchor","middle").attr("font-size",11).attr("fill",css("--ink2")).text(s); });
+  const who=r=>r.eb?"early holder":"surveyed owner";
+  d.forEach(r=>{r.who=who(r);});
+  hover(f,g,x,d,[{k:"who",n:"upper edge set by",c:"--ink",fmt:v=>v},{k:"mid",n:"midpoint",c:"--ink",y},{k:"ub",n:"candidate: early holder",c:"--yellow",y},{k:"ua",n:"candidate: surveyed owner",c:"--blue",y},{k:"lo",n:"lower edge",c:"--magenta",y}],pct);
+}
+function eqStrip(){
+  const n=DATA.meta.now, el=document.getElementById("eq"); el.textContent="";
+  const cell=(v,lab,c)=>{const d=document.createElement("div"), b=document.createElement("b"), s=document.createElement("span"); b.textContent=v; if(c){const i=document.createElement("i"); i.style.background=css(c); s.appendChild(i);} s.appendChild(document.createTextNode(lab)); d.appendChild(b); d.appendChild(s); el.appendChild(d);};
+  const op=o=>{const e=document.createElement("em"); e.textContent=o; el.appendChild(e);};
+  cell(n.rf.toFixed(2),"risk-free rate","--rf"); op("+"); cell(n.mkt.toFixed(2),"market risk","--violet"); op("+"); cell(n.conc.toFixed(2),"concentration risk","--orange"); op("+"); cell(n.mort.toFixed(2),"mortality risk","--aqua"); op("="); cell(n.mid.toFixed(1)+"%","required return, "+fmtM(parse(n.asof)));
+  document.getElementById("facts").textContent=DATA.meta.n_dead+" of "+DATA.meta.n_elite+" have died";
+  const when=fmtM(parse(n.asof)); document.getElementById("now-title").textContent="The band worked out for "+when;
+  const T=document.getElementById("t-now"); T.textContent="";
+  const hr=T.insertRow(); ["Term","Lower edge","Upper edge","Midpoint"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+  const s=(n.vol/100).toFixed(3);
+  const R=[["risk-free rate","--rf","ten-year Treasury yield",[n.rf,""],[n.rf,""],[n.rf,""]],
+    ["market risk","--violet","beta "+n.beta.toFixed(2)+" × equity premium 4% = "+n.mkt.toFixed(2),[n.mlo,"cut by 15%"],[n.mhi,"raised by 15%"],[n.mkt,""]],
+    ["concentration risk","--orange","γ × σ² × w, with volatility σ = "+n.vol.toFixed(1)+"%",[n.clo,"1.0 × "+s+"² × "+n.wlo.toFixed(1)+"%"],[n.chi,"2.8 × "+s+"² × "+n.whi.toFixed(1)+"%"],[n.conc,"average of the two"]],
+    ["mortality risk","--aqua","λ × (1 − δ)",[0.3,"0.30% × 95%"],[3.5,"3.5% × 100%"],[n.mort,"average of the two"]]];
+  R.forEach(([name,c,f,...v])=>{const r=T.insertRow(); const c0=r.insertCell(); const i=document.createElement("i"); i.style.background=css(c); c0.appendChild(i); c0.appendChild(document.createTextNode(name)); const sm=document.createElement("small"); sm.textContent=f; c0.appendChild(sm);
+    v.forEach(([x,note])=>{const td=r.insertCell(); td.appendChild(document.createTextNode(x.toFixed(2))); const sm=document.createElement("small"); sm.textContent=note; td.appendChild(sm);});});
+  const tr=T.insertRow(); tr.className="tot"; ["required return",n.lo.toFixed(1)+"%",n.hi.toFixed(1)+"%",n.mid.toFixed(1)+"%"].forEach(x=>{tr.insertCell().textContent=x;});
+  if(n.early){const r=T.insertRow(); const td=r.insertCell(); td.colSpan=4; td.style.textAlign="left"; td.textContent="This month the early holder sets the upper edge, so the upper-edge column shows the average surveyed owner for reference only.";}
+}
+function deathsChart(){
+  const el=document.getElementById("m-deaths"), f=frame(el,190,{l:40,r:14,t:16,b:24}), D=DATA.meta.deaths.filter(d=>d.y>=+FROM);
+  const x=d3.scaleBand().domain(D.map(d=>d.y)).range([0,f.iw]).padding(0.3);
+  const y=d3.scaleLinear().domain([0,d3.max(D,d=>d.fade+d.jump)*1.15]).nice(3).range([f.ih,0]);
+  const g=axes(f,{},y,{yticks:y.ticks(3),yfmt:v=>v});
+  const every=f.iw<420?3:(D.length>10?2:1);
+  g.selectAll("text.x").data(D.filter((d,i)=>i%every==0)).join("text").attr("x",d=>x(d.y)+x.bandwidth()/2).attr("y",f.ih+17).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--mut")).text(d=>d.y);
+  const grp=g.selectAll("g.b").data(D).join("g").attr("tabindex",0)
+    .on("pointermove focus",(e,d)=>{const n=f.tip.node(); n.textContent=""; const t=document.createElement("div"); t.className="t"; t.textContent=d.y; n.appendChild(t);
+      [["abandonment or delisting",d.fade],["sudden collapse",d.jump]].forEach(([k,v])=>{const r=document.createElement("div"); r.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v; r.appendChild(l); r.appendChild(b); n.appendChild(r);});
+      f.tip.style("display","block"); const X=f.m.l+x(d.y)+x.bandwidth()+8, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+x(d.y)-tw-8:X))+"px").style("top",(f.m.t)+"px");})
+    .on("pointerleave blur",()=>f.tip.style("display","none"));
+  grp.append("rect").attr("x",d=>x(d.y)).attr("width",x.bandwidth()).attr("y",0).attr("height",f.ih).attr("fill","transparent");
+  grp.append("rect").attr("x",d=>x(d.y)).attr("width",x.bandwidth()).attr("y",d=>y(d.fade)).attr("height",d=>y(0)-y(d.fade)).attr("fill",css("--aqua"));
+  grp.append("rect").attr("x",d=>x(d.y)).attr("width",x.bandwidth()).attr("y",d=>y(d.fade+d.jump)).attr("height",d=>Math.max(0,y(d.fade)-y(d.fade+d.jump)-(d.fade?2:0))).attr("fill",css("--ink"));
+  grp.filter(d=>d.fade+d.jump>0).append("text").attr("x",d=>x(d.y)+x.bandwidth()/2).attr("y",d=>y(d.fade+d.jump)-5).attr("text-anchor","middle").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(d=>d.fade+d.jump);
+}
+function tiles(){
+  const m=DATA.meta, a=DATA.per.find(p=>p.sum&&p.p.startsWith("2012")), b=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
+  const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% a year"+(m.complete?"":" · month still running")],
+           ["Explained by the MCM equation, since 2018",b.s_mcm+"%","of Bitcoin's return over the risk-free rate · CAPM alone "+b.s_capm+"%"],
+           ["Explained by the MCM equation, since 2012",a.s_mcm+"%","of Bitcoin's return over the risk-free rate · CAPM alone "+a.s_capm+"%"],
+           ["MCM alpha, last three years",sgn(m.tmcm)+" pts","a year, to "+fmtM(parse(m.to))+" · CAPM alpha "+sgn(m.tcapm)]];
+  const el=document.getElementById("tiles"); el.textContent="";
+  T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c; s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
+  document.getElementById("stamp").textContent="Bitcoin · data to "+d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(m.data_to));
+}
+function draw(){
+  bandChart(); termsChart(); perChart(); trailChart(); cumChart();
+  mini("m-mkt",[{k:"mkt",n:"market term",c:"--violet"}],v=>v.toFixed(1));
+  mini("m-beta",[{k:"beta",n:"beta",c:"--violet"}],v=>v.toFixed(2));
+  mini("m-corr",[{k:"corr",n:"correlation",c:"--violet"}],v=>v.toFixed(2));
+  mini("m-conc",[{k:"conc",n:"concentration term",c:"--orange"}],v=>v.toFixed(v<10?1:0));
+  mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
+  mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
+  edgesChart(); deathsChart(); eqStrip();
+  mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
+  mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
+}
+document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
+tiles(); draw();
+let rt; window.addEventListener("resize",()=>{clearTimeout(rt); rt=setTimeout(draw,120);});
+matchMedia("(prefers-color-scheme:dark)").addEventListener("change",draw);
+</script>
+</body>
+</html>
