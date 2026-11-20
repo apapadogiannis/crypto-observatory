@@ -2,11 +2,12 @@
 
     python3 update.py [DATA_DIR]
 
-Three sources, each appended to the file already stored:
+The sources, each appended to the file already stored:
 
     Coin Metrics Community API   daily Bitcoin series               data/coinmetrics/btc.csv
     US Treasury                  daily ten-year par yield           data/rates/treasury_10y_daily.csv
     Kenneth French data library  monthly US equity market return    data/market/us_market_monthly.csv
+    Aswath Damodaran, NYU Stern  monthly implied equity premium     data/market/implied_equity_premium_monthly.csv
 
 Stored history is never rewritten: new days are added after the last stored one, and the days
 that overlap are compared with what is stored, so a revision upstream is reported and not absorbed.
@@ -32,6 +33,7 @@ FRENCH_ROOT = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/"
 FRENCH = FRENCH_ROOT + "F-F_Research_Data_Factors_CSV.zip"
 FRENCH_DEVELOPED = FRENCH_ROOT + "Developed_3_Factors_CSV.zip"
 FRENCH_SIZE = FRENCH_ROOT + "Portfolios_Formed_on_ME_CSV.zip"
+DAMODARAN = "https://pages.stern.nyu.edu/~adamodar/pc/implprem/ERPbymonth.xlsx"
 OVERLAP_DAYS = 14
 TOLERANCE = 1e-6
 
@@ -161,10 +163,89 @@ def update_small_caps(data: Path) -> dict:
                          "Kenneth R. French data library, portfolios formed on size, Lo 30, value-weighted", note)
 
 
+def _xlsx_columns(blob: bytes, sheet: str, columns: list[str]) -> tuple[list[dict], date]:
+    """The named columns of one sheet of an .xlsx file, one dict per row, and the day its date numbers count from.
+    Read with the standard library only."""
+    import xml.etree.ElementTree as ET
+    ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+          "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+          "p": "http://schemas.openxmlformats.org/package/2006/relationships"}
+    z = zipfile.ZipFile(io.BytesIO(blob))
+    book = ET.fromstring(z.read("xl/workbook.xml"))
+    rid = next(e.get(f"{{{ns['r']}}}id") for e in book.iterfind("m:sheets/m:sheet", ns) if e.get("name") == sheet)
+    rels = ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))
+    target = next(e.get("Target") for e in rels.iterfind("p:Relationship", ns) if e.get("Id") == rid)
+    shared = []
+    if "xl/sharedStrings.xml" in z.namelist():
+        shared = ["".join(t.text or "" for t in si.iter(f"{{{ns['m']}}}t")) for si in ET.fromstring(z.read("xl/sharedStrings.xml")).iterfind("m:si", ns)]
+    rows = []
+    for row in ET.fromstring(z.read("xl/" + target.lstrip("/").removeprefix("xl/"))).iterfind("m:sheetData/m:row", ns):
+        cells = {}
+        for c in row.iterfind("m:c", ns):
+            v = c.find("m:v", ns)
+            if c.get("t") == "inlineStr":
+                text = "".join(t.text or "" for t in c.iter(f"{{{ns['m']}}}t"))
+            elif v is None or v.text is None:
+                continue
+            else:
+                text = shared[int(v.text)] if c.get("t") == "s" else v.text
+            cells["".join(ch for ch in c.get("r") if ch.isalpha())] = text
+        rows.append(cells)
+    head = {name.strip(): col for col, name in rows[0].items()}
+    missing = [c for c in columns if c not in head]
+    if missing:
+        raise SystemExit(f"Damodaran: the sheet no longer has the column(s) {missing}")
+    pr = book.find("m:workbookPr", ns)
+    epoch = date(1904, 1, 1) if pr is not None and pr.get("date1904") in ("1", "true") else date(1899, 12, 30)
+    return [{c: r.get(head[c]) for c in columns} for r in rows[1:]], epoch
+
+
+def update_equity_premium(data: Path) -> dict:
+    """The equity premium implied by the level of the S&P 500 at the start of each month (trailing twelve-month cash flows)."""
+    path = data / "market" / "implied_equity_premium_monthly.csv"
+    stored = _read_csv(path) if path.exists() else []
+    fresh = {}
+    rows, epoch = _xlsx_columns(_get(DAMODARAN), "Historical ERP", ["Start of month", "ERP (T12m)"])
+    for r in rows:
+        day, v = r["Start of month"], r["ERP (T12m)"]
+        if day is None or v is None:
+            continue
+        try:
+            first = epoch + timedelta(days=float(day))
+        except ValueError:
+            try:
+                first = datetime.strptime(day.strip(), "%d-%b-%y").date()      # one date is typed as text ("1-Sep-24")
+            except ValueError:
+                continue                                          # a note under the table, not a row of it
+        if first.day != 1:
+            raise SystemExit(f"Damodaran: a row is dated {first}, not the first of a month")
+        month = first.strftime("%Y-%m")
+        v = v.strip()
+        value = float(v.rstrip("%").replace(",", ".")) if v.endswith("%") else 100 * float(v)   # a few cells are typed as text
+        if not 1 <= value <= 15:
+            raise SystemExit(f"Damodaran: implausible premium {v!r} for {month}")
+        fresh[month] = f"{value:.2f}"
+    if not fresh:
+        raise SystemExit("Damodaran: no rows read")
+    by_month = {r["start_of_month"]: r["implied_premium"] for r in stored}
+    revised = [f"implied premium for {m}: stored {by_month[m]}, now {v}" for m, v in sorted(fresh.items()) if m in by_month and by_month[m] != v]
+    last = stored[-1]["start_of_month"] if stored else ""
+    added = [{"start_of_month": m, "implied_premium": v} for m, v in sorted(fresh.items()) if m > last]
+    months = [r["start_of_month"] for r in stored + added]
+    gaps = [b for a, b in zip(months, months[1:]) if (int(b[:4]) - int(a[:4])) * 12 + int(b[5:]) - int(a[5:]) != 1]
+    if gaps:
+        raise SystemExit(f"Damodaran: months missing before {gaps[:5]}")
+    if added:
+        _write_csv(path, stored + added, ["start_of_month", "implied_premium"])
+    return {"source": "Aswath Damodaran, implied equity risk premium by month (NYU Stern)", "last_observation": months[-1],
+            "rows_added": len(added), "revisions": revised[:20]}
+
+
 def main(argv):
     data = Path(argv[1]) if len(argv) > 1 else ROOT / "data"
     log = {"coinmetrics": update_coinmetrics(data), "treasury": update_treasury(data), "market": update_market(data),
-           "developed_markets": update_developed(data), "us_small_caps": update_small_caps(data)}
+           "developed_markets": update_developed(data), "us_small_caps": update_small_caps(data),
+           "implied_equity_premium": update_equity_premium(data)}
     changed = any(v["rows_added"] for v in log.values())
     for k, v in log.items():
         print(f"{k:18s} to {v['last_observation']}, {v['rows_added']} rows added" + (f", {len(v['revisions'])} series differ from the stored overlap" if v.get("revisions") else ""))
@@ -172,7 +253,7 @@ def main(argv):
             print("   ", r)
     # A source that has stopped must fail the run, so that the page is never rebuilt on stale data unnoticed.
     today = date.today()
-    limits = {"coinmetrics": 7, "treasury": 10, "market": 130, "developed_markets": 130, "us_small_caps": 130}
+    limits = {"coinmetrics": 7, "treasury": 10, "market": 130, "developed_markets": 130, "us_small_caps": 130, "implied_equity_premium": 75}
     late = []
     for k, days in limits.items():
         obs = log[k]["last_observation"]

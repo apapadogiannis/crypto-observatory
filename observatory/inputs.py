@@ -41,6 +41,20 @@ def market_return(data: Path) -> pd.Series:
     return _to_month_end(f["AdjClose"]).pct_change()
 
 
+def implied_equity_premium(data: Path) -> pd.Series | None:
+    """The equity premium implied by US stock prices (Damodaran), as a fraction, indexed by month-end.
+
+    The source dates each value at the start of a month. It is what was known at the month-end before,
+    so it is filed there: the value for 1 November sits at 31 October."""
+    path = data / "market" / "implied_equity_premium_monthly.csv"
+    if not path.exists():
+        return None
+    f = pd.read_csv(path)
+    s = f["implied_premium"] / 100
+    s.index = pd.to_datetime(f["start_of_month"] + "-01") - pd.offsets.MonthEnd(1)
+    return s.sort_index()
+
+
 def risk_free(data: Path) -> pd.Series:
     """Ten-year Treasury yield at month-end, as a fraction.
 

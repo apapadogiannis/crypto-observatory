@@ -107,3 +107,22 @@ def required_return_band(btc: pd.DataFrame, market_return: pd.Series, risk_free:
         "lower": lower, "upper_surveyed": upper_surveyed, "upper_early": upper_early, "upper": upper,
         "midpoint": mid, "early_holder_sets_upper": upper_early > upper_surveyed,
     })
+
+
+def with_equity_premium(band: pd.DataFrame, premium, cfg: dict) -> pd.DataFrame:
+    """The band recomputed with another equity premium: a number, or a series by month-end. Nothing else changes."""
+    c = cfg["constants"]
+    b = band.copy()
+    if not np.isscalar(premium):
+        premium = premium.reindex(b.index).ffill()
+        if premium.isna().any():
+            raise ValueError("the premium series does not cover the band")
+    b["market_term"] = b.beta * premium
+    b["lower"] = b.risk_free + c["market_scale_low"] * b.market_term + c["risk_aversion_low"] * b.variance * b.w_with_funds + c["mortality_low"]
+    b["upper_surveyed"] = (b.risk_free + c["market_scale_high"] * b.market_term + c["risk_aversion_high"] * b.variance * b.w_surveyed
+                           + c["mortality_high"])
+    b["upper"] = np.maximum(b.upper_surveyed, b.upper_early)
+    b["midpoint"] = 0.5 * (b.lower + b.upper)
+    b["early_holder_sets_upper"] = b.upper_early > b.upper_surveyed
+    b["concentration_term"] = (b.midpoint - b.risk_free - b.market_term - b.mortality_term).clip(lower=0)
+    return b

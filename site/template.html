@@ -289,6 +289,21 @@ text{font-family:inherit}
     <div class="legend"><span><i class="ln" style="border-color:var(--orange)"></i>CAPM</span><span><i class="ln" style="border-color:var(--blue)"></i>MCM equation</span></div>
     <div class="chart" id="c-cum"></div>
   </section>
+
+  <section class="card" id="sec-erp">
+    <h2>Does the assumed equity premium matter?</h2>
+    <p class="sub">The market term is beta times the equity premium, which the paper holds at 4% a year. The premium that stock prices imply is not constant, so this section reruns everything with it, month by month, and with other fixed values. The required return moves by about beta times the change in the premium. The tests of fit hardly move, because the unexplained return is computed from what equities actually returned, not from the premium assumed.</p>
+    <div class="grid2">
+      <div class="mini"><h3>The equity premium implied by US stock prices</h3><p>percent a year, at each month-end; the flat line is the 4% used on this site</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--violet)"></i>implied, month by month</span><span><i class="ln" style="border-color:var(--mut)"></i>assumed on this site</span></div>
+        <div class="chart" id="m-erp"></div></div>
+      <div class="mini"><h3>What it does to the required return</h3><p>midpoint of the band with the implied premium, less the midpoint with 4%, in points a year</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--violet)"></i>change in the required return</span></div>
+        <div class="chart" id="m-erp-mid"></div></div>
+    </div>
+    <div class="scroll" style="margin-top:10px"><table id="t-erp"></table></div>
+    <p class="sub" id="erp-note" style="margin-top:10px"></p>
+  </section>
   </div>
 
   <div class="pane" id="pane-compared">
@@ -362,7 +377,7 @@ text{font-family:inherit}
         </div>
         <div class="term" style="border-left-color:var(--violet)">
           <h3>Market risk <span>β × equity premium</span></h3>
-          <p>The asset falls when equities fall, and that cannot be diversified away. Beta (β) says by how much: 1 means it moves one for one with the equity market. Equities are taken to pay 4% a year over the risk-free rate, a convention. This term alone is the CAPM.</p>
+          <p>The asset falls when equities fall, and that cannot be diversified away. Beta (β) says by how much: 1 means it moves one for one with the equity market. Equities are taken to pay 4% a year over the risk-free rate, a convention; the <a href="#tests">Tests</a> tab shows what changes with other values. This term alone is the CAPM.</p>
           <label class="sl"><span>Beta, β</span><input type="range" id="eqn-beta" min="0" max="3" step="0.01"><output></output></label>
           <div class="calc" id="eqn-c-mkt"></div>
         </div>
@@ -458,7 +473,7 @@ text{font-family:inherit}
   <footer>
     <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold", working paper, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">doi.org/10.2139/ssrn.7705239</a>. Replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>, archived at <a href="https://doi.org/10.5281/zenodo.24003938" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24003938</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. On data to May 2026 the paper reports an MCM alpha of 37 points a year over the whole sample and 1 since 2018.</p>
     <p id="asof"></p>
-    <p>Data: Coin Metrics community data (CC BY-NC 4.0); the US equity market return from the Kenneth R. French data library; the ten-year yield from the US Treasury's daily par yield curve rates; survey and filing anchors as cited in the paper. The paper itself used an S&amp;P 500 ETF and the CBOE ten-year yield index, so figures here can differ slightly from the paper's. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>.</p>
+    <p>Data: Coin Metrics community data (CC BY-NC 4.0); the US equity market return from the Kenneth R. French data library; the implied equity premium by month from Aswath Damodaran (NYU Stern); the ten-year yield from the US Treasury's daily par yield curve rates; survey and filing anchors as cited in the paper. The paper itself used an S&amp;P 500 ETF and the CBOE ten-year yield index, so figures here can differ slightly from the paper's. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>.</p>
     <p>Independent research, for informational and academic purposes only. Not financial, investment, tax or legal advice, and not a recommendation to buy or sell any financial instrument.</p>
   </footer>
 </div>
@@ -468,7 +483,7 @@ text{font-family:inherit}
 const DATA=__DATA__;
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const parse=d3.timeParse("%Y-%m"), fmtM=d3.timeFormat("%b %Y");
-DATA.rows.forEach(r=>{r.t=parse(r.asof); r.tr=parse(r.d);});   // t: month-end the required return is set at; tr: month the return is earned in
+DATA.rows.forEach(r=>{r.t=parse(r.asof); r.tr=parse(r.d); r.erp0=DATA.meta.erp.assumed; r.dmid=r.mid2==null?null:r.mid2-r.mid;});   // t: month-end the required return is set at; tr: month the return is earned in
 let FROM="2012";
 const sgn=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(0);
 const rows=()=>DATA.rows.filter(r=>r.asof>=FROM+"-01");
@@ -897,6 +912,18 @@ function censusView(){
   C.ever_top_twenty_deaths_list.forEach(r=>{const tr=T.insertRow(); if(r.kind==="sudden collapse") tr.className="tot"; [r.asset.toUpperCase(),fmtM(parse(r.entered_top_twenty)),fmtM(parse(r.died.slice(0,7))),r.kind].forEach((v,i)=>{const c=tr.insertCell(); c.textContent=v; if(i) c.style.textAlign=i==3?"left":"right";});});
   set("census-note","These figures are the paper's, from data to "+taken+". The data source they came from has stopped, and the census has not yet been moved to the new one, so new deaths since then are not counted.");
 }
+function premiumCard(){
+  const E=DATA.meta.erp, k=FROM, hasImplied=E.rows.some(r=>r.kind==="implied");
+  mini("m-erp",[{k:"erp",n:"implied by stock prices",c:"--violet"},{k:"erp0",n:"assumed on this site",c:"--mut"}],v=>v.toFixed(1)+"%",190);
+  mini("m-erp-mid",[{k:"dmid",n:"change in the required return",c:"--violet"}],v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1),190);
+  const T=document.getElementById("t-erp"); T.textContent="";
+  const hr=T.insertRow(); ["Equity premium","Premium now","Required return now","Band now","Average required","Gap: delivered − required","Left unexplained by MCM","Explained by MCM","Regression alpha"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+  E.rows.forEach(r=>{ const s=r.samples[k], tr=T.insertRow(); if(r.kind==="base") tr.className="tot";
+    [r.premium,r.premium_now.toFixed(1)+"%",r.required_now.toFixed(1)+"%",r.lower_now.toFixed(1)+" to "+r.upper_now.toFixed(1),s.required_mid.toFixed(1),(s.gap>0?"+":"")+s.gap.toFixed(1)+" (±"+s.gap_se.toFixed(0)+")",(s.mcm_unexplained>0?"+":"")+s.mcm_unexplained.toFixed(1),s.explained_mcm.toFixed(0)+"%",(s.regression_alpha>0?"+":"")+s.regression_alpha.toFixed(1)].forEach(v=>{tr.insertCell().textContent=v;}); });
+  const b=E.rows.find(r=>r.kind==="base"), im=E.rows.find(r=>r.kind==="implied"), n=document.getElementById("erp-note");
+  n.textContent=(im?"With the implied premium the required return now is "+im.required_now.toFixed(1)+"% against "+b.required_now.toFixed(1)+"%, and the MCM equation explains "+im.samples[k].explained_mcm.toFixed(0)+"% of Bitcoin's return over the risk-free rate since "+k+" against "+b.samples[k].explained_mcm.toFixed(0)+"%. ":"")
+    +"Columns from \"Average required\" on are for the period chosen above, in percent a year. The implied premium is Aswath Damodaran's monthly estimate from the level of the S&P 500 and its trailing twelve-month cash flows"+(E.implied_to?", to "+fmtM(parse(E.implied_to)):"")+". It is used in this section only: every other number on the site uses 4%, as the paper does.";
+}
 function notesText(){
   const n=DATA.meta.notes, to=fmtM(parse(n.to)), set=(id,s)=>{document.getElementById(id).textContent=s;};
   set("n-flows","In the "+n.months+" months to "+to+", against monthly issuance, net exchange flows and changes in fund holdings together, it shows no reliable link (R² "+n.flows_r2.toFixed(2)+", no coefficient with a t-statistic above "+n.flows_largest_t.toFixed(1)+").");
@@ -925,7 +952,7 @@ function draw(){
   mini("m-conc",[{k:"conc",n:"concentration term",c:"--orange"}],v=>v.toFixed(v<10?1:0));
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
-  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView();
+  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard();
   mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
   mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
 }

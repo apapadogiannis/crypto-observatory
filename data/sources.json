@@ -21,16 +21,22 @@
  "developed_markets": {
   "source": "Kenneth R. French data library, Fama/French developed 3 factors (Mkt-RF plus RF)",
   "last_observation": "2026-09",
-  "rows_added": 201,
+  "rows_added": 0,
   "revisions": [],
   "note": "This file was created using the 202609 Bloomberg database."
  },
  "us_small_caps": {
   "source": "Kenneth R. French data library, portfolios formed on size, Lo 30, value-weighted",
   "last_observation": "2026-09",
-  "rows_added": 201,
+  "rows_added": 0,
   "revisions": [],
   "note": "This file was created using the 202609 CRSP database.  It contains"
+ },
+ "implied_equity_premium": {
+  "source": "Aswath Damodaran, implied equity risk premium by month (NYU Stern)",
+  "last_observation": "2026-11",
+  "rows_added": 219,
+  "revisions": []
  },
  "retrieved": "2026-11-20"
 }

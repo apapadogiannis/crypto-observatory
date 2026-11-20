@@ -140,3 +140,30 @@ def period_table(t: pd.DataFrame) -> list[dict]:
         rows.append({"period": f"{a}–{str(b)[2:]}", "from": x.index[0].strftime("%Y-%m"),
                      "to": x.index[-1].strftime("%Y-%m"), "summary": is_summary, **summarize(x)})
     return rows
+
+
+def equity_premium_sensitivity(band: pd.DataFrame, market_return: pd.Series, cfg: dict, implied: pd.Series | None) -> list[dict]:
+    """The required return and the tests under other equity premiums. The first row is the page's own."""
+    from . import mcm
+    base = cfg["constants"]["equity_risk_premium"]
+    check = mcm.with_equity_premium(band, base, cfg)
+    if not np.allclose(check[["lower", "upper", "midpoint"]], band[["lower", "upper", "midpoint"]], rtol=0, atol=1e-12):
+        raise AssertionError("with_equity_premium does not reproduce the band at the base premium")
+    cases = [(f"{100 * base:.0f}%, as in the paper", "base", base)]
+    if implied is not None:
+        cases.append(("Implied by US stock prices, month by month", "implied", implied))
+    cases += [(f"{100 * v:.0f}%", "constant", v) for v in (0.03, 0.05, 0.06) if abs(v - base) > 1e-9]
+    rows = []
+    for name, kind, premium in cases:
+        b = mcm.with_equity_premium(band, premium, cfg)
+        t = monthly_test(b, market_return)
+        L = b.iloc[-1]
+        row = {"premium": name, "kind": kind, "required_now": float(100 * L.midpoint), "lower_now": float(100 * L.lower), "upper_now": float(100 * L.upper),
+               "premium_now": float(100 * L.market_term / L.beta) if L.beta else None, "samples": {}}
+        for label, tt in (("2012", t), ("2018", t["2018-01-01":])):
+            S = summarize(tt)
+            row["samples"][label] = {"required_mid": S["required_mid"], "gap": S["gap"], "gap_se": S["gap_se"], "mcm_unexplained": S["mcm_alpha"],
+                                     "explained_mcm": S["explained_mcm"], "regression_alpha": S["regression"]["mcm"]["alpha"],
+                                     "average_premium": float(1200 * (tt.market_required / tt.beta).mean())}
+        rows.append(row)
+    return rows

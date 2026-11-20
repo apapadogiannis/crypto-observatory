@@ -25,7 +25,8 @@ The site has three sections: Bitcoin, the equation and the census of deaths. **B
 2. **Required return.** How the band is built, which holder sets each edge, and the three risks
    (market, concentration, mortality), each with its formula and the inputs that move it.
 3. **Tests.** How much of the delivered return the CAPM explains, how much the MCM equation explains,
-   and the alpha each leaves, by period and through time.
+   and the alpha each leaves, by period and through time. A last section reruns everything with the
+   equity premium implied by stock prices month by month, in place of the paper's fixed 4%.
 4. **Compared.** Bitcoin beside the US stock market, developed markets and US small caps: average and
    compound required returns, drag and Sharpe ratios.
 5. **Data and notes.** Supply and holders for context, and what the page does not claim.

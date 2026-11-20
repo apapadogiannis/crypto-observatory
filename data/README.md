@@ -11,11 +11,16 @@ every published number can be recomputed from what is stored.
 | `market/us_market_monthly.csv` | Monthly excess return of the US equity market (`mkt_rf`) and the one-month bill rate (`rf`), in percent | Kenneth R. French data library, Fama/French 3 Factors. Copyright Kenneth R. French. Published with a lag of one to two months. |
 | `market/developed_markets_monthly.csv` | The same two columns for developed-market equities, in US dollars | Kenneth R. French data library, Fama/French Developed 3 Factors. Copyright Kenneth R. French. |
 | `market/us_small_caps_monthly.csv` | Monthly value-weighted return of the smallest 30% of US companies by size (`ret`), in percent | Kenneth R. French data library, Portfolios Formed on Size, column "Lo 30". Copyright Kenneth R. French. |
+| `market/implied_equity_premium_monthly.csv` | The equity premium implied by the level of the S&P 500 at the start of each month, in percent (`implied_premium`), from September 2008. One column of the source file: the estimate on trailing twelve-month cash flows | Aswath Damodaran, Stern School of Business, New York University, "Implied ERP by month", https://pages.stern.nyu.edu/~adamodar/. Used only for the sensitivity table under Tests; the page's own numbers use the 4% of the paper. |
 | `census/` | The census of cryptoasset deaths: `death_rate_by_age.csv`, `death_rate_by_size.csv` (both with exact 95% intervals), `survival_by_size.csv`, `ever_top20.csv` (every asset that was ever in the top twenty by trading volume, with the date and kind of its death if it died) and `summary.json` | Built by `tools/census_from_paper.py` from the result tables of the paper's replication package (CC BY 4.0). Census taken on 24 May 2026; not updated monthly. |
 | `sources.json` | What the last update retrieved from each source, and to which date | written by `update.py` |
 
 Survey and filing anchors (ownership, wealth per owner, fund and treasury holdings) are not data
 files: they are entered by hand in `config/model.toml`, each with its date.
+
+A value in the implied-premium file is dated at the start of a month. The build files it at the
+month-end before, which is when it was known. Two cells of the source are typed as text ("4.06%",
+"1-Sep-24"); `update.py` reads them as the numbers and date they stand for.
 
 ## Where the live data differ from the paper
 

@@ -50,6 +50,17 @@ def build(data: Path, out: Path) -> dict:
     t = tests_of_fit.monthly_test(band, mkt)
     periods = tests_of_fit.period_table(t)
     page_notes = tests_of_fit.notes(band, t, btc)
+    implied = inputs.implied_equity_premium(data)
+    if implied is not None:
+        implied = implied.reindex(implied.index.union(band.index)).ffill()      # a month the source has not posted yet keeps the last value
+    premium_rows = tests_of_fit.equity_premium_sensitivity(band, mkt, cfg, implied)
+    mid_implied = None if implied is None else mcm.with_equity_premium(band, implied, cfg)["midpoint"]
+    rnd = lambda v: None if v is None else round(v, 2)
+    premium_doc = {"assumed": 100 * cfg["constants"]["equity_risk_premium"],
+                   "implied_source": "Aswath Damodaran, implied equity risk premium by month (trailing twelve-month cash flows), NYU Stern",
+                   "implied_to": None if implied is None else (inputs.implied_equity_premium(data).index[-1] + pd.offsets.MonthBegin(1)).strftime("%Y-%m"),
+                   "rows": [{**{k: (rnd(v) if isinstance(v, float) else v) for k, v in r.items() if k != "samples"},
+                             "samples": {k: {a: rnd(x) for a, x in v.items()} for k, v in r["samples"].items()}} for r in premium_rows]}
     compared = compare.comparison(band, inputs.equity_benchmarks(data), cfg)
 
     supply = btc["SplyCur"].dropna().resample("ME").last()
@@ -70,7 +81,9 @@ def build(data: Path, out: Path) -> dict:
                                   "concentration": _r(100 * b.concentration_term), "mortality": _r(100 * b.mortality_term)},
             "inputs": {"volatility": _r(100 * b.volatility, 1), "beta": _r(b.beta), "correlation": _r(b.correlation),
                        "weight_with_funds": _r(100 * b.w_with_funds, 1), "weight_surveyed": _r(100 * b.w_surveyed, 1),
-                       "weight_early_holder": _r(100 * b.w_early, 1)},
+                       "weight_early_holder": _r(100 * b.w_early, 1),
+                       "implied_equity_premium": None if implied is None or pd.isna(implied.get(d, np.nan)) else _r(100 * implied[d])},
+            "midpoint_with_implied_equity_premium": None if mid_implied is None else _r(100 * mid_implied[d]),
             "supply": {"issuance_rate": _r(100 * issuance.get(d, np.nan)), "fund_and_treasury_share": _r(100 * fund_share.get(d, np.nan))},
             "next_month": None if not has else {
                 "return": _r(100 * t.ret[d], 3), "capm_unexplained": _r(100 * t.capm_unexplained[d], 3),
@@ -112,6 +125,7 @@ def build(data: Path, out: Path) -> dict:
             "anchors_to": {"ownership_survey": max(cfg["ownership"])[:7], "fund_and_treasury_holdings": max(cfg["fund_and_treasury_btc"])[:7]},
             "sources": ["Coin Metrics community data (CC BY-NC 4.0)", "US equity market return, Kenneth R. French data library",
                         "US Treasury daily par yield curve rates (ten-year)",
+                        "implied equity risk premium by month, Aswath Damodaran (NYU Stern): used for the sensitivity table only",
                         "ownership surveys and fund holdings as listed in config/model.toml"],
         },
         "latest": {
@@ -135,6 +149,7 @@ def build(data: Path, out: Path) -> dict:
         "comparison": {**compared, "risk_free": round(compared["risk_free"], 2),
                        "rows": [{k: (round(v, 2) if isinstance(v, float) else v) for k, v in r.items()} for r in compared["rows"]]},
         "notes": page_notes,
+        "equity_premium": premium_doc,
         "census": census_doc,
     }
     out.mkdir(parents=True, exist_ok=True)
@@ -157,7 +172,7 @@ def _page_payload(doc: dict) -> dict:
                      "capm": n.get("capm_unexplained"), "mcm": n.get("mcm_unexplained"),
                      "tex": tr.get("excess"), "tcapm": tr.get("capm_unexplained"), "tmcm": tr.get("mcm_unexplained"),
                      "vol": i["volatility"], "beta": i["beta"], "corr": i["correlation"], "wlo": i["weight_with_funds"], "whi": i["weight_surveyed"],
-                     "we": i["weight_early_holder"], "iss": s["issuance_rate"], "inst": s["fund_and_treasury_share"]})
+                     "we": i["weight_early_holder"], "erp": i["implied_equity_premium"], "mid2": m["midpoint_with_implied_equity_premium"], "iss": s["issuance_rate"], "inst": s["fund_and_treasury_share"]})
     per = [{"p": p["period"], "n": p["months"], "a": p["from"], "b": p["to"], "sum": p["summary"], "real": p["delivered"], "mid": p["required_mid"],
             "gap": p["gap"], "gse": p["gap_se"], "ex": p["excess"], "prem": p["required_premium"], "eq": p["equity_beyond_premium"], "mk": p["market_part"], "cm": p["concentration_mortality_part"],
             "alpha": p["mcm_alpha"], "se": p["mcm_alpha_se"], "calpha": p["capm_alpha"],
@@ -166,7 +181,7 @@ def _page_payload(doc: dict) -> dict:
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
     meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"],
-            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "notes": doc["notes"], "cmp": doc["comparison"],
+            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "notes": doc["notes"], "cmp": doc["comparison"], "erp": doc["equity_premium"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],
