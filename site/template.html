@@ -940,7 +940,7 @@ function tiles(){
   document.getElementById("stamp").textContent="Bitcoin · month-end "+longDate(monthEnd)+" · updated monthly";
   { const n=DATA.meta.now, s=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
     document.getElementById("lede-btc").textContent=n.mid.toFixed(1)+"% a year at the end of "+d3.timeFormat("%B %Y")(parse(n.asof))+", for the market, concentration and mortality risk they carry."
-      +(s?" Over "+s.p.replace("–"," to 20")+" Bitcoin delivered "+s.real.toFixed(0)+"% a year against an average requirement of "+s.mid.toFixed(0)+"%.":""); }
+      +(s?" Since 2018 these risks account for "+s.s_mcm+"% of what Bitcoin delivered over the risk-free rate; market risk alone, as in the CAPM, for "+s.s_capm+"%.":""); }
   const age=Math.floor((Date.now()-monthEnd.getTime())/864e5), stale=document.getElementById("stale");
   if(age>50){ stale.textContent="These figures are for "+longDate(monthEnd)+", "+age+" days ago. The monthly update has not run since, so they may be out of date."; stale.style.display="block"; }
   document.getElementById("asof").textContent="Dates of the data: prices and the Treasury yield to "+longDate(monthEnd)+"; equity market returns, and so the tests, to "+fmtM(parse(m.market_to))+" (the beta is carried forward from that month); ownership survey to "+fmtM(parse(m.anchors.ownership_survey))+"; fund and treasury holdings to "+fmtM(parse(m.anchors.fund_and_treasury_holdings))+", held flat after.";
