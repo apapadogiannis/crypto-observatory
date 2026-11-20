@@ -3,27 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crypto observatory · Bitcoin: required and delivered return</title>
+<title>Crypto Observatory: required returns, risks and survival</title>
 <style>
 :root{
   color-scheme:light;
   --page:#f6f5f1;--surface:#fcfcfb;--line:#e1e0d9;--axis:#c3c2b7;
   --ink:#0b0b0b;--ink2:#52514e;--mut:#898781;
-  --blue:#2a78d6;--band:#cde2fb;--orange:#eb6834;--aqua:#1baf7a;--violet:#6250d6;--rf:#b9b8ae;--yellow:#eda100;--magenta:#e87ba4;
+  --blue:#2a78d6;--band:#cde2fb;--orange:#eb6834;--aqua:#1baf7a;--violet:#6250d6;--rf:#b9b8ae;--yellow:#eda100;--magenta:#e87ba4;--q1:#9ec5f4;--q2:#5598e7;--q3:#256abf;--q4:#104281;
 }
 @media (prefers-color-scheme:dark){
   :root:where(:not([data-theme="light"])){
     color-scheme:dark;
     --page:#121211;--surface:#1a1a19;--line:#2e2e2b;--axis:#52514e;
     --ink:#f0efec;--ink2:#c3c2b7;--mut:#898781;
-    --blue:#3987e5;--band:#173a66;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--rf:#6b6a64;--yellow:#c98500;--magenta:#d55181;
+    --blue:#3987e5;--band:#173a66;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--rf:#6b6a64;--yellow:#c98500;--magenta:#d55181;--q1:#1c5cab;--q2:#3987e5;--q3:#6da7ec;--q4:#b7d3f6;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --page:#121211;--surface:#1a1a19;--line:#2e2e2b;--axis:#52514e;
   --ink:#f0efec;--ink2:#c3c2b7;--mut:#898781;
-  --blue:#3987e5;--band:#173a66;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--rf:#6b6a64;--yellow:#c98500;--magenta:#d55181;
+  --blue:#3987e5;--band:#173a66;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--rf:#6b6a64;--yellow:#c98500;--magenta:#d55181;--q1:#1c5cab;--q2:#3987e5;--q3:#6da7ec;--q4:#b7d3f6;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -40,6 +40,14 @@ h2{font-size:17px;margin:0 0 2px}
 .tile .k{font-size:12.5px;color:var(--ink2)}
 .tile .v{font-size:28px;font-weight:650;letter-spacing:-.02em;line-height:1.25}
 .tile .n{font-size:12.5px;color:var(--mut)}
+.site{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;margin:0 0 22px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.site .brand{font-weight:700;font-size:15px;letter-spacing:.01em}
+.site .brand small{font-weight:400;color:var(--mut);font-size:12.5px;margin-left:8px}
+.site nav{display:flex;gap:4px;margin-left:auto}
+.site nav button{font:inherit;font-size:14px;color:var(--ink2);background:none;border:1px solid transparent;border-radius:999px;padding:5px 14px;cursor:pointer}
+.site nav button[aria-current="page"]{color:var(--surface);background:var(--ink)}
+.site nav button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.view{display:none}.view.on{display:block}
 .tabs{display:flex;gap:2px;flex-wrap:wrap;border-bottom:1px solid var(--axis);margin:0 0 16px}
 .tabs button{font:inherit;font-size:14.5px;color:var(--ink2);background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;margin-bottom:-1px;cursor:pointer}
 .tabs button[aria-selected="true"]{color:var(--ink);font-weight:650;border-bottom-color:var(--ink)}
@@ -93,6 +101,8 @@ table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:
 th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left;white-space:nowrap}
 th{font-weight:600;color:var(--ink2);font-size:12.5px;vertical-align:bottom}
+td{white-space:nowrap}
+table.now td:first-child{white-space:normal}
 tr.tot td{font-weight:650;border-top:1.5px solid var(--axis)}
 .scroll{overflow-x:auto}
 .note{font-size:13.5px;color:var(--ink2);max-width:760px}
@@ -104,6 +114,12 @@ text{font-family:inherit}
 </head>
 <body>
 <div class="wrap">
+  <header class="site">
+    <div class="brand">Crypto Observatory<small>required returns, risks and survival</small></div>
+    <nav aria-label="Sections"><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="census">Census of deaths</button></nav>
+  </header>
+
+  <div class="view" id="view-bitcoin">
   <h1>Bitcoin: required and delivered return</h1>
   <p class="lede">What Bitcoin's holders should require for the risks they carry, set against what Bitcoin delivered. Built on the MCM equation: the risk-free rate plus market, concentration and mortality risk.</p>
   <div class="stamp" id="stamp"></div>
@@ -278,6 +294,54 @@ text{font-family:inherit}
       <li><b>Repricing is not shown as a separate part.</b> <span id="n-repricing"></span></li>
       <li><b>Short windows say little.</b> <span id="n-short"></span> The tests are informative over years, not months.</li>
       <li><b>Nothing here is a forecast.</b> A required return is what holders should ask for given the risk, not what the asset will deliver.</li>
+    </ul>
+  </section>
+  </div>
+
+  </div>
+
+  <div class="view" id="view-census">
+  <h1>The census of cryptoasset deaths</h1>
+  <p class="lede">How often cryptoassets die, whether surviving makes them safer, and what protects them. The census is where the mortality term of the required return comes from.</p>
+  <div class="stamp" id="census-stamp"></div>
+  <div class="tiles" id="census-tiles"></div>
+
+  <section class="card" id="sec-c-age">
+    <h2>Does surviving make an asset safer?</h2>
+    <p class="sub">The popular "Lindy" idea says the longer an asset has lived, the longer it will live, which would make the death rate fall like one over age: the dashed line. The data reject it. The death rate rises over the first years of an asset's life and stays high. Deaths per hundred assets a year, by age; whiskers are 95% intervals, and the number of deaths in each group is at the foot of its bar.</p>
+    <div class="legend"><span><i style="background:var(--blue)"></i>death rate</span><span><i class="ln" style="border-color:var(--orange);border-top-style:dashed"></i>what Lindy would predict</span></div>
+    <div class="chart" id="c-age"></div>
+  </section>
+
+  <section class="card" id="sec-c-size">
+    <h2>What protects: size</h2>
+    <p class="sub">Assets are sorted into four groups by their peak trading volume, then the assets that ever reached the top fifty and the top twenty are followed from the month they entered. The last bar counts only sudden collapses among top-twenty assets. Deaths per hundred assets a year, with 95% intervals.</p>
+    <div class="chart" id="c-size"></div>
+    <div class="scroll"><table id="t-size"></table></div>
+  </section>
+
+  <section class="card" id="sec-c-surv">
+    <h2>How long they last</h2>
+    <p class="sub">The share of assets still alive at each age, by size group. Half of the smallest group is dead by its fourth year; most of the largest group is still alive after thirteen.</p>
+    <div class="chart" id="c-surv"></div>
+  </section>
+
+  <section class="card" id="sec-c-grave">
+    <h2>The deaths at the top</h2>
+    <p class="sub" id="grave-sub"></p>
+    <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
+    <div class="chart" id="c-deaths"></div>
+    <div class="scroll"><table id="t-grave"></table></div>
+  </section>
+
+  <section class="card" id="sec-c-method">
+    <h2>What counts as a death, and how it is priced</h2>
+    <ul class="note">
+      <li><b>Three ways to die.</b> The data feed ends more than 180 days before the census date. Or the price falls below 1% of its peak and does not recover. Or trading dries up: three-month volume below 1% of its peak and under $250,000 a day, with no recovery.</li>
+      <li><b>What is not a death.</b> A change of ticker, a redenomination or a merger, where holders received the successor token. Stablecoins, wrapped tokens and tokenized stocks are left out of the census.</li>
+      <li><b>Sudden collapses</b> are entered by hand at their public dates.</li>
+      <li><b>From death rate to required return.</b> A holder must be paid the loss she can expect: the chance the asset dies in a year, times the share of her money lost if it does. Read low, that is sudden collapses only, 0.30% a year at a 95% loss, or 0.3 points. Read high, it is every death of a top-twenty asset counted as a total loss, 3.5 points. Bitcoin's required return uses the range between them, 1.9 points at the midpoint.</li>
+      <li><b>One census, not yet a monthly one.</b> <span id="census-note"></span></li>
     </ul>
   </section>
   </div>
@@ -539,8 +603,8 @@ function eqStrip(){
   const tr=T.insertRow(); tr.className="tot"; ["required return",n.lo.toFixed(1)+"%",n.hi.toFixed(1)+"%",n.mid.toFixed(1)+"%"].forEach(x=>{tr.insertCell().textContent=x;});
   if(n.early){const r=T.insertRow(); const td=r.insertCell(); td.colSpan=4; td.style.textAlign="left"; td.textContent="This month the early holder sets the upper edge, so the upper-edge column shows the average surveyed owner for reference only.";}
 }
-function deathsChart(){
-  const el=document.getElementById("m-deaths"), f=frame(el,190,{l:40,r:14,t:16,b:24}), D=DATA.meta.deaths.filter(d=>d.y>=+FROM);
+function deathsChart(id="m-deaths",all=false){
+  const el=document.getElementById(id), f=frame(el,all?220:190,{l:40,r:14,t:16,b:24}), D=DATA.meta.deaths.filter(d=>all||d.y>=+FROM);
   const x=d3.scaleBand().domain(D.map(d=>d.y)).range([0,f.iw]).padding(0.3);
   const y=d3.scaleLinear().domain([0,d3.max(D,d=>d.fade+d.jump)*1.15]).nice(3).range([f.ih,0]);
   const g=axes(f,{},y,{yticks:y.ticks(3),yfmt:v=>v});
@@ -593,6 +657,81 @@ function comparedTab(){
   set("cmp-sample","For the equity series, beta (to the US stock market) and volatility are measured on monthly returns from "+fmtM(parse(c.equity_sample.from))+" to "+fmtM(parse(c.equity_sample.to))+", and the required return uses the ten-year Treasury yield of "+c.risk_free.toFixed(2)+"%.");
 }
 const longDateOf=s=>d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(s));
+function censusView(){
+  const C=DATA.meta.census, set=(id,s)=>{document.getElementById(id).textContent=s;}, taken=longDateOf(C.census_date);
+  set("census-stamp","Census taken on "+taken+" · from the paper · not yet updated monthly");
+  const tl=document.getElementById("census-tiles"); tl.textContent="";
+  const top=C.death_rate_by_size.find(r=>r.group==="Ever in the top twenty"), sud=C.death_rate_by_size.find(r=>r.group.includes("sudden"));
+  [["Assets followed",C.assets.toLocaleString("en-US"),"since "+fmtM(parse(C.first_asset_born.slice(0,7)))],
+   ["Deaths",C.deaths.toLocaleString("en-US"),Math.round(100*C.deaths/C.assets)+"% of the assets followed"],
+   ["Death rate at the top",top.rate.toFixed(1)+"%","a year, among assets ever in the top twenty"],
+   ["Sudden collapse at the top",sud.rate.toFixed(2)+"%","a year: "+sud.deaths+" of "+top.deaths+" top-twenty deaths"]].forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,x])=>{const s=document.createElement("div"); s.className=c; s.textContent=x; d.appendChild(s);}); tl.appendChild(d);});
+  // --- by age
+  (function(){ const el=document.getElementById("c-age"), f=frame(el,330,{l:44,r:14,t:16,b:44}), A=C.death_rate_by_age;
+    const x=d3.scaleBand().domain(A.map((_,i)=>i)).range([0,f.iw]).padding(0.28), top=31, y=d3.scaleLinear().domain([0,top]).range([f.ih,0]).clamp(true);
+    const g=axes(f,{},y,{yticks:[0,10,20,30],yfmt:v=>v+"%"});
+    const mid=A.map(a=>Math.sqrt(a.age_from*a.age_to)), i2=A.findIndex(a=>a.age_from===2), lind=A.map((_,i)=>A[i2].rate*mid[i2]/mid[i]);
+    const tipFor=a=>{const n=f.tip.node(); n.textContent=""; const t=document.createElement("div"); t.className="t"; t.textContent="Age "+a.age_from+" to "+a.age_to+" years"; n.appendChild(t);
+      [["death rate",a.rate.toFixed(1)+"% a year"],["95% interval",a.ci_low.toFixed(1)+"% to "+a.ci_high.toFixed(1)+"%"],["deaths",a.deaths],["asset-years followed",Math.round(a.asset_years).toLocaleString("en-US")]].forEach(([k,v])=>{const d=document.createElement("div"); d.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v; d.appendChild(l); d.appendChild(b); n.appendChild(d);});
+      f.tip.style("display","block"); const X=f.m.l+x(A.indexOf(a))+x.bandwidth()+8, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+x(A.indexOf(a))-tw-8:X))+"px").style("top",(f.m.t+4)+"px");};
+    A.forEach((a,i)=>{ const G=g.append("g").attr("tabindex",0).on("pointermove focus",()=>tipFor(a)).on("pointerleave blur",()=>f.tip.style("display","none")), cx=x(i)+x.bandwidth()/2;
+      G.append("rect").attr("x",x(i)-4).attr("width",x.bandwidth()+8).attr("y",0).attr("height",f.ih).attr("fill","transparent");
+      G.append("rect").attr("x",x(i)).attr("width",x.bandwidth()).attr("y",y(a.rate)).attr("height",f.ih-y(a.rate)).attr("fill",css("--blue")).attr("opacity",a.deaths<10?0.45:1).attr("rx",3);
+      G.append("line").attr("x1",cx).attr("x2",cx).attr("y1",y(a.ci_low)).attr("y2",y(a.ci_high)).attr("stroke",css("--ink")).attr("stroke-width",1.3);
+      G.append("text").attr("x",cx-4).attr("y",y(a.rate)-6).attr("text-anchor","end").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(a.rate.toFixed(1)+(narrow(f)?"":"%"));
+      g.append("text").attr("x",cx).attr("y",f.ih+16).attr("text-anchor","middle").attr("font-size",narrow(f)?9.5:11.5).attr("fill",css("--ink2")).text(narrow(f)&&i===0?"<"+a.age_to:a.age_from+"–"+a.age_to);
+      g.append("text").attr("x",cx).attr("y",f.ih+31).attr("text-anchor","middle").attr("font-size",11).attr("fill",css("--mut")).text(a.deaths); });
+    g.append("text").attr("x",-8).attr("y",f.ih+16).attr("text-anchor","end").attr("font-size",11).attr("fill",css("--mut")).text("age");
+    g.append("text").attr("x",-8).attr("y",f.ih+31).attr("text-anchor","end").attr("font-size",11).attr("fill",css("--mut")).text("deaths");
+    const yl=d3.scaleLinear().domain([0,top]).range([f.ih,0]), cid="clip-age";
+    f.svg.append("defs").append("clipPath").attr("id",cid).append("rect").attr("x",0).attr("y",-8).attr("width",f.iw).attr("height",f.ih+8);
+    g.append("path").datum(lind.map((v,i)=>[x(i)+x.bandwidth()/2,yl(v)])).attr("fill","none").attr("stroke",css("--orange")).attr("stroke-width",2).attr("stroke-dasharray","6 4").attr("d",d3.line()).attr("clip-path","url(#"+cid+")").style("pointer-events","none"); })();
+  // --- by size
+  (function(){ const el=document.getElementById("c-size"), f=frame(el,320,{l:44,r:14,t:16,b:56}), S=C.death_rate_by_size;
+    const pos=S.map((_,i)=>i<4?i:i+0.6), bw=Math.min(64,f.iw/(S.length+1.4)), x=i=>pos[i]*(f.iw-bw)/(pos[pos.length-1])+0, y=d3.scaleLinear().domain([0,22]).range([f.ih,0]);
+    const g=axes(f,{},y,{yticks:[0,5,10,15,20],yfmt:v=>v+"%"}), cols=["--q1","--q2","--q3","--q4","--q3","--q4","--ink"];
+    const short=["smallest|quartile","second|quartile","third|quartile","largest|quartile","ever in|top fifty","ever in|top twenty","top twenty:|sudden collapse"];
+    const tipFor=(r,i)=>{const n=f.tip.node(); n.textContent=""; const t=document.createElement("div"); t.className="t"; t.textContent=r.group; n.appendChild(t);
+      [["death rate",r.rate.toFixed(2)+"% a year"],["95% interval",r.ci_low.toFixed(2)+"% to "+r.ci_high.toFixed(2)+"%"],["assets",r.assets],["deaths",r.deaths],["asset-years followed",Math.round(r.asset_years).toLocaleString("en-US")]].forEach(([k,v])=>{const d=document.createElement("div"); d.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v; d.appendChild(l); d.appendChild(b); n.appendChild(d);});
+      f.tip.style("display","block"); const X=f.m.l+x(i)+bw+8, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+x(i)-tw-8:X))+"px").style("top",(f.m.t+4)+"px");};
+    g.append("line").attr("x1",x(3)+bw+(x(4)-x(3)-bw)/2).attr("x2",x(3)+bw+(x(4)-x(3)-bw)/2).attr("y1",0).attr("y2",f.ih+44).attr("stroke",css("--line"));
+    S.forEach((r,i)=>{ const G=g.append("g").attr("tabindex",0).on("pointermove focus",()=>tipFor(r,i)).on("pointerleave blur",()=>f.tip.style("display","none")), cx=x(i)+bw/2;
+      G.append("rect").attr("x",x(i)-4).attr("width",bw+8).attr("y",0).attr("height",f.ih).attr("fill","transparent");
+      G.append("rect").attr("x",x(i)).attr("width",bw).attr("y",y(r.rate)).attr("height",Math.max(1.5,f.ih-y(r.rate))).attr("fill",css(cols[i])).attr("rx",3);
+      G.append("line").attr("x1",cx).attr("x2",cx).attr("y1",y(r.ci_low)).attr("y2",y(r.ci_high)).attr("stroke",css("--ink")).attr("stroke-width",1.3);
+      G.append("text").attr("x",cx).attr("y",y(r.ci_high)-6).attr("text-anchor","middle").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(r.rate.toFixed(r.rate<1?2:1)+"%");
+      const tiny=["small-|est","2nd","3rd","larg-|est","top|50","top|20","top 20|sudden"];
+      (narrow(f)?tiny:short)[i].split("|").forEach((w,k)=>g.append("text").attr("x",cx).attr("y",f.ih+16+k*13).attr("text-anchor","middle").attr("font-size",narrow(f)?10:11.5).attr("fill",css("--ink2")).text(w)); });
+    const T=document.getElementById("t-size"); T.textContent=""; const hr=T.insertRow(); ["Group","Assets","Deaths","Asset-years followed","Death rate, % a year","95% interval"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+    S.forEach(r=>{const tr=T.insertRow(); [r.group,r.assets.toLocaleString("en-US"),r.deaths,Math.round(r.asset_years).toLocaleString("en-US"),r.rate.toFixed(2),r.ci_low.toFixed(2)+" to "+r.ci_high.toFixed(2)].forEach(v=>{tr.insertCell().textContent=v;});}); })();
+  // --- survival
+  (function(){ const el=document.getElementById("c-surv"), nar=el.clientWidth<520, f=frame(el,330,{l:44,r:nar?14:176,t:14,b:38});
+    const G=Object.entries(C.survival_by_size), cols=["--q1","--q2","--q3","--q4","--orange"];
+    const x=d3.scaleLinear().domain([0,13]).range([0,f.iw]), y=d3.scaleLinear().domain([0,1]).range([f.ih,0]);
+    const g=axes(f,{},y,{yticks:[0,0.25,0.5,0.75,1],yfmt:v=>Math.round(100*v)+"%"});
+    d3.range(0,14,nar?2:1).forEach(v=>g.append("text").attr("x",x(v)).attr("y",f.ih+16).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--mut")).text(v));
+    g.append("text").attr("x",f.iw/2).attr("y",f.ih+33).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--ink2")).text("age of the asset, years");
+    g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(0.5)).attr("y2",y(0.5)).attr("stroke",css("--mut")).attr("stroke-dasharray","3 3");
+    let ends=[];
+    G.forEach(([name,pts],i)=>{ g.append("path").datum(pts).attr("fill","none").attr("stroke",css(cols[i])).attr("stroke-width",i==4?2.2:2.2).attr("stroke-dasharray",i==4?"6 3":null).attr("d",d3.line().x(p=>x(p[0])).y(p=>y(p[1])).curve(d3.curveStepAfter));
+      const L=pts[pts.length-1]; ends.push({y:y(L[1]),x:x(L[0]),name,c:cols[i],v:L[1]}); });
+    if(nar){ const lg=d3.select(el).insert("div","svg").attr("class","legend"); G.forEach(([name],i)=>{const s=lg.append("span"); s.append("i").attr("class","ln").style("border-color",css(cols[i])); s.append("span").text(name.toLowerCase());}); }
+    else { ends.sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<16) ends[i].y=ends[i-1].y+16;
+      ends.forEach(e=>{ g.append("line").attr("x1",e.x+3).attr("x2",f.iw+10).attr("y1",e.y).attr("y2",e.y).attr("stroke",css(e.c)).attr("stroke-width",1).attr("opacity",.5);
+        g.append("text").attr("x",f.iw+14).attr("y",e.y).attr("dy","0.32em").attr("font-size",12).attr("fill",css("--ink")).text(e.name.toLowerCase()+" · "+Math.round(100*e.v)+"%"); }); }
+    const hair=g.append("line").attr("y1",0).attr("y2",f.ih).attr("stroke",css("--mut")).style("display","none");
+    g.append("rect").attr("width",f.iw).attr("height",f.ih).attr("fill","transparent").on("pointermove",ev=>{ const age=Math.max(0,Math.min(13,Math.round(x.invert(d3.pointer(ev)[0])*4)/4)); hair.attr("x1",x(age)).attr("x2",x(age)).style("display",null);
+        const n=f.tip.node(); n.textContent=""; const t=document.createElement("div"); t.className="t"; t.textContent="Alive at age "+age+" years"; n.appendChild(t);
+        G.forEach(([name,pts],i)=>{ const p=pts.filter(q=>q[0]<=age).pop(); if(!p||age>pts[pts.length-1][0]) return; const d=document.createElement("div"); d.className="r"; const l=document.createElement("span"); const k=document.createElement("i"); k.style.borderColor=css(cols[i]); l.appendChild(k); l.appendChild(document.createTextNode(name.toLowerCase())); const b=document.createElement("b"); b.textContent=Math.round(100*p[1])+"%"; d.appendChild(l); d.appendChild(b); n.appendChild(d); });
+        f.tip.style("display","block"); const X=f.m.l+x(age)+12, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+x(age)-tw-12:X))+"px").style("top",(f.m.t+6)+"px"); })
+      .on("pointerleave",()=>{hair.style("display","none"); f.tip.style("display","none");}); })();
+  // --- the deaths at the top
+  deathsChart("c-deaths",true);
+  set("grave-sub","Of the "+C.ever_top_twenty+" assets that ever ranked in the top twenty by monthly trading volume, "+C.ever_top_twenty_deaths+" have died. Most were slow fades. Three were sudden collapses, each a near-total loss within days.");
+  const T=document.getElementById("t-grave"); T.textContent=""; const hr=T.insertRow(); ["Asset","Entered the top twenty","Died","How"].forEach((h,i)=>{const th=document.createElement("th"); th.textContent=h; if(i===3) th.style.textAlign="left"; hr.appendChild(th);});
+  C.ever_top_twenty_deaths_list.forEach(r=>{const tr=T.insertRow(); if(r.kind==="sudden collapse") tr.className="tot"; [r.asset.toUpperCase(),fmtM(parse(r.entered_top_twenty)),fmtM(parse(r.died.slice(0,7))),r.kind].forEach((v,i)=>{const c=tr.insertCell(); c.textContent=v; if(i) c.style.textAlign=i==3?"left":"right";});});
+  set("census-note","These figures are the paper's, from data to "+taken+". The data source they came from has stopped, and the census has not yet been moved to the new one, so new deaths since then are not counted.");
+}
 function notesText(){
   const n=DATA.meta.notes, to=fmtM(parse(n.to)), set=(id,s)=>{document.getElementById(id).textContent=s;};
   set("n-flows","In the "+n.months+" months to "+to+", against monthly issuance, net exchange flows and changes in fund holdings together, it shows no reliable link (R² "+n.flows_r2.toFixed(2)+", no coefficient with a t-statistic above "+n.flows_largest_t.toFixed(1)+").");
@@ -621,21 +760,25 @@ function draw(){
   mini("m-conc",[{k:"conc",n:"concentration term",c:"--orange"}],v=>v.toFixed(v<10?1:0));
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
-  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab();
+  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView();
   mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
   mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
 }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
 const TABS=["overview","required-return","tests","compared","notes"];
 function showTab(){
-  const name=TABS.includes(location.hash.slice(1))?location.hash.slice(1):"overview";
+  const h=location.hash.slice(1), view=h==="census"?"census":"bitcoin";
+  ["bitcoin","census"].forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));
+  document.querySelectorAll(".site nav button").forEach(b=>{ if(b.dataset.view===view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  const name=TABS.includes(h)?h:"overview";
   TABS.forEach(n=>document.getElementById("pane-"+n).classList.toggle("on",n===name));
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));
   document.querySelector(".filters").style.display=name==="compared"?"none":"";      // this tab is a snapshot of one month-end
   draw();                                   // charts size themselves from their container, so draw once the pane is visible
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ if(location.hash.slice(1)===b.dataset.tab) return; location.hash=b.dataset.tab; }));
-window.addEventListener("hashchange",showTab);
+document.querySelectorAll(".site nav button").forEach(b=>b.addEventListener("click",()=>{ const to=b.dataset.view==="census"?"census":"overview"; if(location.hash.slice(1)!==to) location.hash=to; }));
+window.addEventListener("hashchange",()=>{showTab(); window.scrollTo(0,0);});
 tiles(); showTab();
 let rt; window.addEventListener("resize",()=>{clearTimeout(rt); rt=setTimeout(draw,120);});
 matchMedia("(prefers-color-scheme:dark)").addEventListener("change",draw);

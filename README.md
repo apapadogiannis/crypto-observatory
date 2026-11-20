@@ -17,7 +17,7 @@ required return = risk-free rate + market risk + concentration risk + mortality 
                 = r_f + beta x ERP + gamma x sigma^2 x w + lambda x (1 - delta)
 ```
 
-The page has five tabs:
+The site has two sections. **Bitcoin** has five tabs:
 
 1. **Overview.** The required return and what was delivered, by three-year period, and why the two
    differed: the premium holders required, what the equity market added beyond its own premium, and
@@ -29,6 +29,11 @@ The page has five tabs:
 4. **Compared.** Bitcoin beside the US stock market, developed markets and US small caps: average and
    compound required returns, drag and Sharpe ratios.
 5. **Data and notes.** Supply and holders for context, and what the page does not claim.
+
+**Census of deaths** shows how often cryptoassets die, by age and by size, how long they last, and
+every death among the assets that were ever in the top twenty. It is where the mortality term of the
+required return comes from. The census is the paper's, taken on 24 May 2026, and is not yet updated
+monthly.
 
 It reports required returns. It forecasts nothing.
 
@@ -59,6 +64,7 @@ observatory/mcm.py            the required-return band, month by month
 observatory/tests_of_fit.py   the monthly test, CAPM and MCM alpha, shares explained
 observatory/compare.py        Bitcoin beside equities: average and compound required returns
 observatory/build.py          builds the page and the data file from the stored data
+tools/census_from_paper.py     builds the census tables in data/census/ from the paper's result files (run once)
 observatory/inputs.py         reads the stored files
 observatory/update.py         downloads the latest data into data/ (the only code that uses the network)
 config/model.toml             constants and hand-entered anchors, each with its source
@@ -82,7 +88,7 @@ can read it without scraping the page.
 | `periods` | three-year periods and the two summary samples: delivered, required, the gap and its split, the part each model explains and leaves unexplained, the regression alphas, the average beta and correlation |
 | `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
-| `census` | deaths among assets that were ever in the top twenty, by year and kind |
+| `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, and the list of top-twenty deaths |
 
 Figures are percent a year unless the key says otherwise.
 

@@ -11,7 +11,7 @@ every published number can be recomputed from what is stored.
 | `market/us_market_monthly.csv` | Monthly excess return of the US equity market (`mkt_rf`) and the one-month bill rate (`rf`), in percent | Kenneth R. French data library, Fama/French 3 Factors. Copyright Kenneth R. French. Published with a lag of one to two months. |
 | `market/developed_markets_monthly.csv` | The same two columns for developed-market equities, in US dollars | Kenneth R. French data library, Fama/French Developed 3 Factors. Copyright Kenneth R. French. |
 | `market/us_small_caps_monthly.csv` | Monthly value-weighted return of the smallest 30% of US companies by size (`ret`), in percent | Kenneth R. French data library, Portfolios Formed on Size, column "Lo 30". Copyright Kenneth R. French. |
-| `census/ever_top20.csv` | Every cryptoasset that was ever in the top twenty by trading volume, with the date and kind of its death if it died | Result table of the paper's replication package (CC BY 4.0), census taken on 24 May 2026 |
+| `census/` | The census of cryptoasset deaths: `death_rate_by_age.csv`, `death_rate_by_size.csv` (both with exact 95% intervals), `survival_by_size.csv`, `ever_top20.csv` (every asset that was ever in the top twenty by trading volume, with the date and kind of its death if it died) and `summary.json` | Built by `tools/census_from_paper.py` from the result tables of the paper's replication package (CC BY 4.0). Census taken on 24 May 2026; not updated monthly. |
 | `sources.json` | What the last update retrieved from each source, and to which date | written by `update.py` |
 
 Survey and filing anchors (ownership, wealth per owner, fund and treasury holdings) are not data

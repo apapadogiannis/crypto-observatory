@@ -1,0 +1,241 @@
+group,age,alive
+Smallest quartile,0.0,1.0
+Smallest quartile,0.25,0.995
+Smallest quartile,0.5,0.9897
+Smallest quartile,0.75,0.9808
+Smallest quartile,1.0,0.9512
+Smallest quartile,1.25,0.9367
+Smallest quartile,1.5,0.8885
+Smallest quartile,1.75,0.8647
+Smallest quartile,2.0,0.816
+Smallest quartile,2.25,0.7126
+Smallest quartile,2.5,0.6497
+Smallest quartile,2.75,0.6131
+Smallest quartile,3.0,0.5795
+Smallest quartile,3.25,0.5121
+Smallest quartile,3.5,0.4864
+Smallest quartile,3.75,0.46
+Smallest quartile,4.0,0.3956
+Smallest quartile,4.25,0.3646
+Smallest quartile,4.5,0.2854
+Smallest quartile,4.75,0.2488
+Smallest quartile,5.0,0.2488
+Smallest quartile,5.25,0.228
+Smallest quartile,5.5,0.228
+Smallest quartile,5.75,0.228
+Smallest quartile,6.0,0.2052
+Smallest quartile,6.25,0.1796
+Smallest quartile,6.5,0.1796
+Smallest quartile,6.75,0.1539
+Smallest quartile,7.0,0.1283
+Smallest quartile,7.25,0.1283
+Smallest quartile,7.5,0.0513
+Smallest quartile,7.75,0.0257
+Smallest quartile,8.0,0.0257
+Smallest quartile,8.25,0.0257
+Smallest quartile,8.5,0.0257
+Smallest quartile,8.75,0.0257
+Second quartile,0.0,1.0
+Second quartile,0.25,1.0
+Second quartile,0.5,0.9953
+Second quartile,0.75,0.9852
+Second quartile,1.0,0.9608
+Second quartile,1.25,0.9168
+Second quartile,1.5,0.8831
+Second quartile,1.75,0.8475
+Second quartile,2.0,0.8271
+Second quartile,2.25,0.7831
+Second quartile,2.5,0.7633
+Second quartile,2.75,0.7345
+Second quartile,3.0,0.7216
+Second quartile,3.25,0.6982
+Second quartile,3.5,0.6591
+Second quartile,3.75,0.6294
+Second quartile,4.0,0.5839
+Second quartile,4.25,0.5524
+Second quartile,4.5,0.5244
+Second quartile,4.75,0.4738
+Second quartile,5.0,0.4594
+Second quartile,5.25,0.4151
+Second quartile,5.5,0.3998
+Second quartile,5.75,0.3913
+Second quartile,6.0,0.3722
+Second quartile,6.25,0.3615
+Second quartile,6.5,0.3615
+Second quartile,6.75,0.3396
+Second quartile,7.0,0.283
+Second quartile,7.25,0.2476
+Second quartile,7.5,0.2476
+Second quartile,7.75,0.2339
+Second quartile,8.0,0.2172
+Second quartile,8.25,0.1991
+Second quartile,8.5,0.1991
+Second quartile,8.75,0.1991
+Second quartile,9.0,0.1991
+Second quartile,9.25,0.1991
+Second quartile,9.5,0.1991
+Second quartile,9.75,0.1493
+Second quartile,10.0,0.1493
+Second quartile,10.25,0.1493
+Second quartile,10.5,0.1493
+Second quartile,10.75,0.1493
+Second quartile,11.0,0.1493
+Second quartile,11.25,0.1493
+Second quartile,11.5,0.1493
+Second quartile,11.75,0.1493
+Third quartile,0.0,1.0
+Third quartile,0.25,1.0
+Third quartile,0.5,1.0
+Third quartile,0.75,0.9928
+Third quartile,1.0,0.9878
+Third quartile,1.25,0.9744
+Third quartile,1.5,0.9571
+Third quartile,1.75,0.9256
+Third quartile,2.0,0.9062
+Third quartile,2.25,0.8861
+Third quartile,2.5,0.8719
+Third quartile,2.75,0.8683
+Third quartile,3.0,0.8424
+Third quartile,3.25,0.8185
+Third quartile,3.5,0.7979
+Third quartile,3.75,0.777
+Third quartile,4.0,0.7555
+Third quartile,4.25,0.7061
+Third quartile,4.5,0.6692
+Third quartile,4.75,0.6336
+Third quartile,5.0,0.6058
+Third quartile,5.25,0.5668
+Third quartile,5.5,0.5235
+Third quartile,5.75,0.4987
+Third quartile,6.0,0.4789
+Third quartile,6.25,0.4576
+Third quartile,6.5,0.4044
+Third quartile,6.75,0.3938
+Third quartile,7.0,0.3618
+Third quartile,7.25,0.3193
+Third quartile,7.5,0.3083
+Third quartile,7.75,0.2968
+Third quartile,8.0,0.2512
+Third quartile,8.25,0.2251
+Third quartile,8.5,0.2078
+Third quartile,8.75,0.2078
+Third quartile,9.0,0.2078
+Third quartile,9.25,0.2078
+Third quartile,9.5,0.2078
+Third quartile,9.75,0.2078
+Third quartile,10.0,0.1663
+Third quartile,10.25,0.1663
+Third quartile,10.5,0.1108
+Third quartile,10.75,0.1108
+Third quartile,11.0,0.1108
+Third quartile,11.25,0.1108
+Third quartile,11.5,0.1108
+Third quartile,11.75,0.1108
+Third quartile,12.0,0.1108
+Third quartile,12.25,0.1108
+Largest quartile,0.0,1.0
+Largest quartile,0.25,1.0
+Largest quartile,0.5,1.0
+Largest quartile,0.75,1.0
+Largest quartile,1.0,1.0
+Largest quartile,1.25,0.995
+Largest quartile,1.5,0.9822
+Largest quartile,1.75,0.9767
+Largest quartile,2.0,0.9738
+Largest quartile,2.25,0.9678
+Largest quartile,2.5,0.9617
+Largest quartile,2.75,0.9554
+Largest quartile,3.0,0.9425
+Largest quartile,3.25,0.9291
+Largest quartile,3.5,0.9221
+Largest quartile,3.75,0.9115
+Largest quartile,4.0,0.9045
+Largest quartile,4.25,0.9009
+Largest quartile,4.5,0.8784
+Largest quartile,4.75,0.8588
+Largest quartile,5.0,0.8546
+Largest quartile,5.25,0.846
+Largest quartile,5.5,0.8276
+Largest quartile,5.75,0.8172
+Largest quartile,6.0,0.8053
+Largest quartile,6.25,0.7988
+Largest quartile,6.5,0.7988
+Largest quartile,6.75,0.7988
+Largest quartile,7.0,0.7915
+Largest quartile,7.25,0.7834
+Largest quartile,7.5,0.774
+Largest quartile,7.75,0.7441
+Largest quartile,8.0,0.7115
+Largest quartile,8.25,0.6997
+Largest quartile,8.5,0.6997
+Largest quartile,8.75,0.6854
+Largest quartile,9.0,0.6854
+Largest quartile,9.25,0.6854
+Largest quartile,9.5,0.6854
+Largest quartile,9.75,0.6854
+Largest quartile,10.0,0.6854
+Largest quartile,10.25,0.6283
+Largest quartile,10.5,0.6283
+Largest quartile,10.75,0.6283
+Largest quartile,11.0,0.6283
+Largest quartile,11.25,0.6283
+Largest quartile,11.5,0.6283
+Largest quartile,11.75,0.6283
+Largest quartile,12.0,0.6283
+Largest quartile,12.25,0.6283
+Largest quartile,12.5,0.6283
+Largest quartile,12.75,0.6283
+Largest quartile,13.0,0.6283
+Ever in the top twenty,0.0,1.0
+Ever in the top twenty,0.25,1.0
+Ever in the top twenty,0.5,1.0
+Ever in the top twenty,0.75,1.0
+Ever in the top twenty,1.0,1.0
+Ever in the top twenty,1.25,1.0
+Ever in the top twenty,1.5,0.9863
+Ever in the top twenty,1.75,0.9795
+Ever in the top twenty,2.0,0.9795
+Ever in the top twenty,2.25,0.9724
+Ever in the top twenty,2.5,0.9724
+Ever in the top twenty,2.75,0.9724
+Ever in the top twenty,3.0,0.9654
+Ever in the top twenty,3.25,0.9582
+Ever in the top twenty,3.5,0.9509
+Ever in the top twenty,3.75,0.9509
+Ever in the top twenty,4.0,0.9438
+Ever in the top twenty,4.25,0.9294
+Ever in the top twenty,4.5,0.9148
+Ever in the top twenty,4.75,0.8779
+Ever in the top twenty,5.0,0.8703
+Ever in the top twenty,5.25,0.855
+Ever in the top twenty,5.5,0.847
+Ever in the top twenty,5.75,0.8307
+Ever in the top twenty,6.0,0.8123
+Ever in the top twenty,6.25,0.8123
+Ever in the top twenty,6.5,0.8123
+Ever in the top twenty,6.75,0.8123
+Ever in the top twenty,7.0,0.8024
+Ever in the top twenty,7.25,0.7921
+Ever in the top twenty,7.5,0.7686
+Ever in the top twenty,7.75,0.7442
+Ever in the top twenty,8.0,0.7316
+Ever in the top twenty,8.25,0.7316
+Ever in the top twenty,8.5,0.7316
+Ever in the top twenty,8.75,0.7316
+Ever in the top twenty,9.0,0.7316
+Ever in the top twenty,9.25,0.7316
+Ever in the top twenty,9.5,0.7316
+Ever in the top twenty,9.75,0.7045
+Ever in the top twenty,10.0,0.671
+Ever in the top twenty,10.25,0.6337
+Ever in the top twenty,10.5,0.5964
+Ever in the top twenty,10.75,0.5964
+Ever in the top twenty,11.0,0.5964
+Ever in the top twenty,11.25,0.5964
+Ever in the top twenty,11.5,0.5964
+Ever in the top twenty,11.75,0.5964
+Ever in the top twenty,12.0,0.5964
+Ever in the top twenty,12.25,0.5964
+Ever in the top twenty,12.5,0.5964
+Ever in the top twenty,12.75,0.5964
+Ever in the top twenty,13.0,0.5964

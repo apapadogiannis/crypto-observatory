@@ -79,12 +79,24 @@ def build(data: Path, out: Path) -> dict:
                 "excess": _r(trail.excess[d], 1), "capm_unexplained": _r(trail.capm[d], 1), "mcm_unexplained": _r(trail.mcm[d], 1)},
         })
 
-    census = pd.read_csv(ROOT / "data" / "census" / "ever_top20.csv", parse_dates=["death_date"])
-    dead = census[census.death == 1].assign(year=lambda x: x.death_date.dt.year)
+    census_dir = data / "census"
+    census = pd.read_csv(census_dir / "ever_top20.csv", parse_dates=["first_top", "death_date"])
+    dead = census[census.death == 1].assign(year=lambda x: x.death_date.dt.year).sort_values("death_date")
     by = dead.groupby(["year", "cat"]).size().unstack(fill_value=0)
+    census_summary = json.loads((census_dir / "summary.json").read_text())
     deaths = [{"year": int(y), "abandoned_or_delisted": int(by.loc[y].get(0, 0)) if y in by.index else 0,
                "sudden_collapse": int(by.loc[y].get(1, 0)) if y in by.index else 0}
-              for y in range(2012, int(band.index[-1].year) + 1)]
+              for y in range(2012, int(census_summary["census_date"][:4]) + 1)]
+    survival = pd.read_csv(census_dir / "survival_by_size.csv")
+    census_doc = {
+        **census_summary, "updated_monthly": False,
+        "death_rate_by_age": pd.read_csv(census_dir / "death_rate_by_age.csv").to_dict("records"),
+        "death_rate_by_size": pd.read_csv(census_dir / "death_rate_by_size.csv").to_dict("records"),
+        "survival_by_size": {g: [[float(a), float(v)] for a, v in zip(x.age, x.alive)] for g, x in survival.groupby("group", sort=False)},
+        "deaths_by_year": deaths,
+        "ever_top_twenty_deaths_list": [{"asset": r.asset, "entered_top_twenty": r.first_top.strftime("%Y-%m"), "died": r.death_date.strftime("%Y-%m-%d"),
+                                         "kind": "sudden collapse" if r.cat == 1 else "abandoned or delisted"} for r in dead.itertuples()],
+    }
 
     c = cfg["constants"]
     L = band.iloc[-1]
@@ -123,8 +135,7 @@ def build(data: Path, out: Path) -> dict:
         "comparison": {**compared, "risk_free": round(compared["risk_free"], 2),
                        "rows": [{k: (round(v, 2) if isinstance(v, float) else v) for k, v in r.items()} for r in compared["rows"]]},
         "notes": page_notes,
-        "census": {"ever_top_twenty": int(len(census)), "died": int(len(dead)), "deaths_by_year": deaths,
-                   "as_of": "2026-05-24"},
+        "census": census_doc,
     }
     out.mkdir(parents=True, exist_ok=True)
     (out / "data.json").write_text(json.dumps(doc, separators=(",", ":"), ensure_ascii=False))
@@ -159,7 +170,7 @@ def _page_payload(doc: dict) -> dict:
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],
-            "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["died"], "census_as_of": doc["census"]["as_of"],
+            "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
             "now": {"asof": ym(lt["month_end"]), "rf": w["risk_free"], "mkt": w["market"]["midpoint"], "conc": w["concentration"]["midpoint"],
                     "mort": w["mortality"]["midpoint"], "mid": lt["required"]["midpoint"], "lo": lt["required"]["lower"], "hi": lt["required"]["upper"],
                     "beta": w["market"]["beta"], "vol": w["concentration"]["volatility"], "wlo": w["concentration"]["weight_lower"],
