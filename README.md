@@ -1,5 +1,8 @@
 # Crypto observatory
 
+[![check](https://github.com/apapadogiannis/crypto-observatory/actions/workflows/check.yml/badge.svg)](https://github.com/apapadogiannis/crypto-observatory/actions/workflows/check.yml)
+[![Zenodo](https://img.shields.io/badge/Zenodo-10.5281%2Fzenodo.24403325-007ec6)](https://doi.org/10.5281/zenodo.24403325)
+
 What return should a cryptoasset's holders require, and did they get it? Recomputed every month from
 public data.
 
@@ -144,8 +147,16 @@ only outside request is for the d3 library.
 
 ## Citation
 
-> Papadogiannis, A. (2026). "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold." Working paper.
-> SSRN: https://doi.org/10.2139/ssrn.7705239
+Cite the tool and the paper whose method it uses:
+
+> Papadogiannis, A. (2026). "Crypto Observatory: required returns, risks and survival." Zenodo.
+> https://doi.org/10.5281/zenodo.24403325
+
+> Papadogiannis, A. (2026). "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold."
+> Working paper. https://doi.org/10.2139/ssrn.7705239
+
+The Zenodo DOI above is the concept DOI: it always resolves to the latest archived version. Each
+release also has its own DOI, listed on the Zenodo record.
 
 ## Disclaimer
 
