@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import inputs, mcm, tests_of_fit
+from . import compare, inputs, mcm, tests_of_fit
 
 ROOT = inputs.ROOT
 TRAILING = 36
@@ -50,6 +50,7 @@ def build(data: Path, out: Path) -> dict:
     t = tests_of_fit.monthly_test(band, mkt)
     periods = tests_of_fit.period_table(t)
     page_notes = tests_of_fit.notes(band, t, btc)
+    compared = compare.comparison(band, inputs.equity_benchmarks(data), cfg)
 
     supply = btc["SplyCur"].dropna().resample("ME").last()
     issuance = btc["IssTotNtv"].resample("ME").sum() * 12 / supply
@@ -119,6 +120,8 @@ def build(data: Path, out: Path) -> dict:
         },
         "months": months,
         "periods": [_round(p) for p in periods],
+        "comparison": {**compared, "risk_free": round(compared["risk_free"], 2),
+                       "rows": [{k: (round(v, 2) if isinstance(v, float) else v) for k, v in r.items()} for r in compared["rows"]]},
         "notes": page_notes,
         "census": {"ever_top_twenty": int(len(census)), "died": int(len(dead)), "deaths_by_year": deaths,
                    "as_of": "2026-05-24"},
@@ -152,7 +155,7 @@ def _page_payload(doc: dict) -> dict:
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
     meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"],
-            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "notes": doc["notes"],
+            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "notes": doc["notes"], "cmp": doc["comparison"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],

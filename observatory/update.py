@@ -28,7 +28,10 @@ CM_API = "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
 CM_METRICS = ["AdrBalCnt", "CapMrktCurUSD", "FlowInExUSD", "FlowOutExUSD", "IssTotNtv", "PriceUSD", "SplyCur"]
 TREASURY = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/"
             "{y}/all?type=daily_treasury_yield_curve&field_tdr_date_value={y}&page&_format=csv")
-FRENCH = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_CSV.zip"
+FRENCH_ROOT = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/"
+FRENCH = FRENCH_ROOT + "F-F_Research_Data_Factors_CSV.zip"
+FRENCH_DEVELOPED = FRENCH_ROOT + "Developed_3_Factors_CSV.zip"
+FRENCH_SIZE = FRENCH_ROOT + "Portfolios_Formed_on_ME_CSV.zip"
 OVERLAP_DAYS = 14
 TOLERANCE = 1e-6
 
@@ -106,41 +109,70 @@ def update_treasury(data: Path) -> dict:
     return {"source": "US Treasury, daily par yield curve rates", "last_observation": max(stored), "rows_added": len(stored) - before}
 
 
-def update_market(data: Path) -> dict:
-    path = data / "market" / "us_market_monthly.csv"
-    stored = _read_csv(path) if path.exists() else []
-    with zipfile.ZipFile(io.BytesIO(_get(FRENCH))) as z:
-        text = z.read(z.namelist()[0]).decode("latin-1")
-    lines = text.splitlines()
-    head = next(i for i, l in enumerate(lines) if l.replace(" ", "").startswith(",Mkt-RF"))
+def _french_table(url: str, header: str) -> tuple[list[str], list[list[str]], str]:
+    """The first monthly table of a French data library file: column names, rows, and the file's first line."""
+    with zipfile.ZipFile(io.BytesIO(_get(url))) as z:
+        lines = z.read(z.namelist()[0]).decode("latin-1").splitlines()
+    head = next(i for i, l in enumerate(lines) if l.replace(" ", "").startswith(header))
+    cols = [c.strip() for c in lines[head].split(",")]
     rows = []
     for l in lines[head + 1:]:
         p = [x.strip() for x in l.split(",")]
-        if len(p) < 5 or len(p[0]) != 6 or not p[0].isdigit():
+        if len(p) < 2 or len(p[0]) != 6 or not p[0].isdigit():
             break                                                   # the monthly table ends at the first other line
-        rows.append({"month": f"{p[0][:4]}-{p[0][4:]}", "mkt_rf": p[1], "rf": p[4]})
-    rows = [r for r in rows if r["month"] >= "2010-01"]
+        if p[0] >= "201001":
+            rows.append(p)
     if not rows:
-        raise SystemExit("French data library: no monthly rows found")
+        raise SystemExit(f"French data library: no monthly rows found in {url}")
+    return cols, rows, lines[0].strip()
+
+
+def _store_french(path: Path, rows: list[dict], fields: list[str], key: str, source: str, note: str) -> dict:
+    stored = _read_csv(path) if path.exists() else []
     old = {r["month"]: r for r in stored}
-    revised = [f"{r['month']}: stored {old[r['month']]['mkt_rf']}, now {r['mkt_rf']}" for r in rows
-               if r["month"] in old and abs(float(old[r["month"]]["mkt_rf"]) - float(r["mkt_rf"])) > 0.005]
-    _write_csv(path, rows, ["month", "mkt_rf", "rf"])
-    return {"source": "Kenneth R. French data library, Fama/French 3 factors (Mkt-RF plus RF)", "last_observation": rows[-1]["month"],
-            "rows_added": len(rows) - len(stored), "revisions": revised, "note": lines[0].strip()}
+    revised = [f"{r['month']}: stored {old[r['month']][key]}, now {r[key]}" for r in rows
+               if r["month"] in old and abs(float(old[r["month"]][key]) - float(r[key])) > 0.005]
+    _write_csv(path, rows, fields)
+    return {"source": source, "last_observation": rows[-1]["month"], "rows_added": len(rows) - len(stored), "revisions": revised, "note": note}
+
+
+def update_market(data: Path) -> dict:
+    """The US equity market: excess return and bill rate, percent a month."""
+    _, rows, note = _french_table(FRENCH, ",Mkt-RF")
+    rows = [{"month": f"{p[0][:4]}-{p[0][4:]}", "mkt_rf": p[1], "rf": p[4]} for p in rows]
+    return _store_french(data / "market" / "us_market_monthly.csv", rows, ["month", "mkt_rf", "rf"], "mkt_rf",
+                         "Kenneth R. French data library, Fama/French 3 factors (Mkt-RF plus RF)", note)
+
+
+def update_developed(data: Path) -> dict:
+    """Developed-market equities, in US dollars: excess return and bill rate, percent a month."""
+    _, rows, note = _french_table(FRENCH_DEVELOPED, ",Mkt-RF")
+    rows = [{"month": f"{p[0][:4]}-{p[0][4:]}", "mkt_rf": p[1], "rf": p[4]} for p in rows]
+    return _store_french(data / "market" / "developed_markets_monthly.csv", rows, ["month", "mkt_rf", "rf"], "mkt_rf",
+                         "Kenneth R. French data library, Fama/French developed 3 factors (Mkt-RF plus RF)", note)
+
+
+def update_small_caps(data: Path) -> dict:
+    """US small caps: the value-weighted return of the smallest 30% of companies, percent a month."""
+    cols, rows, note = _french_table(FRENCH_SIZE, ",<=0")
+    i = cols.index("Lo 30")
+    rows = [{"month": f"{p[0][:4]}-{p[0][4:]}", "ret": p[i]} for p in rows]
+    return _store_french(data / "market" / "us_small_caps_monthly.csv", rows, ["month", "ret"], "ret",
+                         "Kenneth R. French data library, portfolios formed on size, Lo 30, value-weighted", note)
 
 
 def main(argv):
     data = Path(argv[1]) if len(argv) > 1 else ROOT / "data"
-    log = {"coinmetrics": update_coinmetrics(data), "treasury": update_treasury(data), "market": update_market(data)}
+    log = {"coinmetrics": update_coinmetrics(data), "treasury": update_treasury(data), "market": update_market(data),
+           "developed_markets": update_developed(data), "us_small_caps": update_small_caps(data)}
     changed = any(v["rows_added"] for v in log.values())
     for k, v in log.items():
-        print(f"{k:12s} to {v['last_observation']}, {v['rows_added']} rows added" + (f", {len(v['revisions'])} series differ from the stored overlap" if v.get("revisions") else ""))
+        print(f"{k:18s} to {v['last_observation']}, {v['rows_added']} rows added" + (f", {len(v['revisions'])} series differ from the stored overlap" if v.get("revisions") else ""))
         for r in v.get("revisions", []):
             print("   ", r)
     # A source that has stopped must fail the run, so that the page is never rebuilt on stale data unnoticed.
     today = date.today()
-    limits = {"coinmetrics": 7, "treasury": 10, "market": 130}
+    limits = {"coinmetrics": 7, "treasury": 10, "market": 130, "developed_markets": 130, "us_small_caps": 130}
     late = []
     for k, days in limits.items():
         obs = log[k]["last_observation"]

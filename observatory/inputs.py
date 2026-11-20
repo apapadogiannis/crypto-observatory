@@ -52,3 +52,17 @@ def risk_free(data: Path) -> pd.Series:
         return f.resample("ME").last().dropna() / 100
     f = pd.read_csv(data / "rates" / "treasury_10y_monthly.csv", parse_dates=["Date"]).set_index("Date")
     return _to_month_end(f["Close"]) / 100
+
+
+def equity_benchmarks(data: Path) -> dict[str, pd.Series]:
+    """Simple monthly total returns of the equity series set beside Bitcoin, indexed by month-end."""
+    def read(name, f):
+        t = pd.read_csv(data / "market" / name)
+        s = f(t) / 100
+        s.index = pd.to_datetime(t["month"] + "-01") + pd.offsets.MonthEnd(0)
+        return s.sort_index()
+    return {
+        "US stock market": market_return(data),
+        "Developed markets": read("developed_markets_monthly.csv", lambda t: t["mkt_rf"] + t["rf"]),
+        "US small caps": read("us_small_caps_monthly.csv", lambda t: t["ret"]),
+    }

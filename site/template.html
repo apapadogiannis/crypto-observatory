@@ -53,6 +53,7 @@ h2{font-size:17px;margin:0 0 2px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:12.5px;color:var(--ink2);margin:2px 0 4px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{display:inline-block;width:14px;height:10px;border-radius:2px}
+.legend i.cd{width:11px;height:11px;border-radius:50%}
 .legend i.ln{height:0;border-top:2.5px solid;border-radius:0}
 .legend i.dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);background:var(--surface)}
 .chart{position:relative;width:100%}
@@ -112,6 +113,7 @@ text{font-family:inherit}
     <button type="button" role="tab" data-tab="overview">Overview</button>
     <button type="button" role="tab" data-tab="required-return">Required return</button>
     <button type="button" role="tab" data-tab="tests">Tests</button>
+    <button type="button" role="tab" data-tab="compared">Compared</button>
     <button type="button" role="tab" data-tab="notes">Data and notes</button>
   </nav>
 
@@ -233,6 +235,29 @@ text{font-family:inherit}
     <p class="sub">Each month's return less what the model allows, summed from the start of the period. Percentage points. A flat line means the model accounts for what Bitcoin delivered.</p>
     <div class="legend"><span><i class="ln" style="border-color:var(--orange)"></i>CAPM</span><span><i class="ln" style="border-color:var(--blue)"></i>MCM equation</span></div>
     <div class="chart" id="c-cum"></div>
+  </section>
+  </div>
+
+  <div class="pane" id="pane-compared">
+  <section class="card" id="sec-cmp">
+    <h2>Bitcoin beside equities</h2>
+    <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. Bitcoin is priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
+    <p class="sub" id="cmp-headline" style="color:var(--ink);font-weight:600"></p>
+    <div class="grid2">
+      <div class="mini"><h3>Required return: average and compound</h3><p>percent a year</p>
+        <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>average</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>compound</span><span><i class="ln" style="border-color:var(--axis)"></i>drag: the distance between them</span><span><i class="ln" style="border-color:var(--ink2);border-top-style:dashed"></i>risk-free rate</span></div>
+        <div class="chart" id="c-cmp-ret"></div></div>
+      <div class="mini"><h3>Sharpe ratio: on the average and on the compound return</h3><p>return over the risk-free rate, divided by volatility</p>
+        <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>on the average</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>on the compound</span></div>
+        <div class="chart" id="c-cmp-sh"></div></div>
+    </div>
+    <div class="scroll" style="margin-top:8px"><table id="t-cmp"></table></div>
+    <ul class="note" style="margin-top:14px">
+      <li><b>Average and compound.</b> The required return is an average across years. A position that is bought and never rebalanced grows at the compound rate, which is lower by the drag: half the variance. For a volatile asset the drag is large.</li>
+      <li><b>While it survives.</b> Bitcoin's figures are what holders require in the years the asset lives. <span id="cmp-death"></span></li>
+      <li><b>How each column is measured.</b> <span id="cmp-sample"></span> Bitcoin's beta and volatility are the ones used in its required return, with recent months weighted more. The Sharpe ratio on the compound return is descriptive: the measure is defined on average returns.</li>
+      <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Ether, gold and the Nasdaq-100, which the paper also shows, are not here yet.</li>
+    </ul>
   </section>
   </div>
 
@@ -531,6 +556,43 @@ function deathsChart(){
   grp.append("rect").attr("x",d=>x(d.y)).attr("width",x.bandwidth()).attr("y",d=>y(d.fade+d.jump)).attr("height",d=>Math.max(0,y(d.fade)-y(d.fade+d.jump)-(d.fade?2:0))).attr("fill",css("--ink"));
   grp.filter(d=>d.fade+d.jump>0).append("text").attr("x",d=>x(d.y)+x.bandwidth()/2).attr("y",d=>y(d.fade+d.jump)-5).attr("text-anchor","middle").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(d=>d.fade+d.jump);
 }
+function dumbbell(id,rows,a,b,fmt,ref,refLabel){
+  const el=document.getElementById(id), f=frame(el,54+rows.length*46,{l:narrow({iw:el.clientWidth-200})?104:132,r:34,t:22,b:24});
+  const vals=rows.flatMap(r=>[r[a],r[b]]).concat(ref==null?[]:[ref]);
+  const x=d3.scaleLinear().domain([Math.min(0,d3.min(vals)),d3.max(vals)*1.08]).nice(5).range([0,f.iw]);
+  const y=d3.scaleBand().domain(rows.map(r=>r.name)).range([0,f.ih]).padding(0.5);
+  const g=f.svg.append("g").attr("transform",`translate(${f.m.l},${f.m.t})`);
+  x.ticks(5).forEach(v=>{ g.append("line").attr("x1",x(v)).attr("x2",x(v)).attr("y1",0).attr("y2",f.ih).attr("stroke",v===0?css("--axis"):css("--line"));
+    g.append("text").attr("x",x(v)).attr("y",f.ih+16).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--mut")).text(fmt(v)); });
+  if(ref!=null){ g.append("line").attr("x1",x(ref)).attr("x2",x(ref)).attr("y1",-6).attr("y2",f.ih).attr("stroke",css("--ink2")).attr("stroke-dasharray","4 3");
+    g.append("text").attr("x",x(ref)).attr("y",-10).attr("text-anchor","middle").attr("font-size",11).attr("fill",css("--ink2")).text(refLabel); }
+  rows.forEach(r=>{ const yy=y(r.name)+y.bandwidth()/2, G=g.append("g").attr("tabindex",0);
+    G.append("text").attr("x",-10).attr("y",yy).attr("dy","0.32em").attr("text-anchor","end").attr("font-size",12.5).attr("font-weight",r.name==="Bitcoin"?650:400).attr("fill",css("--ink")).text(r.name);
+    G.append("line").attr("x1",x(r[b])).attr("x2",x(r[a])).attr("y1",yy).attr("y2",yy).attr("stroke",css("--axis")).attr("stroke-width",3);
+    G.append("circle").attr("cx",x(r[b])).attr("cy",yy).attr("r",6).attr("fill",css("--surface")).attr("stroke",css("--blue")).attr("stroke-width",2.2);
+    G.append("circle").attr("cx",x(r[a])).attr("cy",yy).attr("r",6.5).attr("fill",css("--blue")).attr("stroke",css("--surface")).attr("stroke-width",2);
+    const lo=Math.min(r[a],r[b]), hi=Math.max(r[a],r[b]), lab=(v,anchor,dx)=>G.append("text").attr("x",x(v)+dx).attr("y",yy-11).attr("text-anchor",anchor).attr("font-size",11.5).attr("font-weight",v===r[a]?650:400).attr("fill",css("--ink")).text(fmt(v));
+    if(x(hi)-x(lo)>34){ lab(lo,"middle",0); lab(hi,"middle",0); } else { lab(lo,"end",2); lab(hi,"start",-2); }
+    G.append("rect").attr("x",-f.m.l).attr("width",f.w).attr("y",y(r.name)-8).attr("height",y.bandwidth()+16).attr("fill","transparent")
+      .on("pointermove",()=>tip(r)); G.on("focus",()=>tip(r)).on("pointerleave blur",()=>f.tip.style("display","none")); });
+  function tip(r){ const n=f.tip.node(); n.textContent=""; const t=document.createElement("div"); t.className="t"; t.textContent=r.name+" · priced by the "+r.priced_by+(r.priced_by==="MCM"?" equation":""); n.appendChild(t);
+    [["beta",r.beta.toFixed(2)],["required, average",r.average.toFixed(1)+"%"],["volatility",r.volatility.toFixed(1)+"%"],["drag",r.drag.toFixed(1)+" pts"],["required, compound",r.compound.toFixed(1)+"%"],["Sharpe, on the average",r.sharpe_average.toFixed(2)],["Sharpe, on the compound",r.sharpe_compound.toFixed(2)]].forEach(([k,v])=>{const d=document.createElement("div"); d.className="r"; const l=document.createElement("span"); l.textContent=k; const b2=document.createElement("b"); b2.textContent=v; d.appendChild(l); d.appendChild(b2); n.appendChild(d);});
+    f.tip.style("display","block"); f.tip.style("left",Math.max(0,f.w-n.offsetWidth-4)+"px").style("top",(f.m.t+y(r.name)+y.bandwidth()+10)+"px"); }
+}
+function comparedTab(){
+  const c=DATA.meta.cmp, R=c.rows, b=R.find(r=>r.name==="Bitcoin"), e=R[0], when=longDateOf(c.month_end);
+  dumbbell("c-cmp-ret",R,"average","compound",v=>v.toFixed(v%1?1:0)+"%",c.risk_free,"risk-free "+c.risk_free.toFixed(1)+"%");
+  dumbbell("c-cmp-sh",R,"sharpe_average","sharpe_compound",v=>v.toFixed(2),null);
+  const T=document.getElementById("t-cmp"); T.textContent="";
+  const hr=T.insertRow(); ["Asset","Priced by","Beta","Required, average","Volatility","Drag","Required, compound","Sharpe, average","Sharpe, compound"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+  R.forEach(r=>{const tr=T.insertRow(); if(r.name==="Bitcoin") tr.className="tot";
+    [r.name,r.priced_by,r.beta.toFixed(2),r.average.toFixed(1),r.volatility.toFixed(1),r.drag.toFixed(1),r.compound.toFixed(1),r.sharpe_average.toFixed(2),r.sharpe_compound.toFixed(2)].forEach(v=>{tr.insertCell().textContent=v;});});
+  const set=(id,s)=>{document.getElementById(id).textContent=s;};
+  set("cmp-headline","At "+when+": Bitcoin requires "+b.average.toFixed(1)+"% a year on average, against "+e.average.toFixed(1)+"% for the "+e.name+". After drag the compound figures are "+b.compound.toFixed(1)+"% and "+e.compound.toFixed(1)+"%, and the Sharpe ratio on the compound return is "+b.sharpe_compound.toFixed(2)+" for Bitcoin against "+e.sharpe_compound.toFixed(2)+".");
+  set("cmp-death","Averaged over the chance of death as well, which costs "+(b.average-b.average_net_of_death).toFixed(1)+" points a year, they are "+b.average_net_of_death.toFixed(1)+"% on average and "+b.compound_net_of_death.toFixed(1)+"% compounded.");
+  set("cmp-sample","For the equity series, beta (to the US stock market) and volatility are measured on monthly returns from "+fmtM(parse(c.equity_sample.from))+" to "+fmtM(parse(c.equity_sample.to))+", and the required return uses the ten-year Treasury yield of "+c.risk_free.toFixed(2)+"%.");
+}
+const longDateOf=s=>d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(s));
 function notesText(){
   const n=DATA.meta.notes, to=fmtM(parse(n.to)), set=(id,s)=>{document.getElementById(id).textContent=s;};
   set("n-flows","In the "+n.months+" months to "+to+", against monthly issuance, net exchange flows and changes in fund holdings together, it shows no reliable link (R² "+n.flows_r2.toFixed(2)+", no coefficient with a t-statistic above "+n.flows_largest_t.toFixed(1)+").");
@@ -559,16 +621,17 @@ function draw(){
   mini("m-conc",[{k:"conc",n:"concentration term",c:"--orange"}],v=>v.toFixed(v<10?1:0));
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
-  edgesChart(); deathsChart(); eqStrip(); notesText();
+  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab();
   mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
   mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
 }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
-const TABS=["overview","required-return","tests","notes"];
+const TABS=["overview","required-return","tests","compared","notes"];
 function showTab(){
   const name=TABS.includes(location.hash.slice(1))?location.hash.slice(1):"overview";
   TABS.forEach(n=>document.getElementById("pane-"+n).classList.toggle("on",n===name));
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));
+  document.querySelector(".filters").style.display=name==="compared"?"none":"";      // this tab is a snapshot of one month-end
   draw();                                   // charts size themselves from their container, so draw once the pane is visible
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ if(location.hash.slice(1)===b.dataset.tab) return; location.hash=b.dataset.tab; }));

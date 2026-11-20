@@ -17,7 +17,7 @@ required return = risk-free rate + market risk + concentration risk + mortality 
                 = r_f + beta x ERP + gamma x sigma^2 x w + lambda x (1 - delta)
 ```
 
-The page has four tabs:
+The page has five tabs:
 
 1. **Overview.** The required return and what was delivered, by three-year period, and why the two
    differed: the premium holders required, what the equity market added beyond its own premium, and
@@ -26,7 +26,9 @@ The page has four tabs:
    (market, concentration, mortality), each with its formula and the inputs that move it.
 3. **Tests.** How much of the delivered return the CAPM explains, how much the MCM equation explains,
    and the alpha each leaves, by period and through time.
-4. **Data and notes.** Supply and holders for context, and what the page does not claim.
+4. **Compared.** Bitcoin beside the US stock market, developed markets and US small caps: average and
+   compound required returns, drag and Sharpe ratios.
+5. **Data and notes.** Supply and holders for context, and what the page does not claim.
 
 It reports required returns. It forecasts nothing.
 
@@ -55,6 +57,7 @@ nothing else.
 ```
 observatory/mcm.py            the required-return band, month by month
 observatory/tests_of_fit.py   the monthly test, CAPM and MCM alpha, shares explained
+observatory/compare.py        Bitcoin beside equities: average and compound required returns
 observatory/build.py          builds the page and the data file from the stored data
 observatory/inputs.py         reads the stored files
 observatory/update.py         downloads the latest data into data/ (the only code that uses the network)
@@ -77,6 +80,7 @@ can read it without scraping the page.
 | `latest` | the required return of the latest month, worked out term by term at both edges and the midpoint |
 | `months` | one entry per month-end: the band, the terms at the midpoint, the inputs, supply measures, and the next month's return with what each model leaves unexplained |
 | `periods` | three-year periods and the two summary samples: delivered, required, the gap and its split, the part each model explains and leaves unexplained, the regression alphas, the average beta and correlation |
+| `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
 | `census` | deaths among assets that were ever in the top twenty, by year and kind |
 
