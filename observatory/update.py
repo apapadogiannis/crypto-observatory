@@ -138,6 +138,17 @@ def main(argv):
         print(f"{k:12s} to {v['last_observation']}, {v['rows_added']} rows added" + (f", {len(v['revisions'])} series differ from the stored overlap" if v.get("revisions") else ""))
         for r in v.get("revisions", []):
             print("   ", r)
+    # A source that has stopped must fail the run, so that the page is never rebuilt on stale data unnoticed.
+    today = date.today()
+    limits = {"coinmetrics": 7, "treasury": 10, "market": 130}
+    late = []
+    for k, days in limits.items():
+        obs = log[k]["last_observation"]
+        last = date.fromisoformat(obs if len(obs) == 10 else obs + "-28")
+        if (today - last).days > days:
+            late.append(f"{k}: last observation {obs}, more than {days} days old")
+    if late:
+        raise SystemExit("Stale source. " + "; ".join(late))
     log_path = data / "sources.json"
     if changed or not log_path.exists():
         log["retrieved"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")

@@ -32,6 +32,7 @@ h1{font-size:26px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
 h2{font-size:17px;margin:0 0 2px}
 .lede{color:var(--ink2);max-width:720px;margin:0 0 6px}
 .stamp{display:inline-block;font-size:12.5px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:8px 0 18px;background:var(--surface)}
+.stale{display:none;border:1px solid #c98500;border-left-width:4px;border-radius:8px;padding:10px 14px;margin:0 0 16px;background:var(--surface);font-size:13.5px;max-width:760px}
 .sub{color:var(--ink2);font-size:13.5px;margin:0 0 10px;max-width:760px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 18px 12px;margin:0 0 16px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:0 0 16px}
@@ -56,9 +57,10 @@ h2{font-size:17px;margin:0 0 2px}
 .mini p{font-size:12.5px;color:var(--mut);margin:0}
 
 .risk{border-top:1px solid var(--line);margin-top:18px;padding-top:16px}
-.risk>h3{font-size:16px;margin:0;display:flex;align-items:center;gap:9px}
+.risk>h3{font-size:16px;margin:0;display:flex;align-items:center;gap:4px 9px;flex-wrap:wrap}
 .risk>h3 i{width:12px;height:12px;border-radius:3px;display:inline-block}
 .risk>h3 span{font-weight:400;color:var(--ink2);font-size:13.5px}
+@media (max-width:560px){.risk>h3 span{flex-basis:100%}}
 .risk>p{font-size:13.5px;color:var(--ink2);max-width:760px;margin:6px 0 8px}
 .eq{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:stretch;margin:10px 0 2px;font-variant-numeric:tabular-nums}
 .eq div{border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:104px}
@@ -98,6 +100,7 @@ text{font-family:inherit}
   <h1>Bitcoin: required and delivered return</h1>
   <p class="lede">What Bitcoin's holders should require for the risks they carry, set against what Bitcoin delivered. Built on the MCM equation: the risk-free rate plus market, concentration and mortality risk.</p>
   <div class="stamp" id="stamp"></div>
+  <div class="stale" id="stale" role="status"></div>
 
   <div class="tiles" id="tiles"></div>
 
@@ -133,7 +136,7 @@ text{font-family:inherit}
 
   <section class="card" id="sec-per">
     <h2>How much of the delivered return each model explains</h2>
-    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the S&amp;P 500's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is alpha, in the lower panel: the circle less the top of the bar.</p>
+    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the US equity market's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is alpha, in the lower panel: the circle less the top of the bar.</p>
     <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--blue)"></i>MCM alpha, with ± one standard error</span></div>
     <div class="chart" id="c-per"></div>
     <div class="scroll"><table id="t-per"></table></div>
@@ -165,8 +168,8 @@ text{font-family:inherit}
       <p>The risk Bitcoin shares with the stock market, the one risk the CAPM prices. It rises when Bitcoin moves more closely with equities.</p>
       <div class="grid2">
         <div class="mini"><h3>Market term</h3><p>points a year added to the required return</p><div class="chart" id="m-mkt"></div></div>
-        <div class="mini"><h3>Input: beta to the S&amp;P 500</h3><p>rolling four years</p><div class="chart" id="m-beta"></div></div>
-        <div class="mini"><h3>Behind beta: correlation with the S&amp;P 500</h3><p>rolling four years</p><div class="chart" id="m-corr"></div></div>
+        <div class="mini"><h3>Input: beta to the US equity market</h3><p>rolling four years</p><div class="chart" id="m-beta"></div></div>
+        <div class="mini"><h3>Behind beta: correlation with the US equity market</h3><p>rolling four years</p><div class="chart" id="m-corr"></div></div>
       </div>
     </div>
 
@@ -329,7 +332,7 @@ function perChart(){
     g.append("text").attr("x",-8).attr("y",sc(v)).attr("dy","0.32em").attr("text-anchor","end").attr("font-size",11.5).attr("fill",css("--mut")).text(fmt(v));});};
   grid(y,y.ticks(4),v=>v+"%"); grid(y2,y2.ticks(4),v=>sgn(v));
   const cap=(yy,s)=>g.append("text").attr("x",0).attr("y",yy).attr("font-size",12).attr("font-weight",600).attr("fill",css("--ink2")).text(s);
-  cap(-12,"Delivered, and what the models explain"); cap(Y2-20,"MCM alpha: delivered less explained, points a year");
+  cap(-12,"Delivered, and what the models explain"); cap(Y2-20,narrow(f)?"MCM alpha, points a year":"MCM alpha: delivered less explained, points a year");
   g.selectAll("text.x").data(P).join("text").attr("x",p=>x(p.p)+x.bandwidth()/2).attr("y",f.ih+19).attr("text-anchor","middle").attr("font-size",12).attr("fill",css("--ink2")).text(p=>narrow(f)?"’"+p.p.slice(2):p.p);
   const bw=Math.min(x.bandwidth(),64), bx=p=>x(p.p)+(x.bandwidth()-bw)/2, cx=p=>bx(p)+bw/2;
   const tipFor=(e,p)=>{const n=f.tip.node(); n.textContent="";
@@ -444,14 +447,17 @@ function deathsChart(){
 }
 function tiles(){
   const m=DATA.meta, a=DATA.per.find(p=>p.sum&&p.p.startsWith("2012")), b=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
-  const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% a year"+(m.complete?"":" · month still running")],
+  const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% a year · at the latest month-end"],
            ["Explained by the MCM equation, since 2018",b.s_mcm+"%","of Bitcoin's return over the risk-free rate · CAPM alone "+b.s_capm+"%"],
            ["Explained by the MCM equation, since 2012",a.s_mcm+"%","of Bitcoin's return over the risk-free rate · CAPM alone "+a.s_capm+"%"],
            ["MCM alpha, last three years",sgn(m.tmcm)+" pts","a year, to "+fmtM(parse(m.to))+" · CAPM alpha "+sgn(m.tcapm)]];
   const el=document.getElementById("tiles"); el.textContent="";
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c; s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
-  document.getElementById("stamp").textContent="Bitcoin · data to "+d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(m.data_to));
-  document.getElementById("asof").textContent="Dates of the data: prices and the Treasury yield to "+d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(m.data_to))+"; equity market returns, and so the tests, to "+fmtM(parse(m.market_to))+" (the beta is carried forward from that month); ownership survey to "+fmtM(parse(m.anchors.ownership_survey))+"; fund and treasury holdings to "+fmtM(parse(m.anchors.fund_and_treasury_holdings))+", held flat after.";
+  const day=d3.timeParse("%Y-%m-%d"), longDate=d3.timeFormat("%-d %B %Y"), monthEnd=day(m.month_end);
+  document.getElementById("stamp").textContent="Bitcoin · month-end "+longDate(monthEnd)+" · updated monthly";
+  const age=Math.floor((Date.now()-monthEnd.getTime())/864e5), stale=document.getElementById("stale");
+  if(age>50){ stale.textContent="These figures are for "+longDate(monthEnd)+", "+age+" days ago. The monthly update has not run since, so they may be out of date."; stale.style.display="block"; }
+  document.getElementById("asof").textContent="Dates of the data: prices and the Treasury yield to "+longDate(monthEnd)+"; equity market returns, and so the tests, to "+fmtM(parse(m.market_to))+" (the beta is carried forward from that month); ownership survey to "+fmtM(parse(m.anchors.ownership_survey))+"; fund and treasury holdings to "+fmtM(parse(m.anchors.fund_and_treasury_holdings))+", held flat after.";
 }
 function draw(){
   bandChart(); termsChart(); perChart(); trailChart(); cumChart();

@@ -30,15 +30,16 @@ def build(data: Path, out: Path) -> dict:
     mkt = inputs.market_return(data)
     band = mcm.required_return_band(btc, mkt, inputs.risk_free(data), cfg)
     band = band[band.index >= "2012-01-01"].dropna(subset=["midpoint"])
+    # The page is dated at the last complete month-end: a month in progress is left out.
+    last_day = btc["PriceUSD"].dropna().index[-1]
+    month_complete = last_day == last_day + pd.offsets.MonthEnd(0)
+    if not month_complete:
+        band = band.iloc[:-1]
     t = tests_of_fit.monthly_test(band, mkt)
     periods = tests_of_fit.period_table(t)
 
-    last_day = btc["PriceUSD"].dropna().index[-1]
-    month_complete = last_day == last_day + pd.offsets.MonthEnd(0)
     supply = btc["SplyCur"].dropna().resample("ME").last()
     issuance = btc["IssTotNtv"].resample("ME").sum() * 12 / supply
-    if not month_complete:
-        issuance.iloc[-1] = np.nan          # a partial month's total is not comparable
     fund_share = band["fund_btc"] / supply.reindex(band.index)
     roll = lambda s: 1200 * s.rolling(TRAILING).mean()
     trail = pd.DataFrame({"excess": roll(t.excess), "capm": roll(t.capm_unexplained), "mcm": roll(t.mcm_unexplained)})
@@ -78,7 +79,6 @@ def build(data: Path, out: Path) -> dict:
         "meta": {
             "asset": "btc", "name": "Bitcoin",
             "data_to": last_day.strftime("%Y-%m-%d"), "latest_month_end": band.index[-1].strftime("%Y-%m-%d"),
-            "latest_month_complete": bool(month_complete),
             "units": "percent a year unless stated; next_month figures are percent a month",
             "method": "Papadogiannis (2026), Bitcoin's Required Return. https://doi.org/10.2139/ssrn.7705239",
             "equity_market_to": mkt.dropna().index[-1].strftime("%Y-%m"),
@@ -136,7 +136,7 @@ def _page_payload(doc: dict) -> dict:
             "s_capm": round(p["explained_capm"]), "s_mcm": round(p["explained_mcm"])} for p in doc["periods"]]
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
-    meta = {"data_to": doc["meta"]["data_to"], "complete": doc["meta"]["latest_month_complete"],
+    meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"],
             "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
