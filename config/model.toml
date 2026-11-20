@@ -49,3 +49,4 @@ anchor_date          = "2021-09-30"   # the survey date the holder weight is car
 "2024-06-30" = 1.15
 "2025-06-30" = 2.1
 "2026-06-30" = 2.5
+"2026-11-20" = 2.51        # Bitcoin Treasuries, 20 Nov 2026: public companies 1,238,887 BTC; nine largest US Bitcoin ETFs 1,268,740 BTC
