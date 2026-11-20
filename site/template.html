@@ -138,6 +138,38 @@ td{white-space:nowrap}
 table.now td:first-child{white-space:normal}
 tr.tot td{font-weight:650;border-top:1.5px solid var(--axis)}
 .scroll{overflow-x:auto}
+.chart svg{touch-action:pan-y}
+.swipe{display:none}
+/* phones: the same content, laid out for a narrow screen. Nothing here applies above 640px. */
+@media (max-width:640px){
+  .wrap{padding:16px 12px 48px}
+  .card{padding:14px 14px 10px;border-radius:9px}
+  h1{font-size:23px}
+  .lede{font-size:15px}
+  .site{margin-bottom:16px;padding-bottom:10px;gap:8px}
+  .site .brand small{display:none}
+  .site nav{margin-left:0;width:100%;gap:2px}
+  .site nav button{flex:1;padding:6px 4px;font-size:13.5px;white-space:nowrap}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-left:-12px;margin-right:-12px;padding:0 12px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{white-space:nowrap;padding:9px 11px;flex:none}
+  .filters .hint{display:none}
+  .tiles{grid-template-columns:1fr 1fr;gap:8px}
+  .tile{padding:10px 12px}
+  .tile .v{font-size:23px}
+  .tile .k,.tile .n{font-size:12px}
+  .scroll{margin-right:-14px;padding-right:14px;-webkit-overflow-scrolling:touch}
+  .scroll table{font-size:12.5px}
+  .scroll th,.scroll td{padding:6px 5px}
+  #t-grave td:last-child{white-space:normal}
+  .scroll th:first-child,.scroll td:first-child{position:sticky;left:0;z-index:1;background:var(--surface);padding-left:2px}
+  #t-erp td:first-child,#t-size td:first-child,#t-cmp td:first-child,table.now td:first-child{white-space:normal;max-width:132px}
+  .scroll.more th:first-child,.scroll.more td:first-child{box-shadow:6px 0 6px -6px rgba(0,0,0,.28)}
+  .swipe{font-size:11.5px;color:var(--mut);margin:8px 0 2px;text-align:right}
+  .scroll.more + .swipe,.swipe.on{display:block}
+  .eq div{min-width:0;padding:7px 10px}
+  .formula{font-size:16px}
+}
 .note{font-size:13.5px;color:var(--ink2);max-width:760px}
 .note li{margin:0 0 6px}
 footer{font-size:12.5px;color:var(--mut);margin-top:22px;max-width:820px}
@@ -171,7 +203,7 @@ text{font-family:inherit}
       <button type="button" data-from="2012" aria-pressed="true">Since 2012</button>
       <button type="button" data-from="2018" aria-pressed="false">Since 2018</button>
     </div>
-    <span>applies to every chart and table</span>
+    <span class="hint">applies to every chart and table</span>
   </div>
 
   <div class="pane" id="pane-overview">
@@ -481,6 +513,23 @@ text{font-family:inherit}
 const DATA=__DATA__;
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const parse=d3.timeParse("%Y-%m"), fmtM=d3.timeFormat("%b %Y");
+// On a touch screen a tap shows a chart's reading, and it stays until the next tap.
+{ const on=d3.selection.prototype.on; let pending=null;
+  d3.selection.prototype.on=function(type,fn,...rest){
+    if(typeof type==="string"&&typeof fn==="function"){
+      if(/pointerleave/.test(type)){ const leave=fn; fn=function(ev,...a){ if(ev&&ev.pointerType==="touch"){ pending=()=>leave.call(this,{},...a); return; } return leave.call(this,ev,...a); }; }
+      if(/pointermove/.test(type)&&!/pointerdown/.test(type)) type+=" pointerdown";
+    }
+    return on.call(this,type,fn,...rest); };
+  document.addEventListener("pointerdown",ev=>{ if(ev.pointerType==="touch"&&pending){ const p=pending; pending=null; try{p();}catch(e){} } },true); }
+function markScroll(){
+  document.querySelectorAll(".scroll").forEach(s=>{
+    if(!s.nextElementSibling||!s.nextElementSibling.classList.contains("swipe")){ const n=document.createElement("div"); n.className="swipe"; n.textContent="swipe the table sideways for more columns →"; s.after(n); }
+    const more=s.scrollWidth>s.clientWidth+4; s.classList.toggle("more",more&&s.scrollLeft+s.clientWidth<s.scrollWidth-4);
+    s.nextElementSibling.classList.toggle("on",more);
+    if(!s.dataset.w){ s.dataset.w=1; s.addEventListener("scroll",()=>s.classList.toggle("more",s.scrollLeft+s.clientWidth<s.scrollWidth-4),{passive:true}); } });
+  const cur=document.querySelector('.tabs button[aria-selected="true"]'); if(cur&&cur.parentNode.scrollWidth>cur.parentNode.clientWidth) cur.scrollIntoView({block:"nearest",inline:"center"});
+}
 DATA.rows.forEach(r=>{r.t=parse(r.asof); r.tr=parse(r.d); r.erp0=DATA.meta.erp.assumed; r.dmid=r.mid2==null?null:r.mid2-r.mid;});   // t: month-end the required return is set at; tr: month the return is earned in
 let FROM="2012";
 const sgn=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(0);
@@ -556,7 +605,7 @@ function bandChart(){
     const lab=(yy,s,w)=>{pg.append("text").attr("x",xc+10).attr("y",yy).attr("dy","0.32em").attr("font-size",12).attr("font-weight",w).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(s);};
     const close=Math.abs(y(p.real)-y(p.mid))<15, up=y(p.real)<=y(p.mid);
     lab(y(p.real)+(close&&!up?12:close?-6:0),p.real.toFixed(0)+"%",650);
-    pg.append("text").attr("x",x1).attr("y",y(p.mid)+(close&&!up?-9:15)).attr("text-anchor","end").attr("font-size",12).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(p.mid.toFixed(0)+"%"); });
+    if(!narrow(f)) pg.append("text").attr("x",x1).attr("y",y(p.mid)+(close&&!up?-9:15)).attr("text-anchor","end").attr("font-size",12).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(p.mid.toFixed(0)+"%"); });
   // the right-hand end of the band is the required return now
   const L=d[d.length-1], xe=f.iw, ng=g.append("g").style("pointer-events","none");
   ng.append("line").attr("x1",xe+7).attr("x2",xe+7).attr("y1",y(L.hi)).attr("y2",y(L.lo)).attr("stroke",css("--ink")).attr("stroke-width",1.3);
@@ -953,7 +1002,7 @@ function draw(){
   mini("m-conc",[{k:"conc",n:"concentration term",c:"--orange"}],v=>v.toFixed(v<10?1:0));
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
-  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard();
+  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard(); markScroll();
   mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
   mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
 }
