@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this tool or its data file, please cite it as below, together with the paper whose method it uses."
+title: "Crypto Observatory: required returns, risks and survival"
+type: software
+authors:
+  - family-names: Papadogiannis
+    given-names: Agisilaos
+    orcid: "https://orcid.org/0009-0002-7753-7052"
+date-released: 2026-11-20
+version: "1.0.0"
+license: MIT
+repository-code: "https://github.com/apapadogiannis/crypto-observatory"
+url: "https://apapadogiannis.github.io/crypto-observatory/"
+references:
+  - type: article
+    title: "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold"
+    authors:
+      - family-names: Papadogiannis
+        given-names: Agisilaos
+    year: 2026
+    doi: "10.2139/ssrn.7705239"
+    notes: "Working paper"
