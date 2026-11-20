@@ -135,11 +135,12 @@ text{font-family:inherit}
 
   <section class="card" id="sec-why">
     <h2>Why delivered differed from required</h2>
-    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, taken in three steps. First, the premium its holders required for market, concentration and mortality risk. Second, what the equity market added: equities delivered more, or less, than the 4% a year the equation assumes, and Bitcoin moved with them in proportion to its beta. Third, alpha: what is left. The circle is what Bitcoin delivered. Percent a year.</p>
-    <div class="legend"><span><i style="background:var(--blue)"></i>required premium</span><span><i style="background:var(--violet)"></i>equity market beyond its 4% premium, times beta</span><span><i style="background:var(--ink2)"></i>alpha</span><span><i class="dot"></i>delivered</span></div>
+    <p class="sub">Read each period in two moves. <b>First, the gap.</b> The blue bar is the premium holders required over the risk-free rate, and the circle is what Bitcoin delivered. The black line between them is the gap: delivered minus required. <b>Then, where the gap came from.</b> Part of it came with the equity market: equities paid more, or less, than the 4% a year the equation assumes, and Bitcoin moves with them in proportion to its beta. The rest is alpha, the part specific to Bitcoin. Percent a year.</p>
+    <p class="sub" id="why-example" style="color:var(--ink);font-weight:600"></p>
+    <div class="legend"><span><i style="background:var(--blue)"></i>required premium</span><span><i class="dot"></i>delivered</span><span><i class="ln" style="border-color:var(--ink)"></i>gap: delivered minus required</span><span><i style="background:var(--violet)"></i>of the gap: came with the equity market</span><span><i style="background:var(--ink2)"></i>of the gap: alpha, specific to Bitcoin</span></div>
     <div class="chart" id="c-why"></div>
     <div class="scroll"><table id="t-why"></table></div>
-    <p class="sub" style="margin-top:10px">This split is the observatory's own reading and is not in the paper, which reports the two tests shown under Tests. It is arithmetic on the same quantities, with no new estimate. It depends on the 4% equity premium, which is a convention: a higher premium would move points from the second step to the first.</p>
+    <p class="sub" style="margin-top:10px">The gap is the paper's monthly test, and alpha is the alpha of its regression test (both under Tests). Showing one inside the other is the observatory's own reading and involves no new estimate. The split depends on the 4% equity premium, which is a convention: with a higher premium, more of the gap would count as required and less as coming with the equity market.</p>
   </section>
 
   </div>
@@ -384,31 +385,41 @@ function perChart(){
     p=>[p.p,p.ex.toFixed(0),p.mk.toFixed(0),p.cm.toFixed(0),sgn(p.alpha),"±"+p.se.toFixed(0),sgn(p.calpha),sh(p.s_capm),sh(p.s_mcm)]);
 }
 function whyChart(){
-  const el=document.getElementById("c-why"), f=frame(el,340,{l:44,r:14,t:26,b:30}), P=periods();
-  const x=d3.scaleBand().domain(P.map(p=>p.p)).range([0,f.iw]).padding(narrow(f)?0.18:0.3);
-  const steps=p=>{const a=[{k:"required premium",c:"--blue",y0:0,y1:p.prem},{k:"equity market beyond its premium",c:"--violet",y0:p.prem,y1:p.prem+p.eq},{k:"alpha",c:"--ink2",y0:p.prem+p.eq,y1:p.ex}]; a.forEach(s=>s.v=s.y1-s.y0); return a;};
-  const all=P.flatMap(p=>steps(p).flatMap(s=>[s.y0,s.y1]));
-  const y=d3.scaleLinear().domain([Math.min(0,d3.min(all)),d3.max(all)*1.12]).nice(4).range([f.ih,0]);
+  const el=document.getElementById("c-why"), f=frame(el,360,{l:44,r:14,t:26,b:30}), P=periods();
+  const x=d3.scaleBand().domain(P.map(p=>p.p)).range([0,f.iw]).padding(narrow(f)?0.12:0.22);
+  const all=P.flatMap(p=>[0,p.prem,p.prem+p.eq,p.ex]);
+  const y=d3.scaleLinear().domain([Math.min(0,d3.min(all)),d3.max(all)*1.15]).nice(4).range([f.ih,0]);
   const g=axes(f,{},y,{yfmt:v=>v+"%"});
   g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(0)).attr("y2",y(0)).attr("stroke",css("--axis"));
   g.selectAll("text.x").data(P).join("text").attr("x",p=>x(p.p)+x.bandwidth()/2).attr("y",f.ih+19).attr("text-anchor","middle").attr("font-size",12).attr("fill",css("--ink2")).text(p=>narrow(f)?"’"+p.p.slice(2):p.p);
+  const gapOf=p=>p.ex-p.prem;
   const tipFor=(e,p)=>{const n=f.tip.node(); n.textContent="";
     const t=document.createElement("div"); t.className="t"; t.textContent=p.p+" · "+p.n+" months"; n.appendChild(t);
-    [["required premium",sgn(p.prem)],["equity market beyond its premium × beta",sgn(p.eq)],["alpha",sgn(p.alpha)],["delivered over risk-free",sgn(p.ex)],["standard error of alpha","±"+p.se.toFixed(0)]].forEach(([k,v])=>{const r=document.createElement("div"); r.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v+" pts"; r.appendChild(l); r.appendChild(b); n.appendChild(r);});
+    [["required premium",p.prem.toFixed(0)],["delivered over risk-free",p.ex.toFixed(0)],["gap: delivered minus required",sgn(gapOf(p))],["  came with the equity market",sgn(p.eq)],["  alpha, specific to Bitcoin",sgn(p.alpha)],["  standard error of alpha","±"+p.se.toFixed(0)]].forEach(([k,v])=>{const r=document.createElement("div"); r.className="r"; const l=document.createElement("span"); l.textContent=k; const b=document.createElement("b"); b.textContent=v+" pts"; r.appendChild(l); r.appendChild(b); n.appendChild(r);});
     f.tip.style("display","block"); const X=f.m.l+x(p.p)+x.bandwidth()+8, tw=n.offsetWidth; f.tip.style("left",Math.max(0,(X+tw>f.w?f.m.l+x(p.p)-tw-8:X))+"px").style("top",(f.m.t+4)+"px");};
   const grp=g.selectAll("g.p").data(P).join("g").attr("tabindex",0).on("pointermove focus",(e,p)=>tipFor(e,p)).on("pointerleave blur",()=>f.tip.style("display","none"));
   grp.append("rect").attr("x",p=>x(p.p)).attr("width",x.bandwidth()).attr("y",0).attr("height",f.ih).attr("fill","transparent");
-  const bw=x.bandwidth()/3.6, gap=bw*0.15;
-  grp.each(function(p){ const G=d3.select(this), x0=x(p.p)+(x.bandwidth()-(3*bw+2*gap))/2;
-    steps(p).forEach((s,i)=>{ const xx=x0+i*(bw+gap), top=y(Math.max(s.y0,s.y1)), h=Math.max(1.5,Math.abs(y(s.y0)-y(s.y1)));
-      G.append("rect").attr("x",xx).attr("width",bw).attr("y",top).attr("height",h).attr("fill",css(s.c)).attr("rx",2);
-      if(i<2) G.append("line").attr("x1",xx+bw).attr("x2",xx+bw+gap).attr("y1",y(s.y1)).attr("y2",y(s.y1)).attr("stroke",css("--mut")).attr("stroke-width",1);
-      if(!narrow(f)||i==2) G.append("text").attr("x",xx+bw/2).attr("y",(s.v>=0?top:top+h)+(s.v>=0?-5:13)).attr("text-anchor","middle").attr("font-size",11.5).attr("font-weight",i==2?650:400).attr("fill",css("--ink")).text(sgn(s.v)); });
-    const xe=x0+3*bw+2*gap;
-    G.append("line").attr("x1",x0+2*(bw+gap)+bw).attr("x2",xe+7).attr("y1",y(p.ex)).attr("y2",y(p.ex)).attr("stroke",css("--ink")).attr("stroke-width",1.2);
-    G.append("circle").attr("cx",xe+12).attr("cy",y(p.ex)).attr("r",5).attr("fill",css("--surface")).attr("stroke",css("--ink")).attr("stroke-width",2); });
-  table("t-why",["Period","Delivered over risk-free","Required premium","Equity market effect","Alpha","Standard error of alpha"],
-    p=>[p.p,p.ex.toFixed(0),p.prem.toFixed(0),sgn(p.eq),sgn(p.alpha),"±"+p.se.toFixed(0)]);
+  const W=x.bandwidth(), bw=W*0.30, sw=W*0.13, sg=W*0.035, wide=!narrow(f);
+  grp.each(function(p){ const G=d3.select(this), x0=x(p.p)+W*0.04, xs=x0+bw+sg*2, xg=xs+2*sw+sg*3, yp=y(p.prem), ye=y(p.ex);
+    const txt=(xx,yy,s,o={})=>G.append("text").attr("x",xx).attr("y",yy).attr("text-anchor",o.a||"middle").attr("font-size",o.z||11.5).attr("font-weight",o.w||400).attr("fill",css(o.c||"--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(s);
+    // required
+    G.append("rect").attr("x",x0).attr("width",bw).attr("y",yp).attr("height",Math.max(1,y(0)-yp)).attr("fill",css("--blue")).attr("rx",2);
+    txt(x0+bw/2,yp-6,p.prem.toFixed(0));
+    // the required level carried across, so the gap can be read against it
+    G.append("line").attr("x1",x0+bw).attr("x2",xg+6).attr("y1",yp).attr("y2",yp).attr("stroke",css("--blue")).attr("stroke-width",1.2).attr("stroke-dasharray","3 3");
+    // the two parts of the gap
+    [{v:p.eq,y0:p.prem,c:"--violet"},{v:p.alpha,y0:p.prem+p.eq,c:"--ink2"}].forEach((s,i)=>{ const xx=xs+i*(sw+sg), top=y(Math.max(s.y0,s.y0+s.v)), h=Math.max(1.5,Math.abs(y(s.y0)-y(s.y0+s.v)));
+      G.append("rect").attr("x",xx).attr("width",sw).attr("y",top).attr("height",h).attr("fill",css(s.c)).attr("rx",2);
+      if(wide) txt(xx+sw/2,s.v>=0?top-5:top+h+12,sgn(s.v),{z:10.5,c:"--ink2"}); });
+    // the gap itself: from the required level to the delivered circle
+    G.append("line").attr("x1",xg).attr("x2",xg).attr("y1",yp).attr("y2",ye).attr("stroke",css("--ink")).attr("stroke-width",2);
+    G.append("circle").attr("cx",xg).attr("cy",ye).attr("r",5).attr("fill",css("--surface")).attr("stroke",css("--ink")).attr("stroke-width",2);
+    const up=gapOf(p)>=0, lab=(wide?"gap ":"")+sgn(gapOf(p));
+    if(wide) txt(xg+10,ye+4,lab,{w:650,z:12,a:"start"}); else txt(xg,up?ye-10:ye+18,lab,{w:650,z:12}); });
+  table("t-why",["Period","Required premium","Delivered","Gap","of which equities","of which alpha","Standard error of alpha"],
+    p=>[p.p,p.prem.toFixed(0),p.ex.toFixed(0),sgn(gapOf(p)),sgn(p.eq),sgn(p.alpha),"±"+p.se.toFixed(0)]);
+  const s=totals().slice(-1)[0];
+  document.getElementById("why-example").textContent=(s.p.startsWith("2018")?"Since 2018":"Since 2012")+": holders required "+s.prem.toFixed(0)+" and Bitcoin delivered "+s.ex.toFixed(0)+", a gap of "+sgn(gapOf(s))+". Of that gap, "+sgn(s.eq)+" came with the equity market and "+sgn(s.alpha)+" is alpha.";
 }
 function lines(id,h,d,S,fmt,endfmt){
   const el=document.getElementById(id), f=frame(el,h,{l:50,r:46,t:12,b:26});
