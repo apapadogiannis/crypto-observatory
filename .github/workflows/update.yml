@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-24.04
@@ -43,9 +47,23 @@ jobs:
           git commit -m "Data to $(python3 -I -c "import json; print(json.load(open('_site/data.json'))['meta']['data_to'])")"
           git push
 
-      - name: Upload the built page
-        uses: actions/upload-artifact@v7
+      - name: Hand the built page to GitHub Pages
+        uses: actions/upload-pages-artifact@v5
         with:
-          name: site
           path: _site/
-          retention-days: 30
+
+  publish:
+    needs: update
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish the page
+        id: deployment
+        uses: actions/deploy-pages@v5
