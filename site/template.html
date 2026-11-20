@@ -48,6 +48,39 @@ h2{font-size:17px;margin:0 0 2px}
 .site nav button[aria-current="page"]{color:var(--surface);background:var(--ink)}
 .site nav button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 .view{display:none}.view.on{display:block}
+.paper{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;margin:-10px 0 22px;padding:10px 14px;border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:8px;background:var(--surface);font-size:13.5px;color:var(--ink2)}
+.paper b{color:var(--ink);font-weight:650}
+.paper a{color:var(--blue);white-space:nowrap}
+.formula{font-size:19px;line-height:2.1;font-weight:600;margin:6px 0 2px}
+.formula span{white-space:nowrap;padding:5px 9px;border-radius:7px;border:1px solid var(--line);border-bottom-width:3px}
+.formula em{font-style:normal;color:var(--mut);font-weight:400;padding:0 3px}
+.lab2{display:grid;grid-template-columns:1fr 1fr;gap:18px 30px;align-items:start}
+@media (max-width:820px){.lab2{grid-template-columns:1fr}}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.presets button{font:inherit;font-size:13.5px;color:var(--ink2);background:var(--surface);border:1px solid var(--axis);border-radius:999px;padding:5px 12px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.presets button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.term{border-left:3px solid var(--line);padding:2px 0 2px 14px;margin:0 0 18px}
+.term h3{margin:0 0 2px;font-size:15px}
+.term h3 span{font-weight:400;color:var(--mut);font-size:13px;margin-left:6px}
+.term p{margin:0 0 8px;font-size:13.5px;color:var(--ink2);max-width:520px}
+.term .calc{font-size:13.5px;font-variant-numeric:tabular-nums;color:var(--ink);margin:6px 0 0}
+.term .calc b{font-weight:650}
+.sl{display:grid;grid-template-columns:minmax(120px,1fr) minmax(110px,1.3fr) 64px;gap:10px;align-items:center;font-size:13.5px;margin:4px 0}
+.sl output{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.sl input{width:100%;accent-color:var(--ink)}
+.result{position:sticky;top:8px;border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface);z-index:2}
+@media (max-width:820px){.result{order:-1;top:0;border-radius:0 0 10px 10px;box-shadow:0 6px 14px -10px rgba(0,0,0,.45)}}
+.result .big{font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.result .big small{font-size:13px;font-weight:400;color:var(--mut);margin-left:8px}
+.stack{display:flex;gap:2px;height:26px;margin:12px 0 10px;background:var(--line);border-radius:5px;overflow:hidden}
+.stack i{display:block;height:100%;min-width:0;transition:flex-basis .15s}
+.rrow{display:grid;grid-template-columns:14px 1fr auto;gap:8px;align-items:center;font-size:13.5px;padding:3px 0;font-variant-numeric:tabular-nums}
+.rrow i{width:10px;height:10px;border-radius:2px}
+.rrow b{font-weight:600}
+.cmp2{display:none;font-size:13px;color:var(--ink2);margin:0}
+@media (max-width:820px){.result{padding:10px 14px}.result .big{font-size:26px}.result .stack{height:18px;margin:8px 0 6px}.result #eqn-rows{display:grid;grid-template-columns:1fr 1fr;column-gap:16px}.result .rrow{font-size:12.5px;padding:1px 0}.result .cmp{display:none}.cmp2{display:block}}
+.result .cmp{margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--ink2)}
 .tabs{display:flex;gap:2px;flex-wrap:wrap;border-bottom:1px solid var(--axis);margin:0 0 16px}
 .tabs button{font:inherit;font-size:14.5px;color:var(--ink2);background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;margin-bottom:-1px;cursor:pointer}
 .tabs button[aria-selected="true"]{color:var(--ink);font-weight:650;border-bottom-color:var(--ink)}
@@ -116,8 +149,12 @@ text{font-family:inherit}
 <div class="wrap">
   <header class="site">
     <div class="brand">Crypto Observatory<small>required returns, risks and survival</small></div>
-    <nav aria-label="Sections"><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="census">Census of deaths</button></nav>
+    <nav aria-label="Sections"><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="equation">The equation</button><button type="button" data-view="census">Census of deaths</button></nav>
   </header>
+  <div class="paper"><span>Every number here follows the paper <b>"Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold"</b>, A. Papadogiannis (2026), working paper.</span>
+    <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Read the paper (SSRN)</a>
+    <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">Replication package</a>
+    <a href="https://doi.org/10.5281/zenodo.24003938" target="_blank" rel="noopener">Archive (Zenodo)</a></div>
 
   <div class="view" id="view-bitcoin">
   <h1>Bitcoin: required and delivered return</h1>
@@ -298,6 +335,72 @@ text{font-family:inherit}
   </section>
   </div>
 
+  </div>
+
+  <div class="view" id="view-equation">
+  <h1>The MCM equation</h1>
+  <p class="lede">Every required return on this site comes from one equation. It is the CAPM plus the two risks the CAPM assumes away: that the holder has a lot of her wealth in one asset, and that the asset can die.</p>
+
+  <section class="card">
+    <h2>The equation</h2>
+    <p class="formula">required return <em>=</em> <span style="border-bottom-color:var(--rf)">risk-free rate</span> <em>+</em> <span style="border-bottom-color:var(--violet)">β × equity premium</span> <em>+</em> <span style="border-bottom-color:var(--orange)">γ × σ² × w</span> <em>+</em> <span style="border-bottom-color:var(--aqua)">λ × (1 − δ)</span></p>
+    <div class="legend" style="margin-top:10px"><span><i style="background:var(--rf)"></i>what a safe bond pays</span><span><i style="background:var(--violet)"></i><span style="display:inline"><b>M</b>arket risk</span></span><span><i style="background:var(--orange)"></i><span style="display:inline"><b>C</b>oncentration risk</span></span><span><i style="background:var(--aqua)"></i><span style="display:inline"><b>M</b>ortality risk</span></span></div>
+    <p class="sub" style="margin-top:12px">It answers one question: what return must holders expect, a year, to be willing to keep the asset, given the risks they carry? It is a required return at a date and for a holder. It is not a forecast of what the asset will do. Section 2 of the paper derives it.</p>
+  </section>
+
+  <section class="card">
+    <h2>Build a required return</h2>
+    <p class="sub">Pick a case, then move any slider. The cases use this site's own data for <span id="eqn-when"></span>.</p>
+    <div class="presets" id="eqn-presets"></div>
+    <p class="sub" id="eqn-case" style="margin:6px 0 16px;min-height:2.6em"></p>
+    <div class="lab2">
+      <div>
+        <div class="term" style="border-left-color:var(--rf)">
+          <h3>Risk-free rate</h3>
+          <p>What the holder earns with no risk at all: the yield on a ten-year Treasury bond. Everything else is paid on top of it.</p>
+          <label class="sl"><span>Risk-free rate</span><input type="range" id="eqn-rf" min="0" max="10" step="0.01"><output></output></label>
+        </div>
+        <div class="term" style="border-left-color:var(--violet)">
+          <h3>Market risk <span>β × equity premium</span></h3>
+          <p>The asset falls when equities fall, and that cannot be diversified away. Beta (β) says by how much: 1 means it moves one for one with the equity market. Equities are taken to pay 4% a year over the risk-free rate, a convention. This term alone is the CAPM.</p>
+          <label class="sl"><span>Beta, β</span><input type="range" id="eqn-beta" min="0" max="3" step="0.01"><output></output></label>
+          <div class="calc" id="eqn-c-mkt"></div>
+        </div>
+        <div class="term" style="border-left-color:var(--orange)">
+          <h3>Concentration risk <span>γ × σ² × w</span></h3>
+          <p>The CAPM assumes every holder is diversified. Bitcoin's holders are not: it is a large share of their wealth, so they carry its own ups and downs and must be paid for it. The pay grows with the share held (w), with the asset's variance (σ², volatility squared), and with how much the holder dislikes risk (γ, about 1 to 3 for households).</p>
+          <label class="sl"><span>Holder's weight, w</span><input type="range" id="eqn-w" min="0" max="100" step="0.1"><output></output></label>
+          <label class="sl"><span>Volatility, σ</span><input type="range" id="eqn-vol" min="0" max="160" step="0.1"><output></output></label>
+          <label class="sl"><span>Risk aversion, γ</span><input type="range" id="eqn-gam" min="0.5" max="4" step="0.1"><output></output></label>
+          <div class="calc" id="eqn-c-conc"></div>
+        </div>
+        <div class="term" style="border-left-color:var(--aqua)">
+          <h3>Mortality risk <span>λ × (1 − δ)</span></h3>
+          <p>The CAPM also assumes the asset cannot die. Cryptoassets do. The holder must be paid the loss she can expect: the chance the asset dies in a year (λ) times the share of her money lost if it does (1 − δ, where δ is what she recovers). The <a href="#census">census of deaths</a> measures both.</p>
+          <label class="sl"><span>Chance of death a year, λ</span><input type="range" id="eqn-p" min="0" max="20" step="0.05"><output></output></label>
+          <label class="sl"><span>Share lost at death, 1 − δ</span><input type="range" id="eqn-loss" min="0" max="100" step="1"><output></output></label>
+          <div class="calc" id="eqn-c-mort"></div>
+        </div>
+      </div>
+      <div class="result" aria-live="polite">
+        <div class="big"><span id="eqn-total"></span><small>required return a year</small></div>
+        <div class="stack" id="eqn-stack"></div>
+        <div id="eqn-rows"></div>
+        <p class="cmp" id="eqn-cmp"></p>
+      </div>
+      <p class="cmp2" id="eqn-cmp2"></p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>From one holder to the band</h2>
+    <ul class="note">
+      <li><b>One holder here, a range on the Bitcoin page.</b> Risk aversion and the holder's weight are not measured exactly, so the Bitcoin page shows a band. Its lower edge is the holder through a fund and its upper edge the surveyed owner, the two Bitcoin cases above, with the market term taken 15% lower and 15% higher. Before 2017 the early holder usually set the upper edge. The <a href="#required-return">Required return</a> tab shows this month by month.</li>
+      <li><b>Each term rests on an established result.</b> The market term is the CAPM. The concentration term is the standard portfolio-choice condition (Merton 1969), read as a price when only some investors hold the asset (Merton 1987). The mortality term is the usual compensation for a jump: probability times loss (Merton 1976).</li>
+      <li><b>It reduces to the CAPM.</b> When the asset cannot die and holders are diversified, the last two terms vanish. That is the stock index fund case above.</li>
+      <li><b>It is tested.</b> The <a href="#tests">Tests</a> tab sets the equation against what Bitcoin delivered, month by month since 2012.</li>
+    </ul>
+  </section>
   </div>
 
   <div class="view" id="view-census">
@@ -672,6 +775,50 @@ function comparedTab(){
   set("cmp-sample","For the equity series, beta (to the US stock market) and volatility are measured on monthly returns from "+fmtM(parse(c.equity_sample.from))+" to "+fmtM(parse(c.equity_sample.to))+", and the required return uses the ten-year Treasury yield of "+c.risk_free.toFixed(2)+"%.");
 }
 const longDateOf=s=>d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(s));
+let EQN=null;
+function equationView(){
+  const n=DATA.meta.now, old=DATA.rows.find(r=>r.asof==="2012-12"), $=id=>document.getElementById(id), ERP=4;
+  const K=["rf","beta","w","vol","gam","p","loss"];
+  const CASES=[
+    {id:"btc-hi",n:"Bitcoin, surveyed owner",v:{rf:n.rf,beta:n.beta,w:n.whi,vol:n.vol,gam:2.8,p:3.5,loss:100},
+     t:"The average owner in surveys, read cautiously: Bitcoin at "+n.whi.toFixed(1)+"% of her financial wealth, risk aversion 2.8, and every death of a top-twenty asset counted as a total loss."},
+    {id:"btc-lo",n:"Bitcoin, through a fund",v:{rf:n.rf,beta:n.beta,w:n.wlo,vol:n.vol,gam:1.0,p:0.3,loss:95},
+     t:"The average holder once fund and company-treasury investors are counted: Bitcoin at "+n.wlo.toFixed(1)+"% of wealth, risk aversion 1.0, and only sudden collapses counted as deaths."},
+    {id:"floor",n:"Bitcoin at a negligible weight",v:{rf:n.rf,beta:n.beta,w:0,vol:n.vol,gam:2,p:1.9,loss:100},
+     t:"What the paper calls the floor: a holder for whom Bitcoin is too small a share to matter. Concentration falls to zero; market and mortality risk remain (mortality at the midpoint of its two readings)."},
+    {id:"early",n:"An early holder, January 2013",v:{rf:old.rf,beta:0,w:old.we,vol:old.vol,gam:1.0,p:0,loss:100},
+     t:"In 2013 most coins sat with a few people for whom Bitcoin was nearly everything they owned, at a volatility of "+old.vol.toFixed(0)+"%. For a holder with all her wealth in one asset the paper prices its whole variance in one term, which already includes market and mortality risk, so those two are set to zero here."},
+    {id:"index",n:"A stock index fund",v:{rf:n.rf,beta:1,w:0,vol:16,gam:2,p:0,loss:100},
+     t:"A diversified holder of the whole equity market. No single asset is a large share of her wealth and the market does not die, so the last two terms vanish and the equation is the CAPM."}];
+  if(!EQN){
+    EQN={v:{...CASES[0].v},c:CASES[0].id};
+    const P=$("eqn-presets");
+    CASES.forEach(c=>{const b=document.createElement("button"); b.type="button"; b.textContent=c.n; b.dataset.c=c.id; b.addEventListener("click",()=>{EQN.v={...c.v}; EQN.c=c.id; show();}); P.appendChild(b);});
+    K.forEach(k=>$("eqn-"+k).addEventListener("input",e=>{EQN.v[k]=+e.target.value; EQN.c=null; show();}));
+  }
+  $("eqn-when").textContent=fmtM(parse(n.asof));
+  const f1=v=>v.toFixed(1), f2=v=>v.toFixed(2);
+  function show(){
+    const v=EQN.v, c=CASES.find(x=>x.id===EQN.c);
+    document.querySelectorAll("#eqn-presets button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===EQN.c));
+    $("eqn-case").textContent=c?c.t:"Your own case. Pick one of the cases above to return to the site's data.";
+    const fm={rf:x=>f2(x)+"%",beta:f2,w:x=>f1(x)+"%",vol:x=>f1(x)+"%",gam:f1,p:x=>f2(x)+"%",loss:x=>x.toFixed(0)+"%"};
+    K.forEach(k=>{const i=$("eqn-"+k); if(+i.value!==v[k]) i.value=v[k]; i.parentNode.querySelector("output").textContent=fm[k](v[k]);});
+    const mkt=v.beta*ERP, conc=v.gam*Math.pow(v.vol/100,2)*v.w, mort=v.p*v.loss/100, tot=v.rf+mkt+conc+mort;
+    const calc=(id,parts,val)=>{const el=$(id); el.textContent=parts+" = "; const b=document.createElement("b"); b.textContent=f1(val)+" points a year"; el.appendChild(b);};
+    calc("eqn-c-mkt",f2(v.beta)+" × "+ERP+"%",mkt);
+    calc("eqn-c-conc",f1(v.gam)+" × "+(v.vol/100).toFixed(3)+"² × "+f1(v.w)+"%",conc);
+    calc("eqn-c-mort",f2(v.p)+"% × "+v.loss.toFixed(0)+"%",mort);
+    $("eqn-total").textContent=f1(tot)+"%";
+    const T=[["Risk-free rate","--rf",v.rf],["Market risk","--violet",mkt],["Concentration risk","--orange",conc],["Mortality risk","--aqua",mort]];
+    const S=$("eqn-stack"), R=$("eqn-rows"), scale=Math.max(40,tot); S.textContent=""; R.textContent="";
+    T.forEach(([name,col,val])=>{ if(val>0){const i=document.createElement("i"); i.style.background=css(col); i.style.flex="0 0 calc("+(100*val/scale)+"% - 2px)"; i.title=name+": "+f1(val); S.appendChild(i);}
+      const r=document.createElement("div"); r.className="rrow"; const k=document.createElement("i"); k.style.background=css(col); const l=document.createElement("span"); l.textContent=name; const b=document.createElement("b"); b.textContent=f1(val); r.appendChild(k); r.appendChild(l); r.appendChild(b); R.appendChild(r); });
+    const capm=v.rf+mkt, extra=conc+mort;
+    $("eqn-cmp2").textContent=$("eqn-cmp").textContent="The CAPM alone would say "+f1(capm)+"%. "+(extra<0.05?"Here the two added risks are zero, so the MCM equation and the CAPM agree.":"Concentration and mortality add "+f1(extra)+" points"+(c&&c.id.startsWith("btc")?". The band on the Bitcoin page for "+fmtM(parse(n.asof))+" runs from "+f1(n.lo)+"% to "+f1(n.hi)+"%.":"."));
+  }
+  show();
+}
 function ageLab(a,short){ const mo=v=>Math.round(v*12);
   if(a.age_to<=1) return mo(a.age_from)+"–"+mo(a.age_to)+(short?"m":" months");
   return a.age_from+"–"+a.age_to+(short?"y":" years"); }
@@ -778,15 +925,15 @@ function draw(){
   mini("m-conc",[{k:"conc",n:"concentration term",c:"--orange"}],v=>v.toFixed(v<10?1:0));
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
-  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView();
+  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView();
   mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
   mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
 }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
 const TABS=["overview","required-return","tests","compared","notes"];
 function showTab(){
-  const h=location.hash.slice(1), view=h==="census"?"census":"bitcoin";
-  ["bitcoin","census"].forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));
+  const h=location.hash.slice(1), view=h==="census"||h==="equation"?h:"bitcoin";
+  ["bitcoin","census","equation"].forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));
   document.querySelectorAll(".site nav button").forEach(b=>{ if(b.dataset.view===view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
   const name=TABS.includes(h)?h:"overview";
   TABS.forEach(n=>document.getElementById("pane-"+n).classList.toggle("on",n===name));
@@ -795,7 +942,7 @@ function showTab(){
   draw();                                   // charts size themselves from their container, so draw once the pane is visible
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ if(location.hash.slice(1)===b.dataset.tab) return; location.hash=b.dataset.tab; }));
-document.querySelectorAll(".site nav button").forEach(b=>b.addEventListener("click",()=>{ const to=b.dataset.view==="census"?"census":"overview"; if(location.hash.slice(1)!==to) location.hash=to; }));
+document.querySelectorAll(".site nav button").forEach(b=>b.addEventListener("click",()=>{ const to=b.dataset.view==="bitcoin"?"overview":b.dataset.view; if(location.hash.slice(1)!==to) location.hash=to; }));
 window.addEventListener("hashchange",()=>{showTab(); window.scrollTo(0,0);});
 tiles(); showTab();
 let rt; window.addEventListener("resize",()=>{clearTimeout(rt); rt=setTimeout(draw,120);});

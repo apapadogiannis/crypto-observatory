@@ -17,7 +17,7 @@ required return = risk-free rate + market risk + concentration risk + mortality 
                 = r_f + beta x ERP + gamma x sigma^2 x w + lambda x (1 - delta)
 ```
 
-The site has two sections. **Bitcoin** has five tabs:
+The site has three sections: Bitcoin, the equation and the census of deaths. **Bitcoin** has five tabs:
 
 1. **Overview.** The required return and what was delivered, by three-year period, and why the two
    differed: the premium holders required, what the equity market added beyond its own premium, and
@@ -29,6 +29,10 @@ The site has two sections. **Bitcoin** has five tabs:
 4. **Compared.** Bitcoin beside the US stock market, developed markets and US small caps: average and
    compound required returns, drag and Sharpe ratios.
 5. **Data and notes.** Supply and holders for context, and what the page does not claim.
+
+**The equation** explains the MCM equation term by term, with sliders: start from one of five cases
+taken from the site's own data (two Bitcoin holders, Bitcoin at a negligible weight, an early holder in
+2013, a stock index fund) and see the required return rebuild as the inputs move.
 
 **Census of deaths** shows how often cryptoassets die, by age and by size, how long they last, and
 every death among the assets that were ever in the top twenty. It is where the mortality term of the
