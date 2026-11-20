@@ -146,7 +146,7 @@ text{font-family:inherit}
 
   <section class="card" id="sec-band">
     <h2>The required return, and what Bitcoin delivered</h2>
-    <p class="sub">The band and its midpoint are the equation at each month-end. A single month's return is too noisy to set beside them, so the comparison is by three-year period, named along the top and separated by dotted lines. In each period the circle is the average delivered return and the thick blue bar is the average required return (midpoint) over the same months. The last period is shorter while it is still running. Percent a year, log scale.</p>
+    <p class="sub">The band and its midpoint are the equation at each month-end. A single month's return is too noisy to set beside them, so the comparison is by three-year period, named along the top and separated by dotted lines. In each period the circle is the average delivered return and the thick blue bar is the average required return (midpoint) over the same months. The last period is shorter while it is still running. The dot at the right-hand end is the required return now, with its band. Percent a year, log scale.</p>
     <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i style="background:var(--blue);height:5px"></i>required, three-year average</span><span><i class="dot"></i>delivered, three-year average</span></div>
     <div class="chart" id="c-band"></div>
     <div class="scroll"><table id="t-gap"></table></div>
@@ -421,7 +421,7 @@ function table(id,head,rowsOf){
   periods().concat(totals()).forEach(p=>{const r=T.insertRow(); if(p.n>36) r.className="tot"; rowsOf(p).forEach(v=>{r.insertCell().textContent=v;});});
 }
 function bandChart(){
-  const el=document.getElementById("c-band"), f=frame(el,376,{l:44,r:14,t:30,b:26}), d=rows(), P=periods();
+  const el=document.getElementById("c-band"), wide=el.clientWidth>=520, f=frame(el,376,{l:44,r:wide?104:58,t:30,b:26}), d=rows(), P=periods();
   const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
   const hiMax=Math.max(d3.max(d,r=>r.hi),d3.max(P,p=>p.real));
   const y=d3.scaleLog().domain([5,hiMax*1.12]).range([f.ih,0]).clamp(true);
@@ -441,6 +441,15 @@ function bandChart(){
     const close=Math.abs(y(p.real)-y(p.mid))<15, up=y(p.real)<=y(p.mid);
     lab(y(p.real)+(close&&!up?12:close?-6:0),p.real.toFixed(0)+"%",650);
     pg.append("text").attr("x",x1).attr("y",y(p.mid)+(close&&!up?-9:15)).attr("text-anchor","end").attr("font-size",12).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(p.mid.toFixed(0)+"%"); });
+  // the right-hand end of the band is the required return now
+  const L=d[d.length-1], xe=f.iw, ng=g.append("g").style("pointer-events","none");
+  ng.append("line").attr("x1",xe+7).attr("x2",xe+7).attr("y1",y(L.hi)).attr("y2",y(L.lo)).attr("stroke",css("--ink")).attr("stroke-width",1.3);
+  [L.hi,L.lo].forEach(v=>ng.append("line").attr("x1",xe+3).attr("x2",xe+11).attr("y1",y(v)).attr("y2",y(v)).attr("stroke",css("--ink")).attr("stroke-width",1.3));
+  ng.append("circle").attr("cx",xe).attr("cy",y(L.mid)).attr("r",5).attr("fill",css("--blue")).attr("stroke",css("--surface")).attr("stroke-width",2);
+  const nt=(yy,s,size,w,c)=>ng.append("text").attr("x",xe+16).attr("y",yy).attr("dy","0.32em").attr("font-size",size).attr("font-weight",w).attr("fill",css(c)).text(s);
+  nt(y(L.mid)-15,wide?"now, "+fmtM(L.t):"now",11.5,600,"--ink2");
+  nt(y(L.mid)+1,L.mid.toFixed(1)+"%",wide?15:13,700,"--ink");
+  if(wide){ nt(y(L.hi)-9,L.hi.toFixed(1)+"%",11,400,"--mut"); nt(y(L.lo)+10,L.lo.toFixed(1)+"%",11,400,"--mut"); }
   table("t-gap",["Period","Delivered","Required, midpoint","Gap","Standard error of the gap"],p=>[p.p,p.real.toFixed(0),p.mid.toFixed(0),sgn(p.gap),"±"+p.gse.toFixed(0)]);
 }
 function termsChart(){
