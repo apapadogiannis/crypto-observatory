@@ -505,6 +505,7 @@ text{font-family:inherit}
     <p id="asof"></p>
     <p>Data: Coin Metrics community data (CC BY-NC 4.0); the US equity market return from the Kenneth R. French data library; the implied equity premium by month from Aswath Damodaran (NYU Stern); the ten-year yield from the US Treasury's daily par yield curve rates; survey and filing anchors as cited in the paper. The paper itself used an S&amp;P 500 ETF and the CBOE ten-year yield index, so figures here can differ slightly from the paper's. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>.</p>
     <p>Built and maintained by <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a>, whose other research, with its data and code, is listed on that page.</p>
+    <p>© <span id="copy-year">2026</span> Agisilaos Papadogiannis. The text, charts and numbers of this site, including <a href="data.json" target="_blank" rel="noopener">data.json</a>, may be reused with credit under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. The code is under the <a href="https://github.com/apapadogiannis/crypto-observatory/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>. The source data keep their own terms: Coin Metrics community data are CC BY-NC 4.0, for non-commercial use.</p>
     <p>Independent research, for informational and academic purposes only. Not financial, investment, tax or legal advice, and not a recommendation to buy or sell any financial instrument.</p>
   </footer>
 </div>
@@ -987,6 +988,7 @@ function tiles(){
   const el=document.getElementById("tiles"); el.textContent="";
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c; s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
   const day=d3.timeParse("%Y-%m-%d"), longDate=d3.timeFormat("%-d %B %Y"), monthEnd=day(m.month_end);
+  document.getElementById("copy-year").textContent=DATA.meta.data_to.slice(0,4)==="2026"?"2026":"2026–"+DATA.meta.data_to.slice(0,4);
   document.getElementById("stamp").textContent="Bitcoin · month-end "+longDate(monthEnd)+" · updated monthly";
   { const n=DATA.meta.now, s=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
     document.getElementById("lede-btc").textContent=n.mid.toFixed(1)+"% a year at the end of "+d3.timeFormat("%B %Y")(parse(n.asof))+", for the market, concentration and mortality risk they carry."

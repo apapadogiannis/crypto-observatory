@@ -118,6 +118,8 @@ def build(data: Path, out: Path) -> dict:
         "meta": {
             "asset": "btc", "name": "Bitcoin",
             "author": "Agisilaos Papadogiannis, https://github.com/apapadogiannis",
+            "license": "CC BY 4.0 for the numbers in this file, https://creativecommons.org/licenses/by/4.0/. Cite the tool and the paper. "
+                       "The source data keep their own terms; Coin Metrics community data are CC BY-NC 4.0.",
             "data_to": last_day.strftime("%Y-%m-%d"), "latest_month_end": band.index[-1].strftime("%Y-%m-%d"),
             "units": "percent a year unless stated; next_month figures are percent a month",
             "method": "Papadogiannis (2026), Bitcoin's Required Return. https://doi.org/10.2139/ssrn.7705239",

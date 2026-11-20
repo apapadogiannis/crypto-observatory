@@ -140,11 +140,13 @@ only outside request is for the d3 library.
 
 ## Data and licensing
 
+- Copyright (c) 2026 Agisilaos Papadogiannis.
 - Code: MIT License.
-- The page's numbers (`data.json`): CC BY 4.0, cite the paper.
+- The page's text, charts and numbers (`data.json`): CC BY 4.0. Cite the tool and the paper.
 - Coin Metrics community data in `data/coinmetrics`: CC BY-NC 4.0, non-commercial use with
   attribution. It is not covered by the two licenses above.
 - Equity market returns in `data/market`: copyright Kenneth R. French.
+- Implied equity premium in `data/market`: Aswath Damodaran, NYU Stern, used with attribution.
 - Other sources are listed in `data/README.md`.
 
 ## Citation
