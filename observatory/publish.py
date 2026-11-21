@@ -139,6 +139,13 @@ A public page and a set of data files, updated on the third of each month. This 
 where the files are and how to read them. It holds no figures: fetch them each time, because they
 change.
 
+## What to give first
+
+The figure people come for is the latest required return. Whatever the question, state it first,
+read from `latest` in data.json or from the guide: the midpoint, the band, the month-end it is dated,
+and its four parts (risk-free rate, market, concentration and mortality risk). If no question is
+asked, give that and the delivered-against-required comparison since 2018 from periods.csv.
+
 ## Steps
 
 1. Fetch the guide and read it first: {SITE}llms.txt
