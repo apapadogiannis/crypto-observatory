@@ -50,7 +50,7 @@ want to change the model:
 - datapackage.json: the licence, the citation and the meaning of every column.
 
 All files are at https://apapadogiannis.github.io/crypto-observatory/ (for example https://apapadogiannis.github.io/crypto-observatory/months.csv). In the repository the same
-files are under api/, except data.json, which exists only on the site.
+files are under api/.
 
 ## How to read the figures
 
@@ -60,13 +60,15 @@ files are under api/, except data.json, which exists only on the site.
 - `required_*` is what holders should require, set at the month-end. It is not a forecast of what
   Bitcoin will return.
 - "Delivered" figures in periods.csv are average monthly returns times twelve. They are arithmetic
-  averages, on the same basis as the required return, and not compound or buy-and-hold returns,
-  which are lower. Do not report them as what an investor earned a year.
+  averages, on the same basis as the required return, and not compound or buy-and-hold returns.
+  Do not report them as what an investor earned a year.
 - A period runs from the first to the last month-end at which a required return is set. The
   returns are those of the following months, so "2018 to 2026" means returns from February 2018.
 - `gap` is delivered less required at the midpoint. "Unexplained" is narrower: it also takes out
   what came with the equity market beyond the 4% premium, that is, delivered less required less
   beta x (equity market return less risk-free rate less 4%). The two answer different questions.
+- `delivered_compound` in periods.csv is the compound return over the same months, for a reader
+  who asks what holding earned.
   The paper calls the regression intercept alpha; it is reported separately.
 - Period averages of the required return are taken after converting each month's annual rate to a
   monthly return, so they differ a little from a plain average of months.csv.
@@ -87,7 +89,9 @@ files are under api/, except data.json, which exists only on the site.
 - Any asset other than Bitcoin.
 - Cryptoasset deaths after 2026-05-24.
 - Commercial reuse of the underlying Coin Metrics series: see the licence below.
-- What an investor earned: the files hold monthly returns and their averages, not a compound return.
+- What an investor earned, from `delivered`: use `delivered_compound`.
+- A mismatch between files: every file of one build states the same "data to" date. If two files
+  you fetched disagree on it, one is a cached copy; fetch again.
 
 ## Source, licence and credit
 

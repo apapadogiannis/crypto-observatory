@@ -65,7 +65,8 @@ PERIOD_FIELDS = [
     ("to", "yearmonth", "Last such month-end; the last return in the period is that of the month after it"),
     ("summary", "boolean", "True for the two summary samples (whole sample, and since 2018), False for the three-year periods; the last period is shorter"),
     ("months", "integer", "Number of months"),
-    ("delivered", "number", "Average monthly return times twelve, percent a year. An arithmetic average, not a compound or buy-and-hold return, which is lower"),
+    ("delivered", "number", "Average monthly return times twelve, percent a year. An arithmetic average, not a compound or buy-and-hold return: see delivered_compound"),
+    ("delivered_compound", "number", "Compound return over the same months, percent a year: what holding through the period earned. It differs from delivered in both directions: volatility lowers it, and compounding months within the year raises it when returns are large. Shown for reference; the tests compare averages, not this figure"),
     ("required_mid", "number", "Average required return at the midpoint, percent a year. Each month's annual rate is converted to a one-month return, exp(rate/12) - 1, before averaging and multiplying by twelve, so it is on the same basis as delivered. It is therefore not the plain average of required_midpoint in months.csv and can lie below the middle of the two edges"),
     ("required_lower", "number", "Average required return at the lower edge, percent a year, converted in the same way"),
     ("required_upper", "number", "Average required return at the upper edge, percent a year, converted in the same way"),
@@ -89,7 +90,8 @@ PERIOD_FIELDS = [
     ("regression_mcm_se", "number", "Its standard error"),
 ]
 DEATH_FIELDS = [
-    ("asset", "string", "Ticker of the asset as in the Coin Metrics data, in lower case (ust is TerraUSD, luna is Terra, ftt is the FTX token)"),
+    ("asset", "string", "Ticker of the asset as in the Coin Metrics data, in lower case"),
+    ("name", "string", "Name of the asset in the Coin Metrics catalogue on 21 November 2026. A name can be newer than the event: the asset that collapsed in May 2022 as Terra (luna) is listed as Terra Classic"),
     ("entered_top_twenty", "yearmonth", "Month it first entered the top twenty by trading volume"),
     ("died", "date", "Date of death as classified in the paper's census"),
     ("kind", "string", "Kind of death: abandoned or delisted, or sudden collapse"),
@@ -143,10 +145,10 @@ def publish(doc: dict, dirs: list[Path]) -> list[dict]:
     periods = []
     for p in doc["periods"]:
         reg = p.get("regression") or {}
-        periods.append([p[k] for k, _, _ in PERIOD_FIELDS[:23]]
+        periods.append([p[k] for k, _, _ in PERIOD_FIELDS[:24]]
                        + [(reg.get("capm") or {}).get("alpha"), (reg.get("capm") or {}).get("se"),
                           (reg.get("mcm") or {}).get("alpha"), (reg.get("mcm") or {}).get("se")])
-    deaths = [[d["asset"], d["entered_top_twenty"], d["died"], d["kind"]] for d in c["ever_top_twenty_deaths_list"]]
+    deaths = [[d["asset"], d["name"], d["entered_top_twenty"], d["died"], d["kind"]] for d in c["ever_top_twenty_deaths_list"]]
 
     w = L["worked"]
     whole = next((p for p in doc["periods"] if p["summary"]), None)
@@ -220,7 +222,7 @@ want to change the model:
 - datapackage.json: the licence, the citation and the meaning of every column.
 
 All files are at {SITE} (for example {SITE}months.csv). In the repository the same
-files are under api/, except data.json, which exists only on the site.
+files are under api/.
 
 ## How to read the figures
 
@@ -230,13 +232,15 @@ files are under api/, except data.json, which exists only on the site.
 - `required_*` is what holders should require, set at the month-end. It is not a forecast of what
   Bitcoin will return.
 - "Delivered" figures in periods.csv are average monthly returns times twelve. They are arithmetic
-  averages, on the same basis as the required return, and not compound or buy-and-hold returns,
-  which are lower. Do not report them as what an investor earned a year.
+  averages, on the same basis as the required return, and not compound or buy-and-hold returns.
+  Do not report them as what an investor earned a year.
 - A period runs from the first to the last month-end at which a required return is set. The
   returns are those of the following months, so "2018 to 2026" means returns from February 2018.
 - `gap` is delivered less required at the midpoint. "Unexplained" is narrower: it also takes out
   what came with the equity market beyond the 4% premium, that is, delivered less required less
   beta x (equity market return less risk-free rate less 4%). The two answer different questions.
+- `delivered_compound` in periods.csv is the compound return over the same months, for a reader
+  who asks what holding earned.
   The paper calls the regression intercept alpha; it is reported separately.
 - Period averages of the required return are taken after converting each month's annual rate to a
   monthly return, so they differ a little from a plain average of months.csv.
@@ -257,7 +261,9 @@ files are under api/, except data.json, which exists only on the site.
 - Any asset other than Bitcoin.
 - Cryptoasset deaths after {c['census_date']}.
 - Commercial reuse of the underlying Coin Metrics series: see the licence below.
-- What an investor earned: the files hold monthly returns and their averages, not a compound return.
+- What an investor earned, from `delivered`: use `delivered_compound`.
+- A mismatch between files: every file of one build states the same "data to" date. If two files
+  you fetched disagree on it, one is a cached copy; fetch again.
 
 ## Source, licence and credit
 

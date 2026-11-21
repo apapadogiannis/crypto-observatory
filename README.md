@@ -20,7 +20,7 @@ live page's address.
 
 | File | Content |
 |---|---|
-| `data.json` (on the live page) | every number on the page, under plain names |
+| `api/data.json` | every number on the page, under plain names |
 | `api/months.csv` | one row per month-end: the required-return band, its terms and inputs |
 | `api/periods.csv` | one row per period: delivered and required return, and what each model explains |
 | `api/census_deaths.csv` | every cryptoasset that was ever in the top twenty by trading volume and died |

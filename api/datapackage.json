@@ -229,7 +229,12 @@
      {
       "name": "delivered",
       "type": "number",
-      "description": "Average monthly return times twelve, percent a year. An arithmetic average, not a compound or buy-and-hold return, which is lower"
+      "description": "Average monthly return times twelve, percent a year. An arithmetic average, not a compound or buy-and-hold return: see delivered_compound"
+     },
+     {
+      "name": "delivered_compound",
+      "type": "number",
+      "description": "Compound return over the same months, percent a year: what holding through the period earned. It differs from delivered in both directions: volatility lowers it, and compounding months within the year raises it when returns are large. Shown for reference; the tests compare averages, not this figure"
      },
      {
       "name": "required_mid",
@@ -352,7 +357,12 @@
      {
       "name": "asset",
       "type": "string",
-      "description": "Ticker of the asset as in the Coin Metrics data, in lower case (ust is TerraUSD, luna is Terra, ftt is the FTX token)"
+      "description": "Ticker of the asset as in the Coin Metrics data, in lower case"
+     },
+     {
+      "name": "name",
+      "type": "string",
+      "description": "Name of the asset in the Coin Metrics catalogue on 21 November 2026. A name can be newer than the event: the asset that collapsed in May 2022 as Terra (luna) is listed as Terra Classic"
      },
      {
       "name": "entered_top_twenty",

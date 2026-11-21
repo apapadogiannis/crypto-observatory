@@ -1,37 +1,37 @@
-asset,entered_top_twenty,died,kind
-ltl,2013-07,2014-12-01,abandoned or delisted
-fct,2015-10,2021-07-31,abandoned or delisted
-lbc,2016-07,2021-09-30,abandoned or delisted
-ppt,2019-03,2021-11-28,abandoned or delisted
-etp,2017-10,2022-01-31,abandoned or delisted
-ncash,2018-02,2022-01-31,abandoned or delisted
-zb,2019-03,2022-02-28,abandoned or delisted
-wtc,2017-09,2022-04-26,abandoned or delisted
-ust,2022-04,2022-05-12,sudden collapse
-luna,2021-08,2022-05-12,sudden collapse
-qash,2017-11,2022-07-31,abandoned or delisted
-qc,2019-03,2022-08-24,abandoned or delisted
-ftt,2021-09,2022-11-10,sudden collapse
-mith,2018-04,2023-03-31,abandoned or delisted
-qsp,2017-11,2023-05-31,abandoned or delisted
-seele,2019-12,2023-07-31,abandoned or delisted
-vtc,2014-01,2023-08-01,abandoned or delisted
-mda,2018-10,2023-09-30,abandoned or delisted
-bts,2014-08,2024-06-30,abandoned or delisted
-ae,2019-09,2024-10-31,abandoned or delisted
-bcn,2014-05,2024-10-31,abandoned or delisted
-omg,2017-08,2025-02-24,abandoned or delisted
-key,2018-06,2025-04-30,abandoned or delisted
-loom,2023-09,2025-05-07,abandoned or delisted
-xem,2015-04,2025-05-19,abandoned or delisted
-btg,2017-10,2025-06-30,abandoned or delisted
-lina,2023-06,2025-06-30,abandoned or delisted
-pda,2024-02,2025-06-30,abandoned or delisted
-yfii,2020-09,2025-07-31,abandoned or delisted
-flow,2021-07,2025-09-22,abandoned or delisted
-mxc,2024-04,2025-09-30,abandoned or delisted
-stmx,2023-07,2025-10-31,abandoned or delisted
-nano,2018-02,2025-12-31,abandoned or delisted
-icp,2021-08,2026-01-21,abandoned or delisted
-hifi,2023-09,2026-01-31,abandoned or delisted
-sushi,2020-09,2026-03-31,abandoned or delisted
+asset,name,entered_top_twenty,died,kind
+ltl,Lithuanian Litas,2013-07,2014-12-01,abandoned or delisted
+fct,Factom,2015-10,2021-07-31,abandoned or delisted
+lbc,LBRY Credits,2016-07,2021-09-30,abandoned or delisted
+ppt,Populous,2019-03,2021-11-28,abandoned or delisted
+etp,Metaverse ETP,2017-10,2022-01-31,abandoned or delisted
+ncash,Nitro Network,2018-02,2022-01-31,abandoned or delisted
+zb,ZB,2019-03,2022-02-28,abandoned or delisted
+wtc,Waltonchain,2017-09,2022-04-26,abandoned or delisted
+ust,TerraClassicUSD,2022-04,2022-05-12,sudden collapse
+luna,Terra Classic,2021-08,2022-05-12,sudden collapse
+qash,QASH,2017-11,2022-07-31,abandoned or delisted
+qc,Qcash,2019-03,2022-08-24,abandoned or delisted
+ftt,FTX Token,2021-09,2022-11-10,sudden collapse
+mith,Mithril,2018-04,2023-03-31,abandoned or delisted
+qsp,Quantstamp,2017-11,2023-05-31,abandoned or delisted
+seele,Seele,2019-12,2023-07-31,abandoned or delisted
+vtc,Vertcoin,2014-01,2023-08-01,abandoned or delisted
+mda,Moeda Loyalty Points,2018-10,2023-09-30,abandoned or delisted
+bts,BitShares,2014-08,2024-06-30,abandoned or delisted
+ae,Aeternity,2019-09,2024-10-31,abandoned or delisted
+bcn,Bytecoin,2014-05,2024-10-31,abandoned or delisted
+omg,OMG Network,2017-08,2025-02-24,abandoned or delisted
+key,SelfKey,2018-06,2025-04-30,abandoned or delisted
+loom,Loom Network,2023-09,2025-05-07,abandoned or delisted
+xem,NEM,2015-04,2025-05-19,abandoned or delisted
+btg,Bitcoin Gold,2017-10,2025-06-30,abandoned or delisted
+lina,Linear,2023-06,2025-06-30,abandoned or delisted
+pda,PlayDapp,2024-02,2025-06-30,abandoned or delisted
+yfii,DFI.Money,2020-09,2025-07-31,abandoned or delisted
+flow,Flow,2021-07,2025-09-22,abandoned or delisted
+mxc,MXC,2024-04,2025-09-30,abandoned or delisted
+stmx,StormX,2023-07,2025-10-31,abandoned or delisted
+nano,Nano (New),2018-02,2025-12-31,abandoned or delisted
+icp,Internet Computer,2021-08,2026-01-21,abandoned or delisted
+hifi,Hifi Finance,2023-09,2026-01-31,abandoned or delisted
+sushi,SushiSwap,2020-09,2026-03-31,abandoned or delisted

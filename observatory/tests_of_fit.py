@@ -84,7 +84,8 @@ def summarize(t: pd.DataFrame) -> dict:
     gap = t.ret - t.required_mid
     return {
         "months": n,
-        "delivered": a(t.ret), "required_mid": a(t.required_mid),
+        "delivered": a(t.ret), "delivered_compound": float(100 * ((1 + t.ret).prod() ** (12 / n) - 1)),
+        "required_mid": a(t.required_mid),
         "required_lower": a(t.required_lower), "required_upper": a(t.required_upper),
         "gap": a(gap), "gap_se": se(gap),
         "excess": a(t.excess), "market_part": a(t.market_part),

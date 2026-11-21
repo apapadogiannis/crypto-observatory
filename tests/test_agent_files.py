@@ -38,6 +38,7 @@ for row, m in zip(months, doc["months"]):
     assert (row["next_month_return"] == "") == (m["next_month"] is None)
 for row, p in zip(periods, doc["periods"]):
     assert row["period"] == p["period"] and float(row["delivered"]) == p["delivered"]
+    assert float(row["delivered_compound"]) == p["delivered_compound"]
     assert float(row["explained_mcm"]) == p["explained_mcm"]
 assert len(deaths) == doc["census"]["ever_top_twenty_deaths"] == len(doc["census"]["ever_top_twenty_deaths_list"])
 

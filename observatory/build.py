@@ -101,13 +101,14 @@ def build(data: Path, out: Path) -> dict:
                "sudden_collapse": int(by.loc[y].get(1, 0)) if y in by.index else 0}
               for y in range(2012, int(census_summary["census_date"][:4]) + 1)]
     survival = pd.read_csv(census_dir / "survival_by_size.csv")
+    names = dict(pd.read_csv(census_dir / "asset_names.csv").fillna("").itertuples(index=False, name=None))
     census_doc = {
         **census_summary, "updated_monthly": False,
         "death_rate_by_age": pd.read_csv(census_dir / "death_rate_by_age.csv").to_dict("records"),
         "death_rate_by_size": pd.read_csv(census_dir / "death_rate_by_size.csv").to_dict("records"),
         "survival_by_size": {g: [[float(a), float(v)] for a, v in zip(x.age, x.alive)] for g, x in survival.groupby("group", sort=False)},
         "deaths_by_year": deaths,
-        "ever_top_twenty_deaths_list": [{"asset": r.asset, "entered_top_twenty": r.first_top.strftime("%Y-%m"), "died": r.death_date.strftime("%Y-%m-%d"),
+        "ever_top_twenty_deaths_list": [{"asset": r.asset, "name": names.get(r.asset, ""), "entered_top_twenty": r.first_top.strftime("%Y-%m"), "died": r.death_date.strftime("%Y-%m-%d"),
                                          "kind": "sudden collapse" if r.cat == 1 else "abandoned or delisted"} for r in dead.itertuples()],
     }
 
@@ -159,7 +160,8 @@ def build(data: Path, out: Path) -> dict:
     from . import publish                              # the files written for programs and AI agents
     doc["meta"]["credit"] = publish.credit(doc)
     doc["meta"]["files"] = publish.publish(doc, [ROOT / "api", out] if data == ROOT / "data" else [out])
-    (out / "data.json").write_text(json.dumps(doc, separators=(",", ":"), ensure_ascii=False))
+    for d in ([ROOT / "api", out] if data == ROOT / "data" else [out]):
+        (d / "data.json").write_text(json.dumps(doc, separators=(",", ":"), ensure_ascii=False))
     template = (ROOT / "site" / "template.html").read_text()
     html = template.replace("__DATA__", json.dumps(_page_payload(doc), separators=(",", ":"), ensure_ascii=False))
     for mark, text in _static(doc).items():           # readable without JavaScript
