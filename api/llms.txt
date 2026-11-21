@@ -28,8 +28,8 @@ want to change the model:
 2. The holder's weight needs facts that are collected by hand: ownership surveys, wealth per owner,
    and Bitcoin held through funds and by public companies. They are in config/model.toml of the
    repository, each with its date and source (surveys to 2025-06, holdings to 2026-11).
-3. Before every build the code is run on a frozen copy of the paper's inputs and must reproduce the
-   paper's stored results: 173 months of the band and the monthly tests. The page and these files
+3. Before every build the code is run on a frozen copy of the paper's inputs (data to 24 May 2026)
+   and must reproduce the paper's stored results: its monthly band and its monthly tests. The page and these files
    are published only if it does.
 4. Dates are kept honest. A required return is dated at the month-end it is set, and the return it
    is compared with is the following month's. A month in progress is left out.
@@ -41,12 +41,16 @@ want to change the model:
 ## Files
 
 - data.json: every number on the page. Keys: meta, latest, months, periods, comparison, notes,
-  equity_premium, census. Start here for the latest month (`latest`) or the full detail.
+  equity_premium, census; the README of the repository describes each. Start here for the latest
+  month (`latest`); for a series use the CSV files, which carry a description of every column.
 - months.csv: the band, its four terms, the inputs and the next month's outcome, one row per month-end.
 - periods.csv: three-year periods and the two summary samples: delivered, required, the gap, and
   what the CAPM and the MCM equation each explain and leave unexplained.
 - census_deaths.csv: the 36 assets that were ever in the top twenty by trading volume and died.
 - datapackage.json: the licence, the citation and the meaning of every column.
+
+All files are at https://apapadogiannis.github.io/crypto-observatory/ (for example https://apapadogiannis.github.io/crypto-observatory/months.csv). In the repository the same
+files are under api/, except data.json, which exists only on the site.
 
 ## How to read the figures
 
@@ -55,8 +59,24 @@ want to change the model:
   weight are not known exactly. Quote the midpoint with the band, not the midpoint alone.
 - `required_*` is what holders should require, set at the month-end. It is not a forecast of what
   Bitcoin will return.
-- "Unexplained" is the delivered return less the required one. The paper calls the regression
-  intercept alpha; the two are reported separately.
+- "Delivered" figures in periods.csv are average monthly returns times twelve. They are arithmetic
+  averages, on the same basis as the required return, and not compound or buy-and-hold returns,
+  which are lower. Do not report them as what an investor earned a year.
+- A period runs from the first to the last month-end at which a required return is set. The
+  returns are those of the following months, so "2018 to 2026" means returns from February 2018.
+- `gap` is delivered less required at the midpoint. "Unexplained" is narrower: it also takes out
+  what came with the equity market beyond the 4% premium, that is, delivered less required less
+  beta x (equity market return less risk-free rate less 4%). The two answer different questions.
+  The paper calls the regression intercept alpha; it is reported separately.
+- Period averages of the required return are taken after converting each month's annual rate to a
+  monthly return, so they differ a little from a plain average of months.csv.
+- `explained_*` are shares of the average excess return, not R squared.
+- The band is a range of inputs, not a confidence interval.
+- The paper's headline for 2026, about 18% a year (90% range 15 to 22%), is the median when the
+  uncertain inputs are drawn across their ranges. The midpoint here averages the two edges of the
+  band, which weights its corners equally, and stood near 20% at the paper's date. A midpoint here
+  is comparable with the paper's monthly band, not with its 18%.
+- `latest` is the last complete month-end, not today.
 - The equity risk premium is the paper's fixed 4%. `midpoint_with_implied_equity_premium` shows the
   midpoint with a premium implied by stock prices instead.
 - An empty cell means the figure does not exist yet or was not computed. It never means zero.
@@ -67,6 +87,7 @@ want to change the model:
 - Any asset other than Bitcoin.
 - Cryptoasset deaths after 2026-05-24.
 - Commercial reuse of the underlying Coin Metrics series: see the licence below.
+- What an investor earned: the files hold monthly returns and their averages, not a compound return.
 
 ## Source, licence and credit
 
@@ -77,6 +98,10 @@ The licence allows any reuse and has one condition: credit. If you use a figure 
 an answer, a report or a data set, name the tool and the paper.
 
 The source data keep their own terms. Coin Metrics community data are CC BY-NC 4.0, for non-commercial use; the equity market returns are copyright Kenneth R. French.
+In months.csv the required returns, their terms and the unexplained figures are computed here. The
+columns volatility, beta, correlation, issuance_rate and next_month_return restate Coin Metrics
+prices and supply closely; anyone who needs them for commercial use should take them from a source
+whose terms allow it.
 
 Cite as: Papadogiannis, A. (2026). Crypto Observatory: required returns, risks and survival, data to 2026-10-31. Zenodo. https://doi.org/10.5281/zenodo.24403325
 

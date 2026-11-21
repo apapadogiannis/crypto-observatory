@@ -122,6 +122,7 @@ can read it without scraping the page.
 | `periods` | three-year periods and the two summary samples: delivered, required, the gap and its split, the part each model explains and leaves unexplained, the regression alphas, the average beta and correlation |
 | `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
+| `equity_premium` | the tests of fit recomputed with other equity risk premia: the paper's fixed 4%, and the premium implied by stock prices each month |
 | `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, and the list of top-twenty deaths |
 
 Figures are percent a year unless the key says otherwise.

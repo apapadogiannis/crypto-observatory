@@ -66,7 +66,7 @@
      {
       "name": "required_midpoint",
       "type": "number",
-      "description": "Midpoint of the band, percent a year"
+      "description": "Midpoint of the band, percent a year: the average of the two edges, a convention and not an estimate"
      },
      {
       "name": "required_upper",
@@ -101,17 +101,17 @@
      {
       "name": "concentration_term",
       "type": "number",
-      "description": "Concentration risk at the midpoint, percent a year: risk aversion times variance times the holder's weight"
+      "description": "Concentration risk at the midpoint, percent a year. At each edge it is risk aversion times variance times the holder's weight; at the midpoint it is what remains of the midpoint after the other three terms"
      },
      {
       "name": "mortality_term",
       "type": "number",
-      "description": "Mortality risk at the midpoint, percent a year"
+      "description": "Mortality risk at the midpoint, percent a year: a constant, the middle of the census range (0.3 to 3.5), the same in every month"
      },
      {
       "name": "volatility",
       "type": "number",
-      "description": "Annualised volatility of Bitcoin used in the month, percent"
+      "description": "Annualised volatility of Bitcoin used in the month, percent (computed from Coin Metrics prices)"
      },
      {
       "name": "beta",
@@ -136,7 +136,7 @@
      {
       "name": "weight_early_holder",
       "type": "number",
-      "description": "Share of wealth held in Bitcoin by the early holder, percent"
+      "description": "Share of wealth held in Bitcoin by the early holder, percent. When the early holder sets the upper edge, that edge is the risk-free rate plus this weight times variance, with no market or mortality term"
      },
      {
       "name": "implied_equity_premium",
@@ -161,22 +161,22 @@
      {
       "name": "next_month_return",
       "type": "number",
-      "description": "Bitcoin's return in the following month, percent a month; empty until that month is complete"
+      "description": "Bitcoin's simple return in the calendar month after month_end, percent a month (from Coin Metrics prices); empty until that month is complete and the equity market return for it is published"
      },
      {
       "name": "next_month_capm_unexplained",
       "type": "number",
-      "description": "That return less what the CAPM requires for the month, percent a month"
+      "description": "That return, less the risk-free rate, less beta times the equity market's realised excess return in the same month; percent a month"
      },
      {
       "name": "next_month_mcm_unexplained",
       "type": "number",
-      "description": "That return less what the MCM equation requires for the month, percent a month"
+      "description": "The CAPM figure less the month's required premium for concentration and mortality risk at the midpoint; percent a month. It equals return less required midpoint less beta times (equity market excess return less the 4% premium)"
      },
      {
       "name": "trailing_3y_excess",
       "type": "number",
-      "description": "Average return over the risk-free rate in the three years ending the following month, percent a year"
+      "description": "Average monthly return over the risk-free rate in the three years ending the following month, times twelve; percent a year, not compounded"
      },
      {
       "name": "trailing_3y_capm_unexplained",
@@ -204,22 +204,22 @@
      {
       "name": "period",
       "type": "string",
-      "description": "Label of the period"
+      "description": "Label of the period (years joined by an en dash)"
      },
      {
       "name": "from",
       "type": "yearmonth",
-      "description": "First month"
+      "description": "First month-end at which a required return is set. The return compared with it is that of the following month"
      },
      {
       "name": "to",
       "type": "yearmonth",
-      "description": "Last month"
+      "description": "Last such month-end; the last return in the period is that of the month after it"
      },
      {
       "name": "summary",
       "type": "boolean",
-      "description": "True for the two summary samples, false for the three-year periods"
+      "description": "True for the two summary samples (whole sample, and since 2018), False for the three-year periods; the last period is shorter"
      },
      {
       "name": "months",
@@ -229,27 +229,27 @@
      {
       "name": "delivered",
       "type": "number",
-      "description": "Average delivered return, percent a year"
+      "description": "Average monthly return times twelve, percent a year. An arithmetic average, not a compound or buy-and-hold return, which is lower"
      },
      {
       "name": "required_mid",
       "type": "number",
-      "description": "Average required return at the midpoint, percent a year"
+      "description": "Average required return at the midpoint, percent a year. Each month's annual rate is converted to a one-month return, exp(rate/12) - 1, before averaging and multiplying by twelve, so it is on the same basis as delivered. It is therefore not the plain average of required_midpoint in months.csv and can lie below the middle of the two edges"
      },
      {
       "name": "required_lower",
       "type": "number",
-      "description": "Average required return at the lower edge, percent a year"
+      "description": "Average required return at the lower edge, percent a year, converted in the same way"
      },
      {
       "name": "required_upper",
       "type": "number",
-      "description": "Average required return at the upper edge, percent a year"
+      "description": "Average required return at the upper edge, percent a year, converted in the same way"
      },
      {
       "name": "gap",
       "type": "number",
-      "description": "Delivered less required at the midpoint, points a year"
+      "description": "delivered less required_mid, points a year. This is not the unexplained return: see mcm_alpha"
      },
      {
       "name": "gap_se",
@@ -274,17 +274,17 @@
      {
       "name": "required_premium",
       "type": "number",
-      "description": "Premium over the risk-free rate that holders required, points a year"
+      "description": "Premium over the risk-free rate that holders required: beta times the 4% equity premium, plus concentration_mortality_part; points a year. excess = required_premium + equity_beyond_premium + mcm_alpha"
      },
      {
       "name": "equity_beyond_premium",
       "type": "number",
-      "description": "What came with the equity market beyond the assumed premium, points a year"
+      "description": "beta times (the equity market's realised excess return less the 4% premium), points a year"
      },
      {
       "name": "mcm_alpha",
       "type": "number",
-      "description": "Return the MCM equation leaves unexplained, points a year"
+      "description": "Return the MCM equation leaves unexplained: excess less market_part less concentration_mortality_part, points a year"
      },
      {
       "name": "mcm_alpha_se",
@@ -294,17 +294,17 @@
      {
       "name": "capm_alpha",
       "type": "number",
-      "description": "Return the CAPM leaves unexplained, points a year"
+      "description": "Return the CAPM leaves unexplained: excess less market_part, points a year"
      },
      {
       "name": "explained_capm",
       "type": "number",
-      "description": "Share of the excess return the CAPM explains, percent"
+      "description": "market_part as a share of excess, percent. A share of the average return, not an R squared. It uses the equity market's realised return"
      },
      {
       "name": "explained_mcm",
       "type": "number",
-      "description": "Share of the excess return the MCM equation explains, percent"
+      "description": "market_part plus concentration_mortality_part as a share of excess, percent. Not an R squared; above 100 when Bitcoin delivered less than the two parts together"
      },
      {
       "name": "average_beta",
@@ -352,7 +352,7 @@
      {
       "name": "asset",
       "type": "string",
-      "description": "Ticker of the asset as in the Coin Metrics data"
+      "description": "Ticker of the asset as in the Coin Metrics data, in lower case (ust is TerraUSD, luna is Terra, ftt is the FTX token)"
      },
      {
       "name": "entered_top_twenty",
