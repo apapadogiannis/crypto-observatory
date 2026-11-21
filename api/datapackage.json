@@ -372,7 +372,7 @@
      {
       "name": "died",
       "type": "date",
-      "description": "Date of death as classified in the paper's census"
+      "description": "Date of death as classified in the paper's census. Death is a definition, not a delisting notice: the data feed ended more than 180 days before the end of the data, or the price fell below 1% of its peak and did not recover, or trading volume fell below 1% of its peak and below 250,000 dollars a day and did not recover. An asset that is dead by this definition can still be listed and trade"
      },
      {
       "name": "kind",

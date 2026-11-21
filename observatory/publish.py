@@ -93,7 +93,7 @@ DEATH_FIELDS = [
     ("asset", "string", "Ticker of the asset as in the Coin Metrics data, in lower case"),
     ("name", "string", "Name of the asset in the Coin Metrics catalogue on 21 November 2026. A name can be newer than the event: the asset that collapsed in May 2022 as Terra (luna) is listed as Terra Classic"),
     ("entered_top_twenty", "yearmonth", "Month it first entered the top twenty by trading volume"),
-    ("died", "date", "Date of death as classified in the paper's census"),
+    ("died", "date", "Date of death as classified in the paper's census. Death is a definition, not a delisting notice: the data feed ended more than 180 days before the end of the data, or the price fell below 1% of its peak and did not recover, or trading volume fell below 1% of its peak and below 250,000 dollars a day and did not recover. An asset that is dead by this definition can still be listed and trade"),
     ("kind", "string", "Kind of death: abandoned or delisted, or sudden collapse"),
 ]
 
@@ -152,6 +152,8 @@ def publish(doc: dict, dirs: list[Path]) -> list[dict]:
 
     w = L["worked"]
     whole = next((p for p in doc["periods"] if p["summary"]), None)
+    doc["meta"]["credit"]["standing"] = ("One model's answer, from one working paper. The band is a range of inputs, not a "
+                                         "confidence interval. The tests of fit have little power: see their standard errors.")
     package = {"name": "crypto-observatory", "title": "Crypto Observatory: required returns, risks and survival",
                "description": DESCRIBE_AS, "homepage": SITE, "repository": REPO, "doi": cr["doi"],
                "version": m["latest_month_end"],
@@ -240,7 +242,18 @@ files are under api/.
   what came with the equity market beyond the 4% premium, that is, delivered less required less
   beta x (equity market return less risk-free rate less 4%). The two answer different questions.
 - `delivered_compound` in periods.csv is the compound return over the same months, for a reader
-  who asks what holding earned.
+  who asks what holding earned. There is no required return on a compound basis in these files.
+  Compare `delivered` with `required_mid` (both averages); do not set `delivered_compound` beside
+  `required_mid`.
+- The identities among the period columns hold to within about one point in the early periods,
+  because the required return is converted month by month and the premium is not.
+- "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),
+  not a delisting. Say "dead by the census definition", not that the asset no longer exists.
+- In data.json, `comparison.rows` are required returns of other assets from the same equation,
+  not what those assets delivered.
+- Standing of the figures: they are one model's answer, from one working paper. The tests of fit
+  have little power, as their standard errors show: since 2018 neither this model nor the CAPM is
+  rejected. Report a figure as "this model gives", not as a consensus.
   The paper calls the regression intercept alpha; it is reported separately.
 - Period averages of the required return are taken after converting each month's annual rate to a
   monthly return, so they differ a little from a plain average of months.csv.

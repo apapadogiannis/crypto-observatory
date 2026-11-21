@@ -68,7 +68,18 @@ files are under api/.
   what came with the equity market beyond the 4% premium, that is, delivered less required less
   beta x (equity market return less risk-free rate less 4%). The two answer different questions.
 - `delivered_compound` in periods.csv is the compound return over the same months, for a reader
-  who asks what holding earned.
+  who asks what holding earned. There is no required return on a compound basis in these files.
+  Compare `delivered` with `required_mid` (both averages); do not set `delivered_compound` beside
+  `required_mid`.
+- The identities among the period columns hold to within about one point in the early periods,
+  because the required return is converted month by month and the premium is not.
+- "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),
+  not a delisting. Say "dead by the census definition", not that the asset no longer exists.
+- In data.json, `comparison.rows` are required returns of other assets from the same equation,
+  not what those assets delivered.
+- Standing of the figures: they are one model's answer, from one working paper. The tests of fit
+  have little power, as their standard errors show: since 2018 neither this model nor the CAPM is
+  rejected. Report a figure as "this model gives", not as a consensus.
   The paper calls the regression intercept alpha; it is reported separately.
 - Period averages of the required return are taken after converting each month's annual rate to a
   monthly return, so they differ a little from a plain average of months.csv.
