@@ -48,6 +48,8 @@ want to change the model:
   what the CAPM and the MCM equation each explain and leave unexplained.
 - census_deaths.csv: the 36 assets that were ever in the top twenty by trading volume and died.
 - datapackage.json: the licence, the citation and the meaning of every column.
+- SKILL.md: a skill a person can add to their own AI agent so that it comes to these files when
+  asked about Bitcoin's required return. It holds addresses and reading rules, no figures.
 
 All files are at https://apapadogiannis.github.io/crypto-observatory/ (for example https://apapadogiannis.github.io/crypto-observatory/months.csv). In the repository the same
 files are under api/.

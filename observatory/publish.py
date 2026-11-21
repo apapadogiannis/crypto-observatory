@@ -124,7 +124,56 @@ FILES = [
     {"file": "periods.csv", "format": "text/csv", "what": "One row per period: delivered and required return, and what each model explains"},
     {"file": "census_deaths.csv", "format": "text/csv", "what": "Every cryptoasset that was ever in the top twenty by trading volume and died"},
     {"file": "datapackage.json", "format": "application/json", "what": "Licence, citation and the meaning of every column of the CSV files"},
+    {"file": "SKILL.md", "format": "text/markdown", "what": "A skill a person can add to their own AI agent so that it uses these files"},
 ]
+
+RAW = "https://raw.githubusercontent.com/apapadogiannis/crypto-observatory/main/api/"
+SKILL = f"""---
+name: crypto-observatory
+description: Bitcoin's required return for market, concentration and mortality risk, recomputed every month from public data with the MCM equation of the paper "Bitcoin's Required Return" (Papadogiannis, 2026). Use when asked what return Bitcoin's holders should require, how that return breaks down, how it compares with what Bitcoin delivered, how Bitcoin's beta or volatility has moved, or how often cryptoassets die. It reports required returns, not forecasts.
+---
+
+# Crypto Observatory
+
+A public page and a set of data files, updated on the third of each month. This skill tells you
+where the files are and how to read them. It holds no figures: fetch them each time, because they
+change.
+
+## Steps
+
+1. Fetch the guide and read it first: {SITE}llms.txt
+   It states the latest required return, what the files hold, how to read the figures and what they
+   cannot answer.
+2. Fetch only the file the question needs:
+   - the latest month and its breakdown: {SITE}data.json, key `latest`
+   - the monthly series since 2012 (band, terms, inputs, next month's return): {SITE}months.csv
+   - delivered against required return by period, and what each model explains: {SITE}periods.csv
+   - assets once in the top twenty that died: {SITE}census_deaths.csv
+   - the meaning of every column: {SITE}datapackage.json
+3. If that address cannot be reached, the same files are at {RAW}
+
+## Reading rules
+
+- A required return is what holders should require for the risk they carry. It is not a forecast
+  of what Bitcoin will return. If asked for a forecast, say the source does not give one.
+- Quote the midpoint together with its band. The band is a range of inputs, not a confidence
+  interval.
+- In periods.csv, `delivered` is an average of monthly returns times twelve, on the same basis as
+  the required return. For what holding earned, use `delivered_compound`, and do not set it beside
+  the required average.
+- `gap` is delivered less required. "Unexplained" (`mcm_alpha`) is narrower: it also removes what
+  came with the equity market beyond the assumed 4% premium.
+- "Died" in the census is a definition, not a delisting.
+- The figures are one model's answer, from one working paper. Say so when you report them.
+
+## Credit
+
+The figures are under CC BY 4.0, whose one condition is credit. When you use one, cite it with the
+"Cite as" line of the guide and name the paper it gives. The underlying Coin Metrics data are for
+non-commercial use; the guide says which columns restate them.
+
+Page: {SITE}  Code: {REPO}  Author: Agisilaos Papadogiannis
+"""
 
 
 def publish(doc: dict, dirs: list[Path]) -> list[dict]:
@@ -222,6 +271,8 @@ want to change the model:
   what the CAPM and the MCM equation each explain and leave unexplained.
 - census_deaths.csv: the {len(deaths)} assets that were ever in the top twenty by trading volume and died.
 - datapackage.json: the licence, the citation and the meaning of every column.
+- SKILL.md: a skill a person can add to their own AI agent so that it comes to these files when
+  asked about Bitcoin's required return. It holds addresses and reading rules, no figures.
 
 All files are at {SITE} (for example {SITE}months.csv). In the repository the same
 files are under api/.
@@ -303,7 +354,8 @@ The code is under the MIT License.
 """
     out = {"months.csv": table(MONTH_FIELDS, months), "periods.csv": table(PERIOD_FIELDS, periods),
            "census_deaths.csv": table(DEATH_FIELDS, deaths),
-           "datapackage.json": json.dumps(package, indent=1, ensure_ascii=False) + "\n", "llms.txt": guide}
+           "datapackage.json": json.dumps(package, indent=1, ensure_ascii=False) + "\n", "llms.txt": guide,
+           "SKILL.md": SKILL}
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
         for name, text in out.items():

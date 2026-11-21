@@ -55,6 +55,13 @@ assert credit["paper"]["doi"] in guide and credit["licence"]["source_data"] in g
 latest = doc["latest"]["required"]
 assert f"{latest['midpoint']}% a year at the midpoint" in guide
 
+# The skill names only files that exist, holds no figure that would go stale, and has a valid header.
+skill = api["SKILL.md"]
+assert skill.startswith("---\nname: crypto-observatory\ndescription: ") and skill.count("---\n") >= 2
+for name in ("llms.txt", "data.json", "months.csv", "periods.csv", "census_deaths.csv", "datapackage.json"):
+    assert name in skill and name in api, name
+assert str(latest["midpoint"]) not in skill
+
 # The page says the answer without JavaScript, and no placeholder is left in it.
 assert "<noscript>" in page and "<!--STATIC-->" not in page and "/*LD*/" not in page and "__DATA__" not in page
 assert f"is {latest['midpoint']}% a year" in page

@@ -12,6 +12,20 @@ By [Agisilaos Papadogiannis](https://github.com/apapadogiannis).
 
 ![The page](docs/screenshot.png)
 
+## Use it from your own AI agent
+
+`api/SKILL.md` is a skill: a short file that tells an agent when to use the Observatory, where its
+files are and how to read them. It holds no figures, so it does not go stale. For Claude Code:
+
+```bash
+mkdir -p ~/.claude/skills/crypto-observatory
+curl -o ~/.claude/skills/crypto-observatory/SKILL.md https://apapadogiannis.github.io/crypto-observatory/SKILL.md
+```
+
+Then ask your agent, for example, "what return should Bitcoin's holders require now?". Other agents
+that read `SKILL.md` files take the same file in their own skills folder. The skill is free and is
+written by the build with the other files in `api/`.
+
 ## For AI agents and programs
 
 Read [`api/llms.txt`](api/llms.txt) first. It says what this is, what it adds over computing it
@@ -26,6 +40,7 @@ live page's address.
 | `api/census_deaths.csv` | every cryptoasset that was ever in the top twenty by trading volume and died |
 | `api/datapackage.json` | the licence, the citation and the meaning of every column |
 | `api/llms.txt` | the guide |
+| `api/SKILL.md` | the skill described above |
 
 These files are rebuilt from `data/` by `build.py` and checked by the tests. Do not edit them by hand.
 
