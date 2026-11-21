@@ -1,0 +1,386 @@
+{
+ "name": "crypto-observatory",
+ "title": "Crypto Observatory: required returns, risks and survival",
+ "description": "Crypto Observatory, by Agisilaos Papadogiannis: Bitcoin's required return computed each month with the MCM equation of the paper \"Bitcoin's Required Return\".",
+ "homepage": "https://apapadogiannis.github.io/crypto-observatory/",
+ "repository": "https://github.com/apapadogiannis/crypto-observatory",
+ "doi": "https://doi.org/10.5281/zenodo.24403325",
+ "version": "2026-10-31",
+ "licenses": [
+  {
+   "name": "CC-BY-4.0",
+   "path": "https://creativecommons.org/licenses/by/4.0/",
+   "title": "Creative Commons Attribution 4.0"
+  }
+ ],
+ "licence_note": "The source data keep their own terms. Coin Metrics community data are CC BY-NC 4.0, for non-commercial use; the equity market returns are copyright Kenneth R. French.",
+ "contributors": [
+  {
+   "title": "Agisilaos Papadogiannis",
+   "role": "author",
+   "path": "https://orcid.org/0009-0002-7753-7052"
+  }
+ ],
+ "citation": "Papadogiannis, A. (2026). Crypto Observatory: required returns, risks and survival, data to 2026-10-31. Zenodo. https://doi.org/10.5281/zenodo.24403325",
+ "paper": {
+  "citation": "Papadogiannis, A. (2026). Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold. Working paper.",
+  "doi": "https://doi.org/10.2139/ssrn.7705239",
+  "replication_package": "https://github.com/apapadogiannis/bitcoin-required-return",
+  "relation": "The method. Every required return here is computed with the paper's MCM equation and constants."
+ },
+ "sources": [
+  {
+   "title": "Coin Metrics community data (CC BY-NC 4.0)"
+  },
+  {
+   "title": "US equity market return, Kenneth R. French data library"
+  },
+  {
+   "title": "US Treasury daily par yield curve rates (ten-year)"
+  },
+  {
+   "title": "implied equity risk premium by month, Aswath Damodaran (NYU Stern): used for the sensitivity table only"
+  },
+  {
+   "title": "ownership surveys and fund holdings as listed in config/model.toml"
+  }
+ ],
+ "resources": [
+  {
+   "name": "months",
+   "path": "months.csv",
+   "format": "csv",
+   "mediatype": "text/csv",
+   "schema": {
+    "fields": [
+     {
+      "name": "month_end",
+      "type": "date",
+      "description": "The month-end at which the required return is set"
+     },
+     {
+      "name": "required_lower",
+      "type": "number",
+      "description": "Lower edge of the required-return band, percent a year: the average owner when fund and treasury investors are counted, with the low inputs"
+     },
+     {
+      "name": "required_midpoint",
+      "type": "number",
+      "description": "Midpoint of the band, percent a year"
+     },
+     {
+      "name": "required_upper",
+      "type": "number",
+      "description": "Upper edge of the band, percent a year: the larger of the two candidates below"
+     },
+     {
+      "name": "upper_if_surveyed_owner",
+      "type": "number",
+      "description": "Upper-edge candidate, percent a year: the average surveyed owner with the high inputs"
+     },
+     {
+      "name": "upper_if_early_holder",
+      "type": "number",
+      "description": "Upper-edge candidate, percent a year: the early holder"
+     },
+     {
+      "name": "upper_set_by",
+      "type": "string",
+      "description": "Which candidate sets the upper edge that month"
+     },
+     {
+      "name": "risk_free",
+      "type": "number",
+      "description": "Risk-free rate at the midpoint, percent a year: the ten-year Treasury yield"
+     },
+     {
+      "name": "market_term",
+      "type": "number",
+      "description": "Market risk at the midpoint, percent a year: beta times the equity risk premium"
+     },
+     {
+      "name": "concentration_term",
+      "type": "number",
+      "description": "Concentration risk at the midpoint, percent a year: risk aversion times variance times the holder's weight"
+     },
+     {
+      "name": "mortality_term",
+      "type": "number",
+      "description": "Mortality risk at the midpoint, percent a year"
+     },
+     {
+      "name": "volatility",
+      "type": "number",
+      "description": "Annualised volatility of Bitcoin used in the month, percent"
+     },
+     {
+      "name": "beta",
+      "type": "number",
+      "description": "Beta of Bitcoin to the US equity market"
+     },
+     {
+      "name": "correlation",
+      "type": "number",
+      "description": "Correlation of Bitcoin with the US equity market"
+     },
+     {
+      "name": "weight_with_funds",
+      "type": "number",
+      "description": "Share of wealth held in Bitcoin by the average owner when fund and treasury investors are counted, percent"
+     },
+     {
+      "name": "weight_surveyed",
+      "type": "number",
+      "description": "Share of wealth held in Bitcoin by the average surveyed owner, percent"
+     },
+     {
+      "name": "weight_early_holder",
+      "type": "number",
+      "description": "Share of wealth held in Bitcoin by the early holder, percent"
+     },
+     {
+      "name": "implied_equity_premium",
+      "type": "number",
+      "description": "Equity risk premium implied by stock prices that month (Damodaran), percent; used only for the sensitivity figure"
+     },
+     {
+      "name": "midpoint_with_implied_equity_premium",
+      "type": "number",
+      "description": "Midpoint of the band if the implied premium replaces the paper's fixed 4%, percent a year"
+     },
+     {
+      "name": "issuance_rate",
+      "type": "number",
+      "description": "The month's new issuance at a yearly rate, as a share of supply, percent; context, not an input"
+     },
+     {
+      "name": "fund_and_treasury_share",
+      "type": "number",
+      "description": "Share of supply held by funds and public companies, percent; context"
+     },
+     {
+      "name": "next_month_return",
+      "type": "number",
+      "description": "Bitcoin's return in the following month, percent a month; empty until that month is complete"
+     },
+     {
+      "name": "next_month_capm_unexplained",
+      "type": "number",
+      "description": "That return less what the CAPM requires for the month, percent a month"
+     },
+     {
+      "name": "next_month_mcm_unexplained",
+      "type": "number",
+      "description": "That return less what the MCM equation requires for the month, percent a month"
+     },
+     {
+      "name": "trailing_3y_excess",
+      "type": "number",
+      "description": "Average return over the risk-free rate in the three years ending the following month, percent a year"
+     },
+     {
+      "name": "trailing_3y_capm_unexplained",
+      "type": "number",
+      "description": "The part of it the CAPM leaves unexplained, percent a year"
+     },
+     {
+      "name": "trailing_3y_mcm_unexplained",
+      "type": "number",
+      "description": "The part of it the MCM equation leaves unexplained, percent a year"
+     }
+    ],
+    "missingValues": [
+     ""
+    ]
+   }
+  },
+  {
+   "name": "periods",
+   "path": "periods.csv",
+   "format": "csv",
+   "mediatype": "text/csv",
+   "schema": {
+    "fields": [
+     {
+      "name": "period",
+      "type": "string",
+      "description": "Label of the period"
+     },
+     {
+      "name": "from",
+      "type": "yearmonth",
+      "description": "First month"
+     },
+     {
+      "name": "to",
+      "type": "yearmonth",
+      "description": "Last month"
+     },
+     {
+      "name": "summary",
+      "type": "boolean",
+      "description": "True for the two summary samples, false for the three-year periods"
+     },
+     {
+      "name": "months",
+      "type": "integer",
+      "description": "Number of months"
+     },
+     {
+      "name": "delivered",
+      "type": "number",
+      "description": "Average delivered return, percent a year"
+     },
+     {
+      "name": "required_mid",
+      "type": "number",
+      "description": "Average required return at the midpoint, percent a year"
+     },
+     {
+      "name": "required_lower",
+      "type": "number",
+      "description": "Average required return at the lower edge, percent a year"
+     },
+     {
+      "name": "required_upper",
+      "type": "number",
+      "description": "Average required return at the upper edge, percent a year"
+     },
+     {
+      "name": "gap",
+      "type": "number",
+      "description": "Delivered less required at the midpoint, points a year"
+     },
+     {
+      "name": "gap_se",
+      "type": "number",
+      "description": "Standard error of the gap, points a year"
+     },
+     {
+      "name": "excess",
+      "type": "number",
+      "description": "Delivered return over the risk-free rate, percent a year"
+     },
+     {
+      "name": "market_part",
+      "type": "number",
+      "description": "Part of the excess return that came with the equity market: beta times the market's own excess return, points a year"
+     },
+     {
+      "name": "concentration_mortality_part",
+      "type": "number",
+      "description": "Premium required for concentration and mortality risk, points a year"
+     },
+     {
+      "name": "required_premium",
+      "type": "number",
+      "description": "Premium over the risk-free rate that holders required, points a year"
+     },
+     {
+      "name": "equity_beyond_premium",
+      "type": "number",
+      "description": "What came with the equity market beyond the assumed premium, points a year"
+     },
+     {
+      "name": "mcm_alpha",
+      "type": "number",
+      "description": "Return the MCM equation leaves unexplained, points a year"
+     },
+     {
+      "name": "mcm_alpha_se",
+      "type": "number",
+      "description": "Its standard error"
+     },
+     {
+      "name": "capm_alpha",
+      "type": "number",
+      "description": "Return the CAPM leaves unexplained, points a year"
+     },
+     {
+      "name": "explained_capm",
+      "type": "number",
+      "description": "Share of the excess return the CAPM explains, percent"
+     },
+     {
+      "name": "explained_mcm",
+      "type": "number",
+      "description": "Share of the excess return the MCM equation explains, percent"
+     },
+     {
+      "name": "average_beta",
+      "type": "number",
+      "description": "Average beta over the period"
+     },
+     {
+      "name": "average_correlation",
+      "type": "number",
+      "description": "Average correlation with the equity market over the period"
+     },
+     {
+      "name": "regression_capm_alpha",
+      "type": "number",
+      "description": "Intercept of the regression under the CAPM, points a year"
+     },
+     {
+      "name": "regression_capm_se",
+      "type": "number",
+      "description": "Its standard error"
+     },
+     {
+      "name": "regression_mcm_alpha",
+      "type": "number",
+      "description": "Intercept of the regression under the MCM equation, points a year"
+     },
+     {
+      "name": "regression_mcm_se",
+      "type": "number",
+      "description": "Its standard error"
+     }
+    ],
+    "missingValues": [
+     ""
+    ]
+   }
+  },
+  {
+   "name": "census_deaths",
+   "path": "census_deaths.csv",
+   "format": "csv",
+   "mediatype": "text/csv",
+   "schema": {
+    "fields": [
+     {
+      "name": "asset",
+      "type": "string",
+      "description": "Ticker of the asset as in the Coin Metrics data"
+     },
+     {
+      "name": "entered_top_twenty",
+      "type": "yearmonth",
+      "description": "Month it first entered the top twenty by trading volume"
+     },
+     {
+      "name": "died",
+      "type": "date",
+      "description": "Date of death as classified in the paper's census"
+     },
+     {
+      "name": "kind",
+      "type": "string",
+      "description": "Kind of death: abandoned or delisted, or sudden collapse"
+     }
+    ],
+    "missingValues": [
+     ""
+    ]
+   }
+  },
+  {
+   "name": "data",
+   "path": "data.json",
+   "format": "json",
+   "mediatype": "application/json",
+   "description": "Every number on the page; see llms.txt and the README"
+  }
+ ]
+}

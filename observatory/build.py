@@ -156,10 +156,52 @@ def build(data: Path, out: Path) -> dict:
         "census": census_doc,
     }
     out.mkdir(parents=True, exist_ok=True)
+    from . import publish                              # the files written for programs and AI agents
+    doc["meta"]["credit"] = publish.credit(doc)
+    doc["meta"]["files"] = publish.publish(doc, [ROOT / "api", out] if data == ROOT / "data" else [out])
     (out / "data.json").write_text(json.dumps(doc, separators=(",", ":"), ensure_ascii=False))
     template = (ROOT / "site" / "template.html").read_text()
-    (out / "index.html").write_text(template.replace("__DATA__", json.dumps(_page_payload(doc), separators=(",", ":"), ensure_ascii=False)))
+    html = template.replace("__DATA__", json.dumps(_page_payload(doc), separators=(",", ":"), ensure_ascii=False))
+    for mark, text in _static(doc).items():           # readable without JavaScript
+        html = html.replace(mark, text)
+    (out / "index.html").write_text(html)
     return doc
+
+
+def _static(doc: dict) -> dict:
+    """What is written into the page itself, so that a reader that runs no scripts (a search engine,
+    a program, an AI agent) still gets the answer: the latest required return and the periods."""
+    from . import publish
+    L, w, m = doc["latest"], doc["latest"]["worked"], doc["meta"]
+    pct = lambda v: "" if v is None else f"{v:.1f}%"
+    rows = "".join(
+        f"<tr><td>{p['period']}</td><td>{pct(p['delivered'])}</td><td>{pct(p['required_mid'])}</td>"
+        f"<td>{pct(p['required_lower'])} to {pct(p['required_upper'])}</td><td>{pct(p['explained_capm'])}</td>"
+        f"<td>{pct(p['explained_mcm'])}</td></tr>" for p in doc["periods"])
+    summary = (
+        f"<p>At the month-end of {L['month_end']} the required return on Bitcoin is {L['required']['midpoint']}% a year "
+        f"at the midpoint, in a band of {L['required']['lower']}% to {L['required']['upper']}%. Of the midpoint, "
+        f"{w['risk_free']} points are the risk-free rate, {w['market']['midpoint']} market risk, "
+        f"{w['concentration']['midpoint']} concentration risk and {w['mortality']['midpoint']} mortality risk.</p>"
+        "<table><thead><tr><th>Period</th><th>Delivered, a year</th><th>Required at the midpoint</th>"
+        "<th>Required band</th><th>Explained by the CAPM</th><th>Explained by the MCM equation</th></tr></thead>"
+        f"<tbody>{rows}</tbody></table>"
+        f"<p>Source data to {m['data_to']}; tests to {m['tests_to']}. Required returns are dated at the month-end "
+        "they are set; they are not forecasts.</p>")
+    ld = {"@context": "https://schema.org", "@type": "Dataset",
+          "name": "Crypto Observatory: required returns, risks and survival",
+          "description": "Bitcoin's required return for market, concentration and mortality risk, computed each month "
+                         "with the MCM equation of the paper Bitcoin's Required Return, with tests of fit and a census "
+                         "of cryptoasset deaths.",
+          "url": publish.SITE, "identifier": f"https://doi.org/{publish.DOI}",
+          "creator": {"@type": "Person", "name": "Agisilaos Papadogiannis", "url": "https://github.com/apapadogiannis",
+                      "identifier": "https://orcid.org/0009-0002-7753-7052"},
+          "license": publish.LICENCE["url"], "isAccessibleForFree": True,
+          "temporalCoverage": f"{doc['months'][0]['month_end']}/{m['latest_month_end']}",
+          "dateModified": m["data_to"], "citation": publish.PAPER["doi"],
+          "distribution": [{"@type": "DataDownload", "encodingFormat": f["format"], "contentUrl": f["file"],
+                            "description": f["what"]} for f in m["files"]]}
+    return {"<!--STATIC-->": summary, "/*LD*/": json.dumps(ld, separators=(",", ":"), ensure_ascii=False)}
 
 
 def _page_payload(doc: dict) -> dict:

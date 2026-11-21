@@ -34,6 +34,9 @@ jobs:
           test -s _site/index.html
           python3 -I -c "import json; d=json.load(open('_site/data.json')); assert d['months'] and d['periods'] and d['latest']['required']['midpoint'] > 0; print('data to', d['meta']['data_to'])"
 
+      - name: The files for programs and AI agents agree with the data file
+        run: python3 -I tests/test_agent_files.py
+
       - name: Hand the built page to GitHub Pages
         uses: actions/upload-pages-artifact@v5
         with:

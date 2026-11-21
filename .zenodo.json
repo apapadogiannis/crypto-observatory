@@ -1,7 +1,7 @@
 {
   "title": "Crypto Observatory: required returns, risks and survival",
   "upload_type": "software",
-  "description": "A page and a data file that answer one question for Bitcoin: what return should its holders require for the risks they carry, and what did it deliver? The required return is computed with the MCM equation (market, concentration and mortality risk) and rebuilt every month from public data. The page shows the required return as a band since 2012 against delivered returns, how the band is built, the tests of fit against the CAPM, Bitcoin beside equities, the equation term by term, a sensitivity to the equity premium, and a census of cryptoasset deaths. Before every build the model is run on a frozen copy of the paper's inputs and must reproduce the paper's stored results. Live page: https://apapadogiannis.github.io/crypto-observatory/. The stored Bitcoin series are from the Coin Metrics community data (Coin Metrics, Inc., CC BY-NC 4.0); the code is MIT-licensed. Independent research, for informational and academic purposes only; not investment advice.",
+  "description": "A page and a data file that answer one question for Bitcoin: what return should its holders require for the risks they carry, and what did it deliver? The required return is computed with the MCM equation (market, concentration and mortality risk) and rebuilt every month from public data. The page shows the required return as a band since 2012 against delivered returns, how the band is built, the tests of fit against the CAPM, Bitcoin beside equities, the equation term by term, a sensitivity to the equity premium, and a census of cryptoasset deaths. Before every build the model is run on a frozen copy of the paper's inputs and must reproduce the paper's stored results. Beside the page there are data files for programs and AI agents (api/) with a guide (api/llms.txt). Live page: https://apapadogiannis.github.io/crypto-observatory/. The stored Bitcoin series are from the Coin Metrics community data (Coin Metrics, Inc., CC BY-NC 4.0); the code is MIT-licensed. Independent research, for informational and academic purposes only; not investment advice.",
   "creators": [
     {
       "name": "Papadogiannis, Agisilaos",
@@ -38,6 +38,6 @@
       "scheme": "url"
     }
   ],
-  "version": "1.0.1",
-  "publication_date": "2026-11-20"
+  "version": "1.1.0",
+  "publication_date": "2026-11-21"
 }

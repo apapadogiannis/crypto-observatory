@@ -40,10 +40,10 @@ jobs:
 
       - name: Store the new data in the repository
         run: |
-          if git diff --quiet -- data; then echo "No new data."; exit 0; fi
+          if git diff --quiet -- data api; then echo "No new data."; exit 0; fi
           git config user.name "Agisilaos Papadogiannis"
           git config user.email "apapadogiannis@gmail.com"
-          git add data
+          git add data api
           git commit -m "Data to $(python3 -I -c "import json; print(json.load(open('_site/data.json'))['meta']['data_to'])")"
           git push
 

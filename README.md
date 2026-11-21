@@ -12,6 +12,23 @@ By [Agisilaos Papadogiannis](https://github.com/apapadogiannis).
 
 ![The page](docs/screenshot.png)
 
+## For AI agents and programs
+
+Read [`api/llms.txt`](api/llms.txt) first. It says what this is, what it adds over computing it
+yourself, which file to use for what, and what not to use it for. The same files are served from the
+live page's address.
+
+| File | Content |
+|---|---|
+| `data.json` (on the live page) | every number on the page, under plain names |
+| `api/months.csv` | one row per month-end: the required-return band, its terms and inputs |
+| `api/periods.csv` | one row per period: delivered and required return, and what each model explains |
+| `api/census_deaths.csv` | every cryptoasset that was ever in the top twenty by trading volume and died |
+| `api/datapackage.json` | the licence, the citation and the meaning of every column |
+| `api/llms.txt` | the guide |
+
+These files are rebuilt from `data/` by `build.py` and checked by the tests. Do not edit them by hand.
+
 ## What it is
 
 A page and a data file that answer one question for a cryptoasset: what return should its holders
@@ -63,6 +80,7 @@ Python 3.11 or later.
 ```bash
 pip install -r requirements.txt
 python3 -I tests/test_continuity.py    # reproduces the paper's stored results
+python3 -I tests/test_agent_files.py   # the files in api/ agree with data.json
 python3 -I build.py                    # writes _site/index.html and _site/data.json
 python3 update.py                      # optional: downloads the latest data into data/
 ```
@@ -77,6 +95,8 @@ observatory/mcm.py            the required-return band, month by month
 observatory/tests_of_fit.py   the monthly test, CAPM and MCM alpha, shares explained
 observatory/compare.py        Bitcoin beside equities: average and compound required returns
 observatory/build.py          builds the page and the data file from the stored data
+observatory/publish.py        writes the files for programs and AI agents (api/)
+api/                          those files: months.csv, periods.csv, census_deaths.csv, datapackage.json, llms.txt
 tools/census_from_paper.py     builds the census tables in data/census/ from the paper's result files (run once)
 observatory/inputs.py         reads the stored files
 observatory/update.py         downloads the latest data into data/ (the only code that uses the network)
@@ -84,6 +104,7 @@ config/model.toml             constants and hand-entered anchors, each with its 
 data/                         all input data (see data/README.md)
 site/template.html            the page
 tests/test_continuity.py      checks the code against the paper on a frozen snapshot
+tests/test_agent_files.py     checks the files in api/ against data.json
 tests/snapshot/               the frozen inputs of the paper
 reference/                    the paper's stored results that the test compares against
 ```
@@ -95,7 +116,7 @@ can read it without scraping the page.
 
 | Key | Holds |
 |---|---|
-| `meta` | asset, date of the data, units, method, sources |
+| `meta` | asset, date of the data, units, method, sources, and under `credit` the licence, the citation and the paper |
 | `latest` | the required return of the latest month, worked out term by term at both edges and the midpoint |
 | `months` | one entry per month-end: the band, the terms at the midpoint, the inputs, supply measures, and the next month's return with what each model leaves unexplained |
 | `periods` | three-year periods and the two summary samples: delivered, required, the gap and its split, the part each model explains and leaves unexplained, the regression alphas, the average beta and correlation |
@@ -120,7 +141,10 @@ with the paper's stored outputs (`reference/`):
 3. the unexplained return of the CAPM and of the MCM equation, added up and as a share explained;
 4. the regression alphas, their standard errors and slopes.
 
-The page is built only if this passes. The check shows that the code reproduces the paper. It does
+A second test, `tests/test_agent_files.py`, checks that the files in `api/` are exactly what the build
+produces and carry the same numbers, licence and citation as `data.json`.
+
+The page is built only if both pass. The check shows that the code reproduces the paper. It does
 not show that the data or the argument is right.
 
 The live page uses sources that can be downloaded on a schedule, which differ slightly from the

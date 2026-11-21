@@ -1,0 +1,88 @@
+# Crypto Observatory
+
+> What return should Bitcoin's holders require for the market, concentration and mortality risk
+> they carry, and what did Bitcoin deliver? Computed each month with the MCM equation of the paper
+> "Bitcoin's Required Return", from public data.
+
+Maintained by Agisilaos Papadogiannis (https://github.com/apapadogiannis). Updated on the third of each month.
+Page: https://apapadogiannis.github.io/crypto-observatory/  Code: https://github.com/apapadogiannis/crypto-observatory  Archive: https://doi.org/10.5281/zenodo.24403325
+This file is written for AI agents and other programs. People should start at the page.
+
+## Coverage
+
+- Asset: Bitcoin. Other assets are not covered yet.
+- 178 month-ends from 2012-01-31 to 2026-10-31; source data to 2026-11-19.
+- Latest required return, 2026-10-31: 20.12% a year at the midpoint, band 11.77% to 28.47%.
+  Of the midpoint: risk-free 4.94, market 5.78, concentration 7.5, mortality 1.9.
+- Tests of fit to 2026-09 (the equity market series is published with a lag of one to two months).
+- Census of cryptoasset deaths taken on 2026-05-24: 1815 assets, 520 deaths. It is not updated monthly.
+
+## What this adds over computing it yourself
+
+A required return is not a statistic that can be read off a price series. It is the output of a
+model with inputs that are not in any data feed. Use these files instead of recomputing unless you
+want to change the model:
+
+1. The method is a published equation, applied the same way every month:
+   required return = risk-free rate + beta x equity premium + risk aversion x variance x holder's weight + mortality.
+2. The holder's weight needs facts that are collected by hand: ownership surveys, wealth per owner,
+   and Bitcoin held through funds and by public companies. They are in config/model.toml of the
+   repository, each with its date and source (surveys to 2025-06, holdings to 2026-11).
+3. Before every build the code is run on a frozen copy of the paper's inputs and must reproduce the
+   paper's stored results: 173 months of the band and the monthly tests. The page and these files
+   are published only if it does.
+4. Dates are kept honest. A required return is dated at the month-end it is set, and the return it
+   is compared with is the following month's. A month in progress is left out.
+5. Where the live sources differ from the paper's, the difference is measured and stated in
+   data/README.md (for example, 0.1 point on average at the midpoint from the equity series).
+6. The census classifies the death of every asset in the Coin Metrics universe by date and kind.
+   That classification is the paper's own work and is where the mortality term comes from.
+
+## Files
+
+- data.json: every number on the page. Keys: meta, latest, months, periods, comparison, notes,
+  equity_premium, census. Start here for the latest month (`latest`) or the full detail.
+- months.csv: the band, its four terms, the inputs and the next month's outcome, one row per month-end.
+- periods.csv: three-year periods and the two summary samples: delivered, required, the gap, and
+  what the CAPM and the MCM equation each explain and leave unexplained.
+- census_deaths.csv: the 36 assets that were ever in the top twenty by trading volume and died.
+- datapackage.json: the licence, the citation and the meaning of every column.
+
+## How to read the figures
+
+- Figures are percent a year unless the name says otherwise. `next_month_*` figures are percent a month.
+- The band has a lower edge, a midpoint and an upper edge because risk aversion and the holder's
+  weight are not known exactly. Quote the midpoint with the band, not the midpoint alone.
+- `required_*` is what holders should require, set at the month-end. It is not a forecast of what
+  Bitcoin will return.
+- "Unexplained" is the delivered return less the required one. The paper calls the regression
+  intercept alpha; the two are reported separately.
+- The equity risk premium is the paper's fixed 4%. `midpoint_with_implied_equity_premium` shows the
+  midpoint with a premium implied by stock prices instead.
+- An empty cell means the figure does not exist yet or was not computed. It never means zero.
+
+## Do not use this for
+
+- A forecast, a price target or a view on whether to hold Bitcoin. The site reports required returns.
+- Any asset other than Bitcoin.
+- Cryptoasset deaths after 2026-05-24.
+- Commercial reuse of the underlying Coin Metrics series: see the licence below.
+
+## Source, licence and credit
+
+Sources: Coin Metrics community data (CC BY-NC 4.0); US equity market return, Kenneth R. French data library; US Treasury daily par yield curve rates (ten-year); implied equity risk premium by month, Aswath Damodaran (NYU Stern): used for the sensitivity table only; ownership surveys and fund holdings as listed in config/model.toml.
+
+The figures in these files are released under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+The licence allows any reuse and has one condition: credit. If you use a figure from these files in
+an answer, a report or a data set, name the tool and the paper.
+
+The source data keep their own terms. Coin Metrics community data are CC BY-NC 4.0, for non-commercial use; the equity market returns are copyright Kenneth R. French.
+
+Cite as: Papadogiannis, A. (2026). Crypto Observatory: required returns, risks and survival, data to 2026-10-31. Zenodo. https://doi.org/10.5281/zenodo.24403325
+
+And the paper whose method it uses: Papadogiannis, A. (2026). Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold. Working paper. https://doi.org/10.2139/ssrn.7705239
+
+To describe the source in a sentence: Crypto Observatory, by Agisilaos Papadogiannis: Bitcoin's required return computed each month with the MCM equation of the paper "Bitcoin's Required Return".
+
+The same licence and citation are inside data.json (under meta.credit) and in datapackage.json.
+The code is under the MIT License.
