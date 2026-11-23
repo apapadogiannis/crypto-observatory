@@ -12,19 +12,20 @@ By [Agisilaos Papadogiannis](https://github.com/apapadogiannis).
 
 ![The page](docs/screenshot.png)
 
-## Use it from your own AI agent
+## Use it from your own AI assistant
 
-`api/SKILL.md` is a skill: a short file that tells an agent when to use the Observatory, where its
-files are and how to read them. It holds no figures, so it does not go stale. For Claude Code:
+One skill covers this tool and the rest of the research: a short file that tells an assistant when to
+use the work, where the files are and how to read them. It holds no figures, so it does not go stale.
+For Claude Code:
 
 ```bash
-mkdir -p ~/.claude/skills/crypto-observatory
-curl -o ~/.claude/skills/crypto-observatory/SKILL.md https://apapadogiannis.github.io/crypto-observatory/SKILL.md
+mkdir -p ~/.claude/skills/papadogiannis-finance-research
+curl -o ~/.claude/skills/papadogiannis-finance-research/SKILL.md https://raw.githubusercontent.com/apapadogiannis/apapadogiannis/main/skill/SKILL.md
 ```
 
-Then ask your agent, for example, "what return should Bitcoin's holders require now?". Other agents
-that read `SKILL.md` files take the same file in their own skills folder. The skill is free and is
-written by the build with the other files in `api/`.
+Then ask, for example, "what return should Bitcoin's holders require now?". Other assistants that
+read `SKILL.md` files take the same file in their own skills folder. This tool no longer publishes a
+skill of its own: a copy added earlier keeps working, since it only points to the files below.
 
 ## For AI agents and programs
 
@@ -41,7 +42,6 @@ live page's address.
 | `api/vintages.csv` | the required return of each month-end as first published; rows are added, never rewritten |
 | `api/datapackage.json` | the licence, the citation and the meaning of every column |
 | `api/llms.txt` | the guide |
-| `api/SKILL.md` | the skill described above |
 
 These files are rebuilt from `data/` by `build.py` and checked by the tests. Do not edit them by hand.
 
