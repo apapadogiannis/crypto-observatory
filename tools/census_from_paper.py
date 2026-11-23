@@ -16,6 +16,9 @@ from scipy.stats import chi2
 
 SRC, OUT = Path(sys.argv[1]), Path(sys.argv[2])
 YR = 365.25
+# Left out of the top-twenty cohort: the paper's census counts it, but it is not a cryptoasset.
+# ltl is the Lithuanian litas, a national currency replaced by the euro in January 2015.
+NOT_A_CRYPTOASSET = {"ltl"}
 
 
 def garwood(deaths, exposure):
@@ -46,6 +49,7 @@ for name, r in zip(names, sz.itertuples()):
 for name, f, only_sudden in (("Ever in the top fifty", "elite_top50_curated.csv", False), ("Ever in the top twenty", "elite_top20_curated.csv", False),
                              ("Ever in the top twenty: sudden collapse only", "elite_top20_curated.csv", True)):
     e = pd.read_csv(SRC / f)
+    e = e[~e.asset.isin(NOT_A_CRYPTOASSET)]
     d = int(((e.death == 1) & ((e.cat == 1) | (not only_sudden))).sum())
     exp = e.exp_yr.sum()
     lo, hi = garwood(d, exp)
@@ -96,8 +100,21 @@ surv += [dict(group="Ever in the top twenty", age=float(a), alive=v) for a, v in
 pd.DataFrame(surv).to_csv(OUT / "survival_by_size.csv", index=False)
 
 # ---- the assets that were ever in the top twenty, with their deaths
+e20 = e20[~e20.index.isin(NOT_A_CRYPTOASSET)]
 e20.reset_index().to_csv(OUT / "ever_top20.csv", index=False)
 
+# ---- which rule classified each of those deaths, and how much the asset still traded at the census date
+rules = []
+for r in e20[e20.death == 1].reset_index().itertuples():
+    q = panel.set_index("asset").loc[r.asset]
+    rule = ("sudden collapse" if r.cat == 1 else "trading dried up" if bool(q.vol_dead_c)
+            else "price below 1% of peak" if bool(q.econ_dead) else "data feed ended")
+    rules.append(dict(asset=r.asset, rule=rule, feed_last_day=str(q["last"].date()),
+                      volume_at_end_usd_a_day="" if pd.isna(q.final_vol_3m) else int(round(q.final_vol_3m, -3))))
+pd.DataFrame(rules).sort_values("asset").to_csv(OUT / "death_rules.csv", index=False)
+
+# The universe totals and the tables by age and by peak volume are the paper's as they stand: they
+# still count the one asset named in NOT_A_CRYPTOASSET, 1 of 1,815. The top-twenty cohort does not.
 summary = dict(census_date=str(end.date()), first_asset_born=str(core.birth.min().date()), assets=int(len(core)), deaths=int(core.E.sum()),
                ever_top_twenty=int(len(e20)), ever_top_twenty_deaths=int((e20.death == 1).sum()),
                age_elasticity_of_death=0.42, source="Papadogiannis (2026), Bitcoin's Required Return, Section 3 and Appendix C")

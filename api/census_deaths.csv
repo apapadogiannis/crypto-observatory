@@ -1,37 +1,36 @@
-asset,name,entered_top_twenty,died,kind
-ltl,Lithuanian Litas,2013-07,2014-12-01,abandoned or delisted
-fct,Factom,2015-10,2021-07-31,abandoned or delisted
-lbc,LBRY Credits,2016-07,2021-09-30,abandoned or delisted
-ppt,Populous,2019-03,2021-11-28,abandoned or delisted
-etp,Metaverse ETP,2017-10,2022-01-31,abandoned or delisted
-ncash,Nitro Network,2018-02,2022-01-31,abandoned or delisted
-zb,ZB,2019-03,2022-02-28,abandoned or delisted
-wtc,Waltonchain,2017-09,2022-04-26,abandoned or delisted
-ust,TerraClassicUSD,2022-04,2022-05-12,sudden collapse
-luna,Terra Classic,2021-08,2022-05-12,sudden collapse
-qash,QASH,2017-11,2022-07-31,abandoned or delisted
-qc,Qcash,2019-03,2022-08-24,abandoned or delisted
-ftt,FTX Token,2021-09,2022-11-10,sudden collapse
-mith,Mithril,2018-04,2023-03-31,abandoned or delisted
-qsp,Quantstamp,2017-11,2023-05-31,abandoned or delisted
-seele,Seele,2019-12,2023-07-31,abandoned or delisted
-vtc,Vertcoin,2014-01,2023-08-01,abandoned or delisted
-mda,Moeda Loyalty Points,2018-10,2023-09-30,abandoned or delisted
-bts,BitShares,2014-08,2024-06-30,abandoned or delisted
-ae,Aeternity,2019-09,2024-10-31,abandoned or delisted
-bcn,Bytecoin,2014-05,2024-10-31,abandoned or delisted
-omg,OMG Network,2017-08,2025-02-24,abandoned or delisted
-key,SelfKey,2018-06,2025-04-30,abandoned or delisted
-loom,Loom Network,2023-09,2025-05-07,abandoned or delisted
-xem,NEM,2015-04,2025-05-19,abandoned or delisted
-btg,Bitcoin Gold,2017-10,2025-06-30,abandoned or delisted
-lina,Linear,2023-06,2025-06-30,abandoned or delisted
-pda,PlayDapp,2024-02,2025-06-30,abandoned or delisted
-yfii,DFI.Money,2020-09,2025-07-31,abandoned or delisted
-flow,Flow,2021-07,2025-09-22,abandoned or delisted
-mxc,MXC,2024-04,2025-09-30,abandoned or delisted
-stmx,StormX,2023-07,2025-10-31,abandoned or delisted
-nano,Nano (New),2018-02,2025-12-31,abandoned or delisted
-icp,Internet Computer,2021-08,2026-01-21,abandoned or delisted
-hifi,Hifi Finance,2023-09,2026-01-31,abandoned or delisted
-sushi,SushiSwap,2020-09,2026-03-31,abandoned or delisted
+asset,name,entered_top_twenty,died,kind,rule,volume_at_end_usd_a_day,feed_last_day
+fct,Factom,2015-10,2021-07-31,abandoned or delisted,trading dried up,2000,2024-05-27
+lbc,LBRY Credits,2016-07,2021-09-30,abandoned or delisted,trading dried up,1000,2026-05-23
+ppt,Populous,2019-03,2021-11-28,abandoned or delisted,trading dried up,0,2026-05-23
+ncash,Nitro Network,2018-02,2022-01-31,abandoned or delisted,trading dried up,45000,2023-08-17
+etp,Metaverse ETP,2017-10,2022-01-31,abandoned or delisted,trading dried up,45000,2025-04-01
+zb,ZB,2019-03,2022-02-28,abandoned or delisted,data feed ended,442000,2022-08-24
+wtc,Waltonchain,2017-09,2022-04-26,abandoned or delisted,trading dried up,0,2024-11-05
+ust,TerraClassicUSD,2022-04,2022-05-12,sudden collapse,sudden collapse,2031000,2026-05-24
+luna,Terra Classic,2021-08,2022-05-12,sudden collapse,sudden collapse,17767000,2026-05-24
+qash,QASH,2017-11,2022-07-31,abandoned or delisted,trading dried up,0,2026-04-13
+qc,Qcash,2019-03,2022-08-24,abandoned or delisted,data feed ended,69813000,2022-08-24
+ftt,FTX Token,2021-09,2022-11-10,sudden collapse,sudden collapse,1792000,2026-05-24
+mith,Mithril,2018-04,2023-03-31,abandoned or delisted,trading dried up,5000,2026-05-20
+qsp,Quantstamp,2017-11,2023-05-31,abandoned or delisted,trading dried up,6000,2026-05-21
+seele,Seele,2019-12,2023-07-31,abandoned or delisted,trading dried up,0,2026-05-22
+vtc,Vertcoin,2014-01,2023-08-01,abandoned or delisted,trading dried up,0,2025-05-10
+mda,Moeda Loyalty Points,2018-10,2023-09-30,abandoned or delisted,trading dried up,0,2025-09-15
+bts,BitShares,2014-08,2024-06-30,abandoned or delisted,trading dried up,68000,2026-05-24
+ae,Aeternity,2019-09,2024-10-31,abandoned or delisted,trading dried up,22000,2026-05-24
+bcn,Bytecoin,2014-05,2024-10-31,abandoned or delisted,trading dried up,0,2026-05-23
+omg,OMG Network,2017-08,2025-02-24,abandoned or delisted,trading dried up,86000,2026-05-24
+key,SelfKey,2018-06,2025-04-30,abandoned or delisted,trading dried up,5000,2026-05-24
+loom,Loom Network,2023-09,2025-05-07,abandoned or delisted,trading dried up,0,2026-05-22
+xem,NEM,2015-04,2025-05-19,abandoned or delisted,price below 1% of peak,449000,2026-05-24
+pda,PlayDapp,2024-02,2025-06-30,abandoned or delisted,trading dried up,55000,2026-03-19
+lina,Linear,2023-06,2025-06-30,abandoned or delisted,trading dried up,0,2026-01-24
+btg,Bitcoin Gold,2017-10,2025-06-30,abandoned or delisted,trading dried up,1000,2026-05-24
+yfii,DFI.Money,2020-09,2025-07-31,abandoned or delisted,trading dried up,67000,2026-05-24
+flow,Flow,2021-07,2025-09-22,abandoned or delisted,price below 1% of peak,7731000,2026-05-24
+mxc,MXC,2024-04,2025-09-30,abandoned or delisted,trading dried up,12000,2026-05-24
+stmx,StormX,2023-07,2025-10-31,abandoned or delisted,trading dried up,0,2026-05-20
+nano,Nano (New),2018-02,2025-12-31,abandoned or delisted,trading dried up,77000,2026-05-24
+icp,Internet Computer,2021-08,2026-01-21,abandoned or delisted,price below 1% of peak,32446000,2026-05-24
+hifi,Hifi Finance,2023-09,2026-01-31,abandoned or delisted,trading dried up,71000,2026-05-24
+sushi,SushiSwap,2020-09,2026-03-31,abandoned or delisted,price below 1% of peak,2096000,2026-05-24

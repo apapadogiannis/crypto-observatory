@@ -111,17 +111,17 @@
      {
       "name": "volatility",
       "type": "number",
-      "description": "Annualised volatility of Bitcoin used in the month, percent (computed from Coin Metrics prices)"
+      "description": "Annualised volatility of Bitcoin used in the month, percent: the square root of twelve times an exponentially weighted average of squared monthly log returns, half-life nine months (computed from Coin Metrics prices)"
      },
      {
       "name": "beta",
       "type": "number",
-      "description": "Beta of Bitcoin to the US equity market"
+      "description": "Beta of Bitcoin to the US equity market: covariance over variance of monthly log returns in the trailing 48 months (at least 18), kept between 0 and 3. The equity series is published one to two months late, so the latest months carry the last beta that could be computed; before 18 months of data the first one is carried back"
      },
      {
       "name": "correlation",
       "type": "number",
-      "description": "Correlation of Bitcoin with the US equity market"
+      "description": "Correlation of Bitcoin with the US equity market over the same window as beta, carried forward and back in the same way"
      },
      {
       "name": "weight_with_funds",
@@ -348,6 +348,64 @@
    }
   },
   {
+   "name": "vintages",
+   "path": "vintages.csv",
+   "format": "csv",
+   "mediatype": "text/csv",
+   "schema": {
+    "fields": [
+     {
+      "name": "month_end",
+      "type": "date",
+      "description": "The month-end the required return is set at"
+     },
+     {
+      "name": "recorded_with_data_to",
+      "type": "date",
+      "description": "Last day of source data in the build that first had this month-end as its latest month"
+     },
+     {
+      "name": "required_lower",
+      "type": "number",
+      "description": "Lower edge of the band as first published, percent a year"
+     },
+     {
+      "name": "required_midpoint",
+      "type": "number",
+      "description": "Midpoint as first published, percent a year"
+     },
+     {
+      "name": "required_upper",
+      "type": "number",
+      "description": "Upper edge as first published, percent a year"
+     },
+     {
+      "name": "risk_free",
+      "type": "number",
+      "description": "Risk-free rate at the midpoint as first published, percent a year"
+     },
+     {
+      "name": "market_term",
+      "type": "number",
+      "description": "Market risk at the midpoint as first published, percent a year"
+     },
+     {
+      "name": "concentration_term",
+      "type": "number",
+      "description": "Concentration risk at the midpoint as first published, percent a year"
+     },
+     {
+      "name": "mortality_term",
+      "type": "number",
+      "description": "Mortality risk at the midpoint as first published, percent a year"
+     }
+    ],
+    "missingValues": [
+     ""
+    ]
+   }
+  },
+  {
    "name": "census_deaths",
    "path": "census_deaths.csv",
    "format": "csv",
@@ -378,6 +436,21 @@
       "name": "kind",
       "type": "string",
       "description": "Kind of death: abandoned or delisted, or sudden collapse"
+     },
+     {
+      "name": "rule",
+      "type": "string",
+      "description": "The rule that classified it: trading dried up (three-month volume below 1% of its peak year and under 250,000 dollars a day), price below 1% of peak (and trading did not dry up), data feed ended, or sudden collapse (entered by hand at its public date). An asset dead by the price rule alone lost 99% of its peak value and still trades"
+     },
+     {
+      "name": "volume_at_end_usd_a_day",
+      "type": "number",
+      "description": "Average daily trading volume in the source over the last three months of its data, in US dollars, rounded to thousands. It shows how much the asset still traded when the census was taken"
+     },
+     {
+      "name": "feed_last_day",
+      "type": "date",
+      "description": "Last day the asset has data in the source. The census date itself, or a day or two before, for an asset whose feed was still running"
      }
     ],
     "missingValues": [

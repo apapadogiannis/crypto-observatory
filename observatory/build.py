@@ -102,19 +102,37 @@ def build(data: Path, out: Path) -> dict:
               for y in range(2012, int(census_summary["census_date"][:4]) + 1)]
     survival = pd.read_csv(census_dir / "survival_by_size.csv")
     names = dict(pd.read_csv(census_dir / "asset_names.csv").fillna("").itertuples(index=False, name=None))
+    rules = pd.read_csv(census_dir / "death_rules.csv").set_index("asset")
+    by_rule = rules.rule.value_counts()
+    # Deaths by the price rule alone: the asset lost 99% of its peak value and still trades.
+    still_trading = rules[rules.rule == "price below 1% of peak"]
+    at_risk = pd.read_csv(census_dir / "death_rate_by_size.csv").set_index("group").loc["Ever in the top twenty", "asset_years"]
+    census_end = pd.Timestamp(census_summary["census_date"])
+    extra_years = sum((census_end - d).days / 365.25 for d in dead[dead.asset.isin(still_trading.index)].death_date)
     census_doc = {
         **census_summary, "updated_monthly": False,
+        "deaths_by_rule": {k: int(v) for k, v in by_rule.items()},
+        "left_out": [{"asset": "ltl", "name": "Lithuanian litas", "why": "a national currency, replaced by the euro in January 2015; "
+                      "the paper's census counts it among the top-twenty deaths (36 of 219), this one does not (35 of 218)"}],
+        "paper_counts": {"ever_top_twenty": 219, "ever_top_twenty_deaths": 36, "death_rate": 3.54},
+        "death_rate_without_price_rule_deaths": _r(100 * (len(dead) - len(still_trading)) / (at_risk + extra_years)),
         "death_rate_by_age": pd.read_csv(census_dir / "death_rate_by_age.csv").to_dict("records"),
         "death_rate_by_size": pd.read_csv(census_dir / "death_rate_by_size.csv").to_dict("records"),
         "survival_by_size": {g: [[float(a), float(v)] for a, v in zip(x.age, x.alive)] for g, x in survival.groupby("group", sort=False)},
         "deaths_by_year": deaths,
         "ever_top_twenty_deaths_list": [{"asset": r.asset, "name": names.get(r.asset, ""), "entered_top_twenty": r.first_top.strftime("%Y-%m"), "died": r.death_date.strftime("%Y-%m-%d"),
-                                         "kind": "sudden collapse" if r.cat == 1 else "abandoned or delisted"} for r in dead.itertuples()],
+                                         "kind": "sudden collapse" if r.cat == 1 else "abandoned or delisted",
+                                         "rule": rules.rule[r.asset],
+                                         "volume_at_end_usd_a_day": None if pd.isna(rules.volume_at_end_usd_a_day[r.asset]) else int(rules.volume_at_end_usd_a_day[r.asset]),
+                                         "feed_last_day": rules.feed_last_day[r.asset]} for r in dead.itertuples()],
     }
 
     c = cfg["constants"]
     L = band.iloc[-1]
     pct = lambda v: _r(100 * v)
+    months_since = lambda d: (band.index[-1].year - int(d[:4])) * 12 + band.index[-1].month - int(d[5:7])
+    anchor_age = {"ownership_survey": months_since(max(cfg["ownership"])),
+                  "fund_and_treasury_holdings": max(0, months_since(max(cfg["fund_and_treasury_btc"])))}
     doc = {
         "meta": {
             "asset": "btc", "name": "Bitcoin",
@@ -127,6 +145,21 @@ def build(data: Path, out: Path) -> dict:
             "equity_market_to": mkt.dropna().index[-1].strftime("%Y-%m"),
             "tests_to": (t.index[-1] + pd.offsets.MonthEnd(1)).strftime("%Y-%m"),
             "anchors_to": {"ownership_survey": max(cfg["ownership"])[:7], "fund_and_treasury_holdings": max(cfg["fund_and_treasury_btc"])[:7]},
+            "anchors_age_months": anchor_age,
+            "anchors_overdue": [k for k, limit in (("ownership_survey", c["ownership_survey_max_age_months"]),
+                                                   ("fund_and_treasury_holdings", c["fund_holdings_max_age_months"])) if anchor_age[k] > limit],
+            "model": {
+                "equity_risk_premium": pct(c["equity_risk_premium"]),
+                "market_scale": [c["market_scale_low"], c["market_scale_high"]],
+                "risk_aversion": [c["risk_aversion_low"], c["risk_aversion_high"]],
+                "mortality": [pct(c["mortality_low"]), pct(c["mortality_high"])],
+                "volatility_halflife_months": c["volatility_halflife_months"],
+                "beta_window_months": c["beta_window_months"], "beta_min_months": c["beta_min_months"], "beta_cap": c["beta_cap"],
+                "weight_cap": c["weight_cap"], "owner_weight_at_anchor": c["owner_weight_2021"], "anchor_date": c["anchor_date"],
+                "fund_investor_weight": c["fund_investor_weight"],
+                "beta_carried_forward_from": mkt.dropna().index[-1].strftime("%Y-%m"),
+                "history_uses_later_anchors": True,
+            },
             "sources": ["Coin Metrics community data (CC BY-NC 4.0)", "US equity market return, Kenneth R. French data library",
                         "US Treasury daily par yield curve rates (ten-year)",
                         "implied equity risk premium by month, Aswath Damodaran (NYU Stern): used for the sensitivity table only",
@@ -157,6 +190,7 @@ def build(data: Path, out: Path) -> dict:
         "census": census_doc,
     }
     out.mkdir(parents=True, exist_ok=True)
+    doc["vintages"] = _vintages(data, doc)
     from . import publish                              # the files written for programs and AI agents
     doc["meta"]["credit"] = publish.credit(doc)
     doc["meta"]["files"] = publish.publish(doc, [ROOT / "api", out] if data == ROOT / "data" else [out])
@@ -168,6 +202,30 @@ def build(data: Path, out: Path) -> dict:
         html = html.replace(mark, text)
     (out / "index.html").write_text(html)
     return doc
+
+
+VINTAGE_COLUMNS = ["month_end", "recorded_with_data_to", "required_lower", "required_midpoint", "required_upper",
+                   "risk_free", "market_term", "concentration_term", "mortality_term"]
+
+
+def _vintages(data: Path, doc: dict) -> list[dict]:
+    """The record of what was published for each month-end when it was first computed.
+
+    months.csv is recomputed at every build with the data and the hand-entered anchors of that day,
+    so a past month's figure can change. This file does not: a month-end gets one row, the first
+    time a build has it as its latest month, and that row is never rewritten. It is kept in the
+    data folder beside the sources, and only added to.
+    """
+    path = data / "vintages.csv"
+    rows = pd.read_csv(path, dtype=str).to_dict("records") if path.exists() else []
+    L, w = doc["latest"], doc["latest"]["worked"]
+    if L["month_end"] not in {r["month_end"] for r in rows}:
+        rows.append({k: str(v) for k, v in zip(VINTAGE_COLUMNS, [
+            L["month_end"], doc["meta"]["data_to"], L["required"]["lower"], L["required"]["midpoint"], L["required"]["upper"],
+            w["risk_free"], w["market"]["midpoint"], w["concentration"]["midpoint"], w["mortality"]["midpoint"]])})
+        rows.sort(key=lambda r: r["month_end"])
+        pd.DataFrame(rows, columns=VINTAGE_COLUMNS).to_csv(path, index=False)
+    return [{k: (r[k] if k in ("month_end", "recorded_with_data_to") else float(r[k])) for k in VINTAGE_COLUMNS} for r in rows]
 
 
 def _static(doc: dict) -> dict:
@@ -228,7 +286,7 @@ def _page_payload(doc: dict) -> dict:
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
     meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"],
-            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "notes": doc["notes"], "cmp": doc["comparison"], "erp": doc["equity_premium"],
+            "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "anchors_age": doc["meta"]["anchors_age_months"], "anchors_overdue": doc["meta"]["anchors_overdue"], "notes": doc["notes"], "cmp": doc["comparison"], "erp": doc["equity_premium"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],

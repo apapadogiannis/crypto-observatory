@@ -9,8 +9,12 @@ The sources, each appended to the file already stored:
     Kenneth French data library  monthly US equity market return    data/market/us_market_monthly.csv
     Aswath Damodaran, NYU Stern  monthly implied equity premium     data/market/implied_equity_premium_monthly.csv
 
-Stored history is never rewritten: new days are added after the last stored one, and the days
-that overlap are compared with what is stored, so a revision upstream is reported and not absorbed.
+Coin Metrics and the implied equity premium are only added to: new rows go after the last stored
+one, and the rows that overlap are compared with what is stored, so a revision upstream is
+reported and not absorbed. The Treasury file is refreshed for the current year, and the French
+series are stored as published each time, with any revision of a stored month printed in the log:
+those two can therefore change a past figure in months.csv. What was published at the time is
+kept in data/vintages.csv, which no build rewrites.
 """
 from __future__ import annotations
 
@@ -262,6 +266,19 @@ def main(argv):
             late.append(f"{k}: last observation {obs}, more than {days} days old")
     if late:
         raise SystemExit("Stale source. " + "; ".join(late))
+    # Hand-entered anchors grow old silently. Say so in the run's log; the page says so too.
+    try:
+        import tomllib
+        cfg = tomllib.loads((ROOT / "config" / "model.toml").read_text(encoding="utf-8"))
+        months_old = lambda d: (today.year - int(d[:4])) * 12 + today.month - int(d[5:7])
+        for name, table, limit in (("ownership survey", "ownership", "ownership_survey_max_age_months"),
+                                   ("fund and treasury holdings", "fund_and_treasury_btc", "fund_holdings_max_age_months")):
+            newest = max(cfg[table])
+            if months_old(newest) > cfg["constants"][limit]:
+                print(f"::warning::The newest {name} anchor in config/model.toml is dated {newest}, "
+                      f"more than {cfg['constants'][limit]} months ago. Enter a newer one.")
+    except Exception as e:  # the warning is a courtesy; the update does not depend on it
+        print(f"anchor ages not checked ({e!r})")
     log_path = data / "sources.json"
     if changed or not log_path.exists():
         log["retrieved"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")

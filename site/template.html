@@ -497,6 +497,7 @@ text{font-family:inherit}
     <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
     <div class="chart" id="c-deaths"></div>
     <div class="scroll"><table id="t-grave"></table></div>
+    <p class="note" id="grave-rules"></p>
   </section>
 
   <section class="card" id="sec-c-method">
@@ -969,9 +970,11 @@ function censusView(){
   // --- the deaths at the top
   deathsChart("c-deaths",true);
   set("grave-sub","Of the "+C.ever_top_twenty+" assets that ever ranked in the top twenty by monthly trading volume, "+C.ever_top_twenty_deaths+" have died. Most were slow fades. Three were sudden collapses, each a near-total loss within days.");
-  const T=document.getElementById("t-grave"); T.textContent=""; const hr=T.insertRow(); ["Asset","Entered the top twenty","Died","How"].forEach((h,i)=>{const th=document.createElement("th"); th.textContent=h; if(i===3) th.style.textAlign="left"; hr.appendChild(th);});
-  C.ever_top_twenty_deaths_list.forEach(r=>{const tr=T.insertRow(); if(r.kind==="sudden collapse") tr.className="tot"; [r.asset.toUpperCase(),fmtM(parse(r.entered_top_twenty)),fmtM(parse(r.died.slice(0,7))),r.kind].forEach((v,i)=>{const c=tr.insertCell(); c.textContent=v; if(i) c.style.textAlign=i==3?"left":"right";});});
-  set("census-note","These figures are the paper's, from data to "+taken+". The data source they came from has stopped, and the census has not yet been moved to the new one, so new deaths since then are not counted.");
+  const T=document.getElementById("t-grave"); T.textContent=""; const hr=T.insertRow(); ["Asset","Entered the top twenty","Died","How","Still traded, $ a day"].forEach((h,i)=>{const th=document.createElement("th"); th.textContent=h; if(i===3) th.style.textAlign="left"; hr.appendChild(th);});
+  C.ever_top_twenty_deaths_list.forEach(r=>{const tr=T.insertRow(); if(r.kind==="sudden collapse") tr.className="tot"; [r.asset.toUpperCase(),fmtM(parse(r.entered_top_twenty)),fmtM(parse(r.died.slice(0,7))),r.rule,r.volume_at_end_usd_a_day==null?"":r.volume_at_end_usd_a_day>=1e6?(r.volume_at_end_usd_a_day/1e6).toFixed(1)+" million":r.volume_at_end_usd_a_day>=1e3?Math.round(r.volume_at_end_usd_a_day/1e3)+" thousand":"under a thousand"].forEach((v,i)=>{const c=tr.insertCell(); c.textContent=v; if(i) c.style.textAlign=i==3?"left":"right";});});
+  const BR=C.deaths_by_rule, nPrice=BR["price below 1% of peak"]||0;
+  set("grave-rules","How each was classified: "+(BR["trading dried up"]||0)+" because trading dried up, "+nPrice+" because the price fell below 1% of its peak, "+(BR["data feed ended"]||0)+" because the data feed ended, and "+(BR["sudden collapse"]||0)+" sudden collapses. The "+nPrice+" dead by price alone still traded more than $250,000 a day when the census was taken: they count because a holder at the peak lost 99%, not because the asset stopped. Without them the death rate of this group would be "+C.death_rate_without_price_rule_deaths.toFixed(2)+"% a year. \u201cStill traded\u201d is the average daily volume in the source over the last three months of the asset's data.");
+  set("census-note","These figures are the paper's, from data to "+taken+". The data source they came from has stopped, and the census has not yet been moved to the new one, so new deaths since then are not counted. One entry of the paper's census is left out here: the Lithuanian litas, a national currency replaced by the euro in 2015, which the source carried among its assets. The paper counts "+C.paper_counts.ever_top_twenty_deaths+" deaths among "+C.paper_counts.ever_top_twenty+" assets; this page counts "+C.ever_top_twenty_deaths+" among "+C.ever_top_twenty+". The upper mortality figure of 3.5 points is the paper's and is not changed; on this page's count it would be "+C.death_rate_by_size.find(r=>r.group==="Ever in the top twenty").rate.toFixed(2)+". The tables by age and by size still include the litas, one of "+C.assets.toLocaleString("en-US")+" assets.");
 }
 function premiumCard(){
   const E=DATA.meta.erp, k=FROM, hasImplied=E.rows.some(r=>r.kind==="implied");
@@ -1007,6 +1010,8 @@ function tiles(){
       +(s?" Since 2018 these risks account for "+s.s_mcm+"% of what Bitcoin delivered over the risk-free rate; market risk alone, as in the CAPM, for "+s.s_capm+"%.":""); }
   const age=Math.floor((Date.now()-monthEnd.getTime())/864e5), stale=document.getElementById("stale");
   if(age>50){ stale.textContent="These figures are for "+longDate(monthEnd)+", "+age+" days ago. The monthly update has not run since, so they may be out of date."; stale.style.display="block"; }
+  else if((DATA.meta.anchors_overdue||[]).length){ const A=DATA.meta.anchors_age, what={ownership_survey:"the last ownership survey entered is "+A.ownership_survey+" months old", fund_and_treasury_holdings:"the last count of Bitcoin held by funds and companies is "+A.fund_and_treasury_holdings+" months old"};
+    stale.textContent="Some inputs of the holder's weight are entered by hand and are due for renewal: "+DATA.meta.anchors_overdue.map(k=>what[k]).join(", and ")+". The concentration term rests on them."; stale.style.display="block"; }
   document.getElementById("asof").textContent="Dates of the data: prices and the Treasury yield to "+longDate(monthEnd)+"; equity market returns, and so the tests, to "+fmtM(parse(m.market_to))+" (the beta is carried forward from that month); ownership survey to "+fmtM(parse(m.anchors.ownership_survey))+"; fund and treasury holdings to "+fmtM(parse(m.anchors.fund_and_treasury_holdings))+", held flat after.";
 }
 function draw(){

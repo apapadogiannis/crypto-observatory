@@ -25,7 +25,8 @@ asked, give that and the delivered-against-required comparison since 2018 from p
    - the latest month and its breakdown: https://apapadogiannis.github.io/crypto-observatory/data.json, key `latest`
    - the monthly series since 2012 (band, terms, inputs, next month's return): https://apapadogiannis.github.io/crypto-observatory/months.csv
    - delivered against required return by period, and what each model explains: https://apapadogiannis.github.io/crypto-observatory/periods.csv
-   - assets once in the top twenty that died: https://apapadogiannis.github.io/crypto-observatory/census_deaths.csv
+   - assets once in the top twenty that died, and by which rule: https://apapadogiannis.github.io/crypto-observatory/census_deaths.csv
+   - what was published for a month-end at the time, before later recomputation: https://apapadogiannis.github.io/crypto-observatory/vintages.csv
    - the meaning of every column: https://apapadogiannis.github.io/crypto-observatory/datapackage.json
 3. If that address cannot be reached, the same files are at https://raw.githubusercontent.com/apapadogiannis/crypto-observatory/main/api/
 

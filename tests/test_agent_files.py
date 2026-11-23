@@ -25,6 +25,7 @@ with tempfile.TemporaryDirectory() as tmp:
     page = (out / "index.html").read_text(encoding="utf-8")
     read = lambda name: list(csv.DictReader((out / name).open(encoding="utf-8")))
     months, periods, deaths = read("months.csv"), read("periods.csv"), read("census_deaths.csv")
+    vintages = read("vintages.csv")
     api = {p.name: p.read_text(encoding="utf-8") for p in (ROOT / "api").iterdir()}
     for name, text in api.items():
         assert (out / name).read_text(encoding="utf-8") == text, f"api/{name} is not what the build produces"
@@ -43,10 +44,37 @@ for row, p in zip(periods, doc["periods"]):
 assert len(deaths) == doc["census"]["ever_top_twenty_deaths"] == len(doc["census"]["ever_top_twenty_deaths_list"])
 
 # Every column is described, in the order it appears.
-for name, rows in (("months", months), ("periods", periods), ("census_deaths", deaths)):
+for name, rows in (("months", months), ("periods", periods), ("census_deaths", deaths), ("vintages", vintages)):
     fields = next(r for r in pkg["resources"] if r["name"] == name)["schema"]["fields"]
     assert [f["name"] for f in fields] == list(rows[0].keys()), name
     assert all(f["description"] for f in fields)
+
+# The census: no national currency among the deaths, every death carries the rule that classified it,
+# and the counts by rule add up. The upper mortality figure stays the paper's.
+c = doc["census"]
+assert "ltl" not in {d["asset"] for d in deaths} and c["ever_top_twenty_deaths"] == 35 and c["ever_top_twenty"] == 218
+rules = {"trading dried up", "price below 1% of peak", "data feed ended", "sudden collapse"}
+assert {d["rule"] for d in deaths} <= rules and sum(c["deaths_by_rule"].values()) == len(deaths)
+assert all((d["rule"] == "sudden collapse") == (d["kind"] == "sudden collapse") for d in deaths)
+assert all(float(d["volume_at_end_usd_a_day"]) > 250_000 for d in deaths if d["rule"] == "price below 1% of peak")
+top = next(r for r in c["death_rate_by_size"] if r["group"] == "Ever in the top twenty")
+assert top["deaths"] == 35 and c["death_rate_without_price_rule_deaths"] < top["rate"] < 3.5 == doc["meta"]["model"]["mortality"][1]
+from observatory.census import FIAT  # noqa: E402
+assert "ltl" in FIAT and "usd" in FIAT
+
+# The record of what was first published: one row per month-end, the latest month in it, and stored
+# rows unchanged by a build.
+stored = list(csv.DictReader((ROOT / "data" / "vintages.csv").open(encoding="utf-8")))
+assert [v["month_end"] for v in stored] == sorted({v["month_end"] for v in stored}) and stored == vintages
+assert doc["latest"]["month_end"] in {v["month_end"] for v in stored}
+row = next(v for v in stored if v["month_end"] == doc["latest"]["month_end"])
+assert row["recorded_with_data_to"] <= doc["meta"]["data_to"]
+
+# The model's fixed settings are stated to agents, with the age of the hand-entered inputs.
+mo = doc["meta"]["model"]
+assert f"half-life {mo['volatility_halflife_months']} months" in guide and f"trailing {mo['beta_window_months']} months" in guide
+assert "requirement built in hindsight" in guide and set(doc["meta"]["anchors_age_months"]) == {"ownership_survey", "fund_and_treasury_holdings"}
+assert all(k in doc["meta"]["anchors_age_months"] for k in doc["meta"]["anchors_overdue"])
 
 # Licence and citation are the same everywhere, and the guide states the latest figure.
 credit = doc["meta"]["credit"]
@@ -58,6 +86,8 @@ assert f"{latest['midpoint']}% a year at the midpoint" in guide
 # The skill names only files that exist, holds no figure that would go stale, and has a valid header.
 skill = api["SKILL.md"]
 assert skill.startswith("---\nname: crypto-observatory\ndescription: ") and skill.count("---\n") >= 2
+for name in ("llms.txt", "data.json", "months.csv", "periods.csv", "census_deaths.csv", "datapackage.json"):
+    assert name in api, name
 for name in ("llms.txt", "data.json", "months.csv", "periods.csv", "census_deaths.csv", "datapackage.json"):
     assert name in skill and name in api, name
 assert str(latest["midpoint"]) not in skill

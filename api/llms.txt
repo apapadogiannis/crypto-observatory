@@ -16,6 +16,7 @@ This file is written for AI agents and other programs. People should start at th
   Of the midpoint: risk-free 4.94, market 5.78, concentration 7.5, mortality 1.9.
 - Tests of fit to 2026-09 (the equity market series is published with a lag of one to two months).
 - Census of cryptoasset deaths taken on 2026-05-24: 1815 assets, 520 deaths. It is not updated monthly.
+  Of 218 assets that were ever in the top twenty by trading volume, 35 died.
 
 ## What this adds over computing it yourself
 
@@ -37,6 +38,35 @@ want to change the model:
    data/README.md (for example, 0.1 point on average at the midpoint from the equity series).
 6. The census classifies the death of every asset in the Coin Metrics universe by date and kind.
    That classification is the paper's own work and is where the mortality term comes from.
+7. vintages.csv keeps what was published for each month-end when it was first computed. No later
+   build rewrites it.
+
+## The model's fixed settings
+
+These are choices, not measurements. They are in config/model.toml and in data.json under
+`meta.model`. Change one and the midpoint moves; the band is the paper's statement of that range.
+
+- Equity premium 4.0% a year. The market term is beta times it, scaled by 0.85 at the
+  lower edge and 1.15 at the upper edge.
+- Risk aversion 1.0 at the lower edge and 2.8 at the upper edge.
+- Volatility: exponentially weighted squared monthly log returns, half-life 9 months.
+- Beta: trailing 48 months (at least 18), kept between 0 and 3. The equity series
+  ends 2026-09, so later months carry that month's beta forward.
+- Holder's weight: 19% of an owner's financial assets at the 2021 survey, carried to other
+  dates by market value, ownership and an assumed path of wealth per owner; never above 90%.
+  Fund and treasury investors are taken to hold 1.5% of their wealth in Bitcoin.
+- Mortality 0.3% to 3.5% a year, the same in every month. The upper figure is the paper's:
+  36 deaths among 219 assets, 3.54% a year.
+- The concentration term at the midpoint is what remains of the midpoint after the other three
+  terms, and is not allowed below zero.
+- The past is computed with what is known today. The band for an earlier month uses surveys taken
+  after it (the 2021 survey is carried back to 2012), an assumed wealth path, and for the
+  first months a beta carried back from the first one that can be computed. Holders at the time
+  could not have computed it. "Delivered against required" before 2021 is a comparison with a
+  requirement built in hindsight.
+- Age of the hand-entered inputs at the latest month-end: the last ownership survey is 16 months
+  old and the last count of fund and treasury holdings 0 months old. Ownership has been
+  entered as flat since 2023.
 
 ## Files
 
@@ -46,7 +76,10 @@ want to change the model:
 - months.csv: the band, its four terms, the inputs and the next month's outcome, one row per month-end.
 - periods.csv: three-year periods and the two summary samples: delivered, required, the gap, and
   what the CAPM and the MCM equation each explain and leave unexplained.
-- census_deaths.csv: the 36 assets that were ever in the top twenty by trading volume and died.
+- census_deaths.csv: the 35 assets that were ever in the top twenty by trading volume and died,
+  with the rule that classified each and how much it still traded.
+- vintages.csv: the required return of each month-end as first published. Rows are added, never
+  rewritten. Use it to see what the tool said at the time.
 - datapackage.json: the licence, the citation and the meaning of every column.
 - SKILL.md: a skill a person can add to their own AI agent so that it comes to these files when
   asked about Bitcoin's required return. It holds addresses and reading rules, no figures.
@@ -77,6 +110,17 @@ files are under api/.
   because the required return is converted month by month and the premium is not.
 - "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),
   not a delisting. Say "dead by the census definition", not that the asset no longer exists.
+  `rule` in census_deaths.csv says which: 26 by trading drying up, 4 by price alone, 2 by the feed
+  ending, 3 sudden collapses. The 4 dead by price alone still traded more than 250,000 dollars a day
+  at the census date (`volume_at_end_usd_a_day`): they are counted because a holder at the peak
+  lost 99%, not because the asset stopped. Without them the top-twenty death rate would be 3.05% a
+  year, not 3.45%.
+- The census here leaves out one entry the paper's census counts: the Lithuanian litas (ltl), a
+  national currency replaced by the euro in 2015. The paper has 36 top-twenty deaths, these
+  files 35. The universe totals (1815 assets, 520 deaths) and the tables by age and by
+  size are the paper's and still include it.
+- months.csv is recomputed at every build. For what was published at the time, use vintages.csv,
+  which starts in November 2026.
 - In data.json, `comparison.rows` are required returns of other assets from the same equation,
   not what those assets delivered.
 - Standing of the figures: they are one model's answer, from one working paper. The tests of fit

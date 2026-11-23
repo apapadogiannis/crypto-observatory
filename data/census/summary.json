@@ -3,8 +3,8 @@
  "first_asset_born": "2010-07-18",
  "assets": 1815,
  "deaths": 520,
- "ever_top_twenty": 219,
- "ever_top_twenty_deaths": 36,
+ "ever_top_twenty": 218,
+ "ever_top_twenty_deaths": 35,
  "age_elasticity_of_death": 0.42,
  "source": "Papadogiannis (2026), Bitcoin's Required Return, Section 3 and Appendix C"
 }

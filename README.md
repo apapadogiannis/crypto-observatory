@@ -37,7 +37,8 @@ live page's address.
 | `api/data.json` | every number on the page, under plain names |
 | `api/months.csv` | one row per month-end: the required-return band, its terms and inputs |
 | `api/periods.csv` | one row per period: delivered and required return, and what each model explains |
-| `api/census_deaths.csv` | every cryptoasset that was ever in the top twenty by trading volume and died |
+| `api/census_deaths.csv` | every cryptoasset that was ever in the top twenty by trading volume and died, with the rule that classified it |
+| `api/vintages.csv` | the required return of each month-end as first published; rows are added, never rewritten |
 | `api/datapackage.json` | the licence, the citation and the meaning of every column |
 | `api/llms.txt` | the guide |
 | `api/SKILL.md` | the skill described above |
@@ -78,9 +79,18 @@ taken from the site's own data (two Bitcoin holders, Bitcoin at a negligible wei
 **Census of deaths** shows how often cryptoassets die, by age and by size, how long they last, and
 every death among the assets that were ever in the top twenty. It is where the mortality term of the
 required return comes from. The census is the paper's, taken on 24 May 2026, and is not yet updated
-monthly.
+monthly. Each death carries the rule that classified it (trading dried up, price below 1% of its
+peak, the data feed ended, or a sudden collapse) and how much the asset still traded at the census
+date. One entry of the paper's census is left out: the Lithuanian litas, a national currency that
+the source carried among its assets. The paper counts 36 top-twenty deaths, this site 35; the upper
+mortality figure of 3.5% a year is the paper's and is not changed.
 
 It reports required returns. It forecasts nothing.
+
+**What was said at the time.** The monthly series is recomputed at every update with the data and
+the hand-entered anchors of that day, so the figure for a past month can change, and the band for
+the years before 2021 uses a survey taken in 2021. `data/vintages.csv` keeps what was published for
+each month-end when it was first computed, from November 2026 on. No build rewrites a stored row.
 
 ## Status
 
@@ -138,7 +148,9 @@ can read it without scraping the page.
 | `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
 | `equity_premium` | the tests of fit recomputed with other equity risk premia: the paper's fixed 4%, and the premium implied by stock prices each month |
-| `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, and the list of top-twenty deaths |
+| `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, the list of top-twenty deaths with the rule behind each, the counts by rule, and what is left out |
+| `vintages` | what was published for each month-end when it was first computed |
+| `meta.model` | the model's fixed settings (equity premium, risk aversion, scales, windows, caps) and `meta.anchors_age_months`, the age of the hand-entered inputs |
 
 Figures are percent a year unless the key says otherwise.
 

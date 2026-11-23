@@ -17,6 +17,9 @@ VOLUME_FLOOR = 0.01            # of the best twelve-month average
 ABANDONED_BELOW = 2.5e5        # dollars a day, last three months
 
 FIAT = set("""aed afn all amd ang aoa ars aud awg azn bam bbd bdt bgn bhd bif bmd bnd bob brl bsd btn bwp byn bzd cad cdf chf clp cny cop crc cup cve czk djf dkk dop dzd egp ern etb eur fjd fkp gbp gel ghs gip gmd gnf gtq gyd hkd hnl hrk htg huf idr ils inr iqd irr isk jmd jod jpy kes kgs khr kmf kpw krw kwd kyd kzt lak lbp lkr lrd lsl lyd mad mdl mga mkd mmk mnt mop mru mur mvr mwk mxn myr mzn nad ngn nio nok npr nzd omr pab pen pgk php pkr pln pyg qar ron rsd rub rwf sar sbd scr sdg sek sgd shp sll sos srd ssp stn svc syp szl thb tjs tmt tnd top try ttd twd tzs uah ugx usd uyu uzs ves vnd vuv wst xaf xcd xof xpf yer zar zmw zwl xau xag xpt xpd""".split())
+# National currencies since retired. They are in no current list of currency codes, which is how the
+# Lithuanian litas (ltl, replaced by the euro in January 2015) once entered the census as a death.
+FIAT |= set("ltl lvl eek skk sit cyp mtl trl rol bgl zwd vef mro std byr azm ghc mzm sdd tmm zmk".split())
 _STOCKS = "aal aapl abbv abnb abt acn adbe amd amzn avgo axp ba bac brk brkb cat coin crcl crm csco cvx dfdv dis gld glxy gme goog googl hd hon hood iau ibm intc jnj jpm ko lin lly ma mcd meta mrk mrvl msft mstr nflx nke nvda orcl pep pfe pg pltr qqq slv spy tqqq tsla unh uso v vst vti vz wmt xom azn nvo sap tm".split()
 TOKENIZED_STOCKS = {s + "x" for s in _STOCKS} | {s + "on" for s in _STOCKS}
 WRAPPED = set("wbtc weth wsteth steth cbbtc cbeth reth rseth wbeth frxeth sfrxeth tbtc renbtc hbtc btcb wbnb wsol bnsol jitosol msol ezeth weeth rsweth sweth oseth lseth meth ankreth btse cmeth stsol solvbtc wavax wmatic wpol".split())

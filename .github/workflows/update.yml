@@ -38,6 +38,9 @@ jobs:
           python3 -I build.py
           test -s _site/index.html
 
+      - name: The files for programs and AI agents agree with the data file
+        run: python3 -I tests/test_agent_files.py
+
       - name: Store the new data in the repository
         run: |
           if git diff --quiet -- data api; then echo "No new data."; exit 0; fi

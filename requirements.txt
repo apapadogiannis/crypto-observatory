@@ -1,2 +1,4 @@
-pandas>=2.0
-numpy>=1.26
+# Exact versions, so that a scheduled run does not change a figure by changing a library.
+# Raise them on purpose, with the checks, never by default.
+pandas==3.1.1
+numpy==2.5.5

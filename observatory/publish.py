@@ -42,9 +42,9 @@ MONTH_FIELDS = [
     ("market_term", "number", "Market risk at the midpoint, percent a year: beta times the equity risk premium"),
     ("concentration_term", "number", "Concentration risk at the midpoint, percent a year. At each edge it is risk aversion times variance times the holder's weight; at the midpoint it is what remains of the midpoint after the other three terms"),
     ("mortality_term", "number", "Mortality risk at the midpoint, percent a year: a constant, the middle of the census range (0.3 to 3.5), the same in every month"),
-    ("volatility", "number", "Annualised volatility of Bitcoin used in the month, percent (computed from Coin Metrics prices)"),
-    ("beta", "number", "Beta of Bitcoin to the US equity market"),
-    ("correlation", "number", "Correlation of Bitcoin with the US equity market"),
+    ("volatility", "number", "Annualised volatility of Bitcoin used in the month, percent: the square root of twelve times an exponentially weighted average of squared monthly log returns, half-life nine months (computed from Coin Metrics prices)"),
+    ("beta", "number", "Beta of Bitcoin to the US equity market: covariance over variance of monthly log returns in the trailing 48 months (at least 18), kept between 0 and 3. The equity series is published one to two months late, so the latest months carry the last beta that could be computed; before 18 months of data the first one is carried back"),
+    ("correlation", "number", "Correlation of Bitcoin with the US equity market over the same window as beta, carried forward and back in the same way"),
     ("weight_with_funds", "number", "Share of wealth held in Bitcoin by the average owner when fund and treasury investors are counted, percent"),
     ("weight_surveyed", "number", "Share of wealth held in Bitcoin by the average surveyed owner, percent"),
     ("weight_early_holder", "number", "Share of wealth held in Bitcoin by the early holder, percent. When the early holder sets the upper edge, that edge is the risk-free rate plus this weight times variance, with no market or mortality term"),
@@ -95,6 +95,20 @@ DEATH_FIELDS = [
     ("entered_top_twenty", "yearmonth", "Month it first entered the top twenty by trading volume"),
     ("died", "date", "Date of death as classified in the paper's census. Death is a definition, not a delisting notice: the data feed ended more than 180 days before the end of the data, or the price fell below 1% of its peak and did not recover, or trading volume fell below 1% of its peak and below 250,000 dollars a day and did not recover. An asset that is dead by this definition can still be listed and trade"),
     ("kind", "string", "Kind of death: abandoned or delisted, or sudden collapse"),
+    ("rule", "string", "The rule that classified it: trading dried up (three-month volume below 1% of its peak year and under 250,000 dollars a day), price below 1% of peak (and trading did not dry up), data feed ended, or sudden collapse (entered by hand at its public date). An asset dead by the price rule alone lost 99% of its peak value and still trades"),
+    ("volume_at_end_usd_a_day", "number", "Average daily trading volume in the source over the last three months of its data, in US dollars, rounded to thousands. It shows how much the asset still traded when the census was taken"),
+    ("feed_last_day", "date", "Last day the asset has data in the source. The census date itself, or a day or two before, for an asset whose feed was still running"),
+]
+VINTAGE_FIELDS = [
+    ("month_end", "date", "The month-end the required return is set at"),
+    ("recorded_with_data_to", "date", "Last day of source data in the build that first had this month-end as its latest month"),
+    ("required_lower", "number", "Lower edge of the band as first published, percent a year"),
+    ("required_midpoint", "number", "Midpoint as first published, percent a year"),
+    ("required_upper", "number", "Upper edge as first published, percent a year"),
+    ("risk_free", "number", "Risk-free rate at the midpoint as first published, percent a year"),
+    ("market_term", "number", "Market risk at the midpoint as first published, percent a year"),
+    ("concentration_term", "number", "Concentration risk at the midpoint as first published, percent a year"),
+    ("mortality_term", "number", "Mortality risk at the midpoint as first published, percent a year"),
 ]
 
 
@@ -122,7 +136,8 @@ FILES = [
     {"file": "data.json", "format": "application/json", "what": "Every number on the page, under plain names"},
     {"file": "months.csv", "format": "text/csv", "what": "One row per month-end: the required-return band, its terms and inputs"},
     {"file": "periods.csv", "format": "text/csv", "what": "One row per period: delivered and required return, and what each model explains"},
-    {"file": "census_deaths.csv", "format": "text/csv", "what": "Every cryptoasset that was ever in the top twenty by trading volume and died"},
+    {"file": "census_deaths.csv", "format": "text/csv", "what": "Every cryptoasset that was ever in the top twenty by trading volume and died, with the rule that classified it"},
+    {"file": "vintages.csv", "format": "text/csv", "what": "The required return of each month-end as first published; rows are added and never rewritten"},
     {"file": "datapackage.json", "format": "application/json", "what": "Licence, citation and the meaning of every column of the CSV files"},
     {"file": "SKILL.md", "format": "text/markdown", "what": "A skill a person can add to their own AI agent so that it uses these files"},
 ]
@@ -155,7 +170,8 @@ asked, give that and the delivered-against-required comparison since 2018 from p
    - the latest month and its breakdown: {SITE}data.json, key `latest`
    - the monthly series since 2012 (band, terms, inputs, next month's return): {SITE}months.csv
    - delivered against required return by period, and what each model explains: {SITE}periods.csv
-   - assets once in the top twenty that died: {SITE}census_deaths.csv
+   - assets once in the top twenty that died, and by which rule: {SITE}census_deaths.csv
+   - what was published for a month-end at the time, before later recomputation: {SITE}vintages.csv
    - the meaning of every column: {SITE}datapackage.json
 3. If that address cannot be reached, the same files are at {RAW}
 
@@ -204,7 +220,11 @@ def publish(doc: dict, dirs: list[Path]) -> list[dict]:
         periods.append([p[k] for k, _, _ in PERIOD_FIELDS[:24]]
                        + [(reg.get("capm") or {}).get("alpha"), (reg.get("capm") or {}).get("se"),
                           (reg.get("mcm") or {}).get("alpha"), (reg.get("mcm") or {}).get("se")])
-    deaths = [[d["asset"], d["name"], d["entered_top_twenty"], d["died"], d["kind"]] for d in c["ever_top_twenty_deaths_list"]]
+    deaths = [[d["asset"], d["name"], d["entered_top_twenty"], d["died"], d["kind"], d["rule"], d["volume_at_end_usd_a_day"],
+               d["feed_last_day"]] for d in c["ever_top_twenty_deaths_list"]]
+    vintages = [[v[k] for k, _, _ in VINTAGE_FIELDS] for v in doc["vintages"]]
+    mo, age = m["model"], m["anchors_age_months"]
+    rule_n = c["deaths_by_rule"]
 
     w = L["worked"]
     whole = next((p for p in doc["periods"] if p["summary"]), None)
@@ -223,6 +243,8 @@ def publish(doc: dict, dirs: list[Path]) -> list[dict]:
                     "schema": {"fields": [{"name": n, "type": t, "description": d} for n, t, d in MONTH_FIELDS], "missingValues": [""]}},
                    {"name": "periods", "path": "periods.csv", "format": "csv", "mediatype": "text/csv",
                     "schema": {"fields": [{"name": n, "type": t, "description": d} for n, t, d in PERIOD_FIELDS], "missingValues": [""]}},
+                   {"name": "vintages", "path": "vintages.csv", "format": "csv", "mediatype": "text/csv",
+                    "schema": {"fields": [{"name": n, "type": t, "description": d} for n, t, d in VINTAGE_FIELDS], "missingValues": [""]}},
                    {"name": "census_deaths", "path": "census_deaths.csv", "format": "csv", "mediatype": "text/csv",
                     "schema": {"fields": [{"name": n, "type": t, "description": d} for n, t, d in DEATH_FIELDS], "missingValues": [""]}},
                    {"name": "data", "path": "data.json", "format": "json", "mediatype": "application/json",
@@ -246,6 +268,7 @@ This file is written for AI agents and other programs. People should start at th
   Of the midpoint: risk-free {w['risk_free']}, market {w['market']['midpoint']}, concentration {w['concentration']['midpoint']}, mortality {w['mortality']['midpoint']}.
 - Tests of fit to {m['tests_to']} (the equity market series is published with a lag of one to two months).
 - Census of cryptoasset deaths taken on {c['census_date']}: {c['assets']} assets, {c['deaths']} deaths. It is not updated monthly.
+  Of {c['ever_top_twenty']} assets that were ever in the top twenty by trading volume, {c['ever_top_twenty_deaths']} died.
 
 ## What this adds over computing it yourself
 
@@ -267,6 +290,35 @@ want to change the model:
    data/README.md (for example, 0.1 point on average at the midpoint from the equity series).
 6. The census classifies the death of every asset in the Coin Metrics universe by date and kind.
    That classification is the paper's own work and is where the mortality term comes from.
+7. vintages.csv keeps what was published for each month-end when it was first computed. No later
+   build rewrites it.
+
+## The model's fixed settings
+
+These are choices, not measurements. They are in config/model.toml and in data.json under
+`meta.model`. Change one and the midpoint moves; the band is the paper's statement of that range.
+
+- Equity premium {mo['equity_risk_premium']}% a year. The market term is beta times it, scaled by {mo['market_scale'][0]} at the
+  lower edge and {mo['market_scale'][1]} at the upper edge.
+- Risk aversion {mo['risk_aversion'][0]} at the lower edge and {mo['risk_aversion'][1]} at the upper edge.
+- Volatility: exponentially weighted squared monthly log returns, half-life {mo['volatility_halflife_months']} months.
+- Beta: trailing {mo['beta_window_months']} months (at least {mo['beta_min_months']}), kept between 0 and {mo['beta_cap']:g}. The equity series
+  ends {mo['beta_carried_forward_from']}, so later months carry that month's beta forward.
+- Holder's weight: {100 * mo['owner_weight_at_anchor']:.0f}% of an owner's financial assets at the {mo['anchor_date'][:4]} survey, carried to other
+  dates by market value, ownership and an assumed path of wealth per owner; never above {100 * mo['weight_cap']:.0f}%.
+  Fund and treasury investors are taken to hold {100 * mo['fund_investor_weight']:.1f}% of their wealth in Bitcoin.
+- Mortality {mo['mortality'][0]}% to {mo['mortality'][1]}% a year, the same in every month. The upper figure is the paper's:
+  {c['paper_counts']['ever_top_twenty_deaths']} deaths among {c['paper_counts']['ever_top_twenty']} assets, {c['paper_counts']['death_rate']}% a year.
+- The concentration term at the midpoint is what remains of the midpoint after the other three
+  terms, and is not allowed below zero.
+- The past is computed with what is known today. The band for an earlier month uses surveys taken
+  after it (the {mo['anchor_date'][:4]} survey is carried back to 2012), an assumed wealth path, and for the
+  first months a beta carried back from the first one that can be computed. Holders at the time
+  could not have computed it. "Delivered against required" before {mo['anchor_date'][:4]} is a comparison with a
+  requirement built in hindsight.
+- Age of the hand-entered inputs at the latest month-end: the last ownership survey is {age['ownership_survey']} months
+  old and the last count of fund and treasury holdings {age['fund_and_treasury_holdings']} months old. Ownership has been
+  entered as flat since 2023.
 
 ## Files
 
@@ -276,7 +328,10 @@ want to change the model:
 - months.csv: the band, its four terms, the inputs and the next month's outcome, one row per month-end.
 - periods.csv: three-year periods and the two summary samples: delivered, required, the gap, and
   what the CAPM and the MCM equation each explain and leave unexplained.
-- census_deaths.csv: the {len(deaths)} assets that were ever in the top twenty by trading volume and died.
+- census_deaths.csv: the {len(deaths)} assets that were ever in the top twenty by trading volume and died,
+  with the rule that classified each and how much it still traded.
+- vintages.csv: the required return of each month-end as first published. Rows are added, never
+  rewritten. Use it to see what the tool said at the time.
 - datapackage.json: the licence, the citation and the meaning of every column.
 - SKILL.md: a skill a person can add to their own AI agent so that it comes to these files when
   asked about Bitcoin's required return. It holds addresses and reading rules, no figures.
@@ -307,6 +362,17 @@ files are under api/.
   because the required return is converted month by month and the premium is not.
 - "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),
   not a delisting. Say "dead by the census definition", not that the asset no longer exists.
+  `rule` in census_deaths.csv says which: {rule_n.get('trading dried up', 0)} by trading drying up, {rule_n.get('price below 1% of peak', 0)} by price alone, {rule_n.get('data feed ended', 0)} by the feed
+  ending, {rule_n.get('sudden collapse', 0)} sudden collapses. The {rule_n.get('price below 1% of peak', 0)} dead by price alone still traded more than 250,000 dollars a day
+  at the census date (`volume_at_end_usd_a_day`): they are counted because a holder at the peak
+  lost 99%, not because the asset stopped. Without them the top-twenty death rate would be {c['death_rate_without_price_rule_deaths']}% a
+  year, not {next(r['rate'] for r in c['death_rate_by_size'] if r['group'] == 'Ever in the top twenty')}%.
+- The census here leaves out one entry the paper's census counts: the Lithuanian litas (ltl), a
+  national currency replaced by the euro in 2015. The paper has {c['paper_counts']['ever_top_twenty_deaths']} top-twenty deaths, these
+  files {c['ever_top_twenty_deaths']}. The universe totals ({c['assets']} assets, {c['deaths']} deaths) and the tables by age and by
+  size are the paper's and still include it.
+- months.csv is recomputed at every build. For what was published at the time, use vintages.csv,
+  which starts in November 2026.
 - In data.json, `comparison.rows` are required returns of other assets from the same equation,
   not what those assets delivered.
 - Standing of the figures: they are one model's answer, from one working paper. The tests of fit
@@ -360,7 +426,7 @@ The same licence and citation are inside data.json (under meta.credit) and in da
 The code is under the MIT License.
 """
     out = {"months.csv": table(MONTH_FIELDS, months), "periods.csv": table(PERIOD_FIELDS, periods),
-           "census_deaths.csv": table(DEATH_FIELDS, deaths),
+           "census_deaths.csv": table(DEATH_FIELDS, deaths), "vintages.csv": table(VINTAGE_FIELDS, vintages),
            "datapackage.json": json.dumps(package, indent=1, ensure_ascii=False) + "\n", "llms.txt": guide,
            "SKILL.md": SKILL}
     for d in dirs:
