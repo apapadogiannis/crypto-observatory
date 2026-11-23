@@ -11,7 +11,8 @@ market_scale_high   = 1.15        # and raised by 15% at the upper edge
 mortality_low       = 0.003       # sudden collapses only: 0.30% a year at a 95% loss (Section 3)
 mortality_high      = 0.035       # every death of a top-twenty asset as a total loss (Section 3). The paper's figure:
                                   # 36 deaths in 1,016.9 asset-years. Without the Lithuanian litas, which is a national
-                                  # currency, the census here has 35 in 1,015.5, or 3.45%. The constant is not changed.
+                                  # currency, the census here has 35 in 1,015.5, or 3.45%. The constant is kept at the paper's
+                                  # figure for now. To do: bring it to this site's own count when the paper is next revised.
 fund_investor_weight = 0.015      # Bitcoin's share of the wealth of fund and treasury investors (Appendix B)
 owner_weight_2021    = 0.19       # crypto share of owners' financial assets, Cleveland Fed survey 2021
 weight_cap           = 0.9

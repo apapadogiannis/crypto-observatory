@@ -369,7 +369,8 @@ files are under api/.
   year, not {next(r['rate'] for r in c['death_rate_by_size'] if r['group'] == 'Ever in the top twenty')}%.
 - The census here leaves out one entry the paper's census counts: the Lithuanian litas (ltl), a
   national currency replaced by the euro in 2015. The paper has {c['paper_counts']['ever_top_twenty_deaths']} top-twenty deaths, these
-  files {c['ever_top_twenty_deaths']}. The universe totals ({c['assets']} assets, {c['deaths']} deaths) and the tables by age and by
+  files {c['ever_top_twenty_deaths']}. {c['mortality_to_be_adjusted']}
+  The universe totals ({c['assets']} assets, {c['deaths']} deaths) and the tables by age and by
   size are the paper's and still include it.
 - months.csv is recomputed at every build. For what was published at the time, use vintages.csv,
   which starts in November 2026.

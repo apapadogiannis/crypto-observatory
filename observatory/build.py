@@ -115,6 +115,8 @@ def build(data: Path, out: Path) -> dict:
         "left_out": [{"asset": "ltl", "name": "Lithuanian litas", "why": "a national currency, replaced by the euro in January 2015; "
                       "the paper's census counts it among the top-twenty deaths (36 of 219), this one does not (35 of 218)"}],
         "paper_counts": {"ever_top_twenty": 219, "ever_top_twenty_deaths": 36, "death_rate": 3.54},
+        "mortality_to_be_adjusted": "The upper mortality figure is kept at the paper's 3.5% a year for now. It will be brought to "
+                                    "this site's own census count when the paper is next revised.",
         "death_rate_without_price_rule_deaths": _r(100 * (len(dead) - len(still_trading)) / (at_risk + extra_years)),
         "death_rate_by_age": pd.read_csv(census_dir / "death_rate_by_age.csv").to_dict("records"),
         "death_rate_by_size": pd.read_csv(census_dir / "death_rate_by_size.csv").to_dict("records"),

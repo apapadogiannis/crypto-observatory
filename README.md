@@ -83,7 +83,8 @@ monthly. Each death carries the rule that classified it (trading dried up, price
 peak, the data feed ended, or a sudden collapse) and how much the asset still traded at the census
 date. One entry of the paper's census is left out: the Lithuanian litas, a national currency that
 the source carried among its assets. The paper counts 36 top-twenty deaths, this site 35; the upper
-mortality figure of 3.5% a year is the paper's and is not changed.
+mortality figure of 3.5% a year is kept at the paper's for now and will be brought to this site's own
+count (3.45%) when the paper is next revised.
 
 It reports required returns. It forecasts nothing.
 

@@ -117,7 +117,8 @@ files are under api/.
   year, not 3.45%.
 - The census here leaves out one entry the paper's census counts: the Lithuanian litas (ltl), a
   national currency replaced by the euro in 2015. The paper has 36 top-twenty deaths, these
-  files 35. The universe totals (1815 assets, 520 deaths) and the tables by age and by
+  files 35. The upper mortality figure is kept at the paper's 3.5% a year for now. It will be brought to this site's own census count when the paper is next revised.
+  The universe totals (1815 assets, 520 deaths) and the tables by age and by
   size are the paper's and still include it.
 - months.csv is recomputed at every build. For what was published at the time, use vintages.csv,
   which starts in November 2026.
