@@ -9,17 +9,15 @@ risk_aversion_high  = 2.8         # upper household estimate (Table 3)
 market_scale_low    = 0.85        # market term cut by 15% at the lower edge (Section 5)
 market_scale_high   = 1.15        # and raised by 15% at the upper edge
 mortality_low       = 0.003       # sudden collapses only: 0.30% a year at a 95% loss (Section 3)
-mortality_high      = 0.035       # every death of a top-twenty asset as a total loss (Section 3). The paper's figure:
-                                  # 36 deaths in 1,016.9 asset-years. Without the Lithuanian litas, which is a national
-                                  # currency, the census here has 35 in 1,015.5, or 3.45%. The constant is kept at the paper's
-                                  # figure for now. To do: bring it to this site's own count when the paper is next revised.
+mortality_high      = 0.035       # every death of a top-twenty asset as a total loss (Section 3): 35 deaths in 1,011.0
+                                  # asset-years, 3.46% a year (version 2.0 of the paper), rounded to one decimal.
 fund_investor_weight = 0.015      # Bitcoin's share of the wealth of fund and treasury investors (Appendix B)
 owner_weight_2021    = 0.19       # crypto share of owners' financial assets, Cleveland Fed survey 2021
 weight_cap           = 0.9
 few_hands_ownership  = 0.012      # ownership at or below this: the early holder is all-in (2018 survey)
 volatility_halflife_months = 9
 beta_window_months   = 48
-beta_min_months      = 18
+beta_min_months      = 12          # every estimate uses returns up to its own month only (version 2.0 of the paper)
 beta_cap             = 3.0
 genesis              = "2009-01-03"
 # The newest hand-entered anchor of each kind may be this old, in months, before the page says so.

@@ -17,14 +17,38 @@ VOLUME_FLOOR = 0.01            # of the best twelve-month average
 ABANDONED_BELOW = 2.5e5        # dollars a day, last three months
 
 FIAT = set("""aed afn all amd ang aoa ars aud awg azn bam bbd bdt bgn bhd bif bmd bnd bob brl bsd btn bwp byn bzd cad cdf chf clp cny cop crc cup cve czk djf dkk dop dzd egp ern etb eur fjd fkp gbp gel ghs gip gmd gnf gtq gyd hkd hnl hrk htg huf idr ils inr iqd irr isk jmd jod jpy kes kgs khr kmf kpw krw kwd kyd kzt lak lbp lkr lrd lsl lyd mad mdl mga mkd mmk mnt mop mru mur mvr mwk mxn myr mzn nad ngn nio nok npr nzd omr pab pen pgk php pkr pln pyg qar ron rsd rub rwf sar sbd scr sdg sek sgd shp sll sos srd ssp stn svc syp szl thb tjs tmt tnd top try ttd twd tzs uah ugx usd uyu uzs ves vnd vuv wst xaf xcd xof xpf yer zar zmw zwl xau xag xpt xpd""".split())
-# National currencies since retired. They are in no current list of currency codes, which is how the
-# Lithuanian litas (ltl, replaced by the euro in January 2015) once entered the census as a death.
-FIAT |= set("ltl lvl eek skk sit cyp mtl trl rol bgl zwd vef mro std byr azm ghc mzm sdd tmm zmk".split())
+# A national currency since retired, in no current list of currency codes: the Lithuanian litas (ltl, replaced by the
+# euro in January 2015), which the source carried among its assets. Retired codes are named one by one and only when
+# the source holds them, because several are also tickers of cryptoassets (lvl is Level Finance, not the Latvian lats).
+FIAT |= {"ltl"}
 _STOCKS = "aal aapl abbv abnb abt acn adbe amd amzn avgo axp ba bac brk brkb cat coin crcl crm csco cvx dfdv dis gld glxy gme goog googl hd hon hood iau ibm intc jnj jpm ko lin lly ma mcd meta mrk mrvl msft mstr nflx nke nvda orcl pep pfe pg pltr qqq slv spy tqqq tsla unh uso v vst vti vz wmt xom azn nvo sap tm".split()
 TOKENIZED_STOCKS = {s + "x" for s in _STOCKS} | {s + "on" for s in _STOCKS}
+# Named one by one since version 2.0 of the paper, because the archive has no price history that would identify them:
+# further tokenized shares and funds, and tokenized gold;
+TOKENIZED_STOCKS |= set("""achron aggon amaton aneton appon armon asmlon babaon bacon_bankofamerica bbaion biduon bilion blkon bmnron
+btgoon cegon cmgon cohron copon copxon coston cpngon crwdon crwvon cvnaon enphon eqixon figon fon futuon geon
+gevon gson himson iefaon iemgon ijhon intuon irenon isrgon itoton ivvon iwmon jdon klacon lmton lrcxon maraon
+melion mpon muon nbison nowon okloon ondson oxyon pallon panwon pbron pddon psqon pyplon qcomon rddton rioton
+rivnon rklbon rtxon sbeton sbuxon sgovon shopon smcion sndkon snowon sofion sounon spgion spoton tipon tlton
+tmoon tmuson tsmon uberon usfron vrton wdcon ambrx appx bmnrx btgox cmcsax copxx crwdx dhrx gsx iemgx iwmx
+kraqx max_mastercardxstock mdtx metax_metaxstock openx pallx pmx ppltx schfx strcx tbllx tmox tonxx vtx paxg
+xaut dgx""".split())
+# stablecoins (TerraUSD, ust, is not in the list: its collapse is one of the dated sudden collapses);
+STABLECOINS = set("""aeur audd ausd bfusd bidr brz buidl ceur crvusd cusd eurc eurcv euri eurm_lmax euroc europ eurq eurr eurs eurt
+fdusd fei frax gbpt gho gyen idrt lusd mim musd ousd pyusd rlusd rsv susd tryb u_unitedstables usat usd1 usdcv
+usdd usde usdf usdg usdh usdm usdm_lmax usdn usdp usdq usdr usds usdy vchf veur xsgd xusd""".split())
 WRAPPED = set("wbtc weth wsteth steth cbbtc cbeth reth rseth wbeth frxeth sfrxeth tbtc renbtc hbtc btcb wbnb wsol bnsol jitosol msol ezeth weeth rsweth sweth oseth lseth meth ankreth btse cmeth stsol solvbtc wavax wmatic wpol".split())
+# and further wrapped or staked copies, and second files of an asset already in the census.
+WRAPPED |= set("lbtc ubtc_unitbitcoin ueth usol beth steth_lido wluna wust ustc.t_eth_wh waxl wcfg avaxc avaxp avaxx flow_evm flow_native leo_eos".split())
 MIGRATIONS = {"matic", "eos", "ftm", "gnt", "rndr", "btt", "nu", "strat", "maid", "ht", "rep", "agix", "xzc", "npxs", "bnx", "ocean",
               "one", "klay", "mith2", "erd", "dgd", "lend", "ant", "sai", "ven", "poly", "tomo"}
+# Further ticker changes and token swaps (version 2.0 of the paper), each confirmed by an announcement of the issuer or
+# of an exchange: old ticker -> the ticker its holders received (None where the successor is not in the source).
+SUCCESSOR = {"quick": "quick_new", "dyp": "dyp_new", "fxs": "frax_frax", "gal": "g", "keep": "t", "bzrx": "ooki", "cqt": "cxt",
+             "tvk": "vanry", "rbn": "aevo", "dar": "d", "front": "slf", "pla": "pda", "cocos": "combo", "agi": "agix", "bit": None,
+             "mpl": "syrup", "noia": "synt", "orn": "lumia", "mft": "hifi", "lit": "hei", "chsb": "borg", "mco": "cro", "loki": None,
+             "yamv2": None, "rgt": "tribe", "gxs": "rei", "key": "sfi"}
+MIGRATIONS |= set(SUCCESSOR)
 SUDDEN_COLLAPSES = {"luna": "2022-05-12", "ust": "2022-05-12", "ftt": "2022-11-10", "srm": "2022-11-10", "anc": "2022-05-12",
                     "mir": "2022-05-12", "cel": "2022-06-13", "tmtg": "2022-06-28"}
 
@@ -47,7 +71,7 @@ def take_census(volume: dict, price_a: dict, price_b: dict, as_of=None, price_ru
             continue
         ends = [s.index for s in (px, vol) if len(s)]
         rec = dict(asset=a, birth=min(i[0] for i in ends), last=max(i[-1] for i in ends), n_px=len(px), n_vol=len(vol),
-                   price_dead=False, price_death_date=pd.NaT, stable=False)
+                   price_dead=False, price_death_date=pd.NaT, stable=a in STABLECOINS)
         if len(px) >= 90:
             high, floor = px.max(), PRICE_FLOOR * px.max()
             if px.iloc[-1] < floor:
@@ -55,21 +79,21 @@ def take_census(volume: dict, price_a: dict, price_b: dict, as_of=None, price_ru
                 rec.update(price_dead=True, price_death_date=px.index[above[-1] + 1 if len(above) else 0])
             m = px.resample("ME").last().dropna()
             monthly_px[a] = m
-            rec["stable"] = bool(0.95 <= px.median() <= 1.05 and high < 2.0) or bool(
+            rec["stable"] = a in STABLECOINS or bool(0.95 <= px.median() <= 1.05 and high < 2.0) or bool(
                 len(m) >= 6 and 0.9 <= m.median() <= 1.1 and m.quantile(0.05) > 0.8 and m.quantile(0.95) < 1.2)
             rec["stable_first_rule"] = bool(0.95 <= px.median() <= 1.05 and high < 2.0)
         if len(vol) >= 10:
             V[a] = vol.resample("ME").mean()
         rows.append(rec)
     p = pd.DataFrame(rows)
-    p["stable_first_rule"] = p["stable_first_rule"].fillna(False).astype(bool)
+    p["stable_first_rule"] = p["stable_first_rule"].astype("boolean").fillna(False).astype(bool)
     end = p["last"].max()
     p["feed_dead"] = (end - p["last"]).dt.days > FEED_DEAD_DAYS
     p["feed_death_date"] = p["last"].where(p["feed_dead"])
     p["excluded"] = p.asset.isin(TOKENIZED_STOCKS) | p.asset.isin(WRAPPED)
     span_ok = (p["last"] - p.birth).dt.days >= 30
     # the monthly volume matrix holds the assets that pass the first stablecoin rule, as in the paper
-    keep = set(p.asset[~p.stable_first_rule & ~p.excluded & span_ok])
+    keep = set(p.asset[~p.stable_first_rule & ~p.asset.isin(STABLECOINS) & ~p.excluded & span_ok])
     V = pd.DataFrame({a: s for a, s in V.items() if a in keep})
 
     vol_date, final = {}, {}
@@ -115,6 +139,12 @@ def ever_in_top(core: pd.DataFrame, V: pd.DataFrame, end, n: int = 20) -> pd.Dat
         if not len(hit) or a not in core.index:
             continue
         r, t0 = core.loc[a], hit[0]
+        dead, date = bool(r.dead), r.death_date
+        # an asset swapped for a successor that later died, and that is not itself in this group, dies at the successor's date
+        s = SUCCESSOR.get(a)
+        if s and s in core.index and not len(ranks.index[(ranks[s] <= n).fillna(False)] if s in ranks else []) and bool(core.dead[s]):
+            dead, date = True, core.death_date[s]
+        r = r.copy(); r["dead"], r["death_date"] = dead, date
         stop = r.death_date if r.dead else end
         if (r.dead and pd.notna(stop) and stop <= t0) or (stop - t0).days <= 0:
             continue

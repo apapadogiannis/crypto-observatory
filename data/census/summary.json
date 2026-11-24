@@ -1,10 +1,83 @@
 {
  "census_date": "2026-05-24",
  "first_asset_born": "2010-07-18",
- "assets": 1815,
- "deaths": 520,
- "ever_top_twenty": 218,
+ "assets": 1624,
+ "deaths": 471,
+ "ever_top_twenty": 216,
  "ever_top_twenty_deaths": 35,
- "age_elasticity_of_death": 0.42,
- "source": "Papadogiannis (2026), Bitcoin's Required Return, Section 3 and Appendix C"
+ "age_elasticity_of_death": 0.36,
+ "age_elasticity_standard_error": 0.04,
+ "ever_top_twenty_asset_years": 1011.0,
+ "ever_top_twenty_death_rate": 3.46,
+ "by_period": {
+  "all assets": {
+   "deaths_to_2024": 137,
+   "rate_to_2024": 3.6,
+   "deaths": 471,
+   "rate": 8.6
+  },
+  "ever top twenty": {
+   "deaths_to_2024": 20,
+   "rate_to_2024": 2.58,
+   "deaths": 35,
+   "rate": 3.46
+  }
+ },
+ "death_rate_by_calendar_year": [
+  {
+   "year": 2018,
+   "deaths": 0,
+   "asset_years": 167,
+   "rate": 0.0
+  },
+  {
+   "year": 2019,
+   "deaths": 1,
+   "asset_years": 240,
+   "rate": 0.4
+  },
+  {
+   "year": 2020,
+   "deaths": 3,
+   "asset_years": 318,
+   "rate": 0.9
+  },
+  {
+   "year": 2021,
+   "deaths": 14,
+   "asset_years": 490,
+   "rate": 2.9
+  },
+  {
+   "year": 2022,
+   "deaths": 31,
+   "asset_years": 637,
+   "rate": 4.9
+  },
+  {
+   "year": 2023,
+   "deaths": 26,
+   "asset_years": 800,
+   "rate": 3.2
+  },
+  {
+   "year": 2024,
+   "deaths": 62,
+   "asset_years": 1010,
+   "rate": 6.1
+  },
+  {
+   "year": 2025,
+   "deaths": 240,
+   "asset_years": 1189,
+   "rate": 20.2
+  },
+  {
+   "year": 2026,
+   "deaths": 78,
+   "asset_years": 467,
+   "rate": 16.7
+  }
+ ],
+ "source": "Papadogiannis (2026), Bitcoin's Required Return, version 2.0, Section 3 and Appendix C"
 }

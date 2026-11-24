@@ -7,6 +7,7 @@ tables, the ever-top-twenty tables and the monthly volume matrix) and writes sma
 page is built from. Needs scipy for the exact Poisson intervals; the observatory itself does not.
 """
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -16,9 +17,9 @@ from scipy.stats import chi2
 
 SRC, OUT = Path(sys.argv[1]), Path(sys.argv[2])
 YR = 365.25
-# Left out of the top-twenty cohort: the paper's census counts it, but it is not a cryptoasset.
-# ltl is the Lithuanian litas, a national currency replaced by the euro in January 2015.
-NOT_A_CRYPTOASSET = {"ltl"}
+# Assets to leave out of the top-twenty cohort although the paper's census counts them. Empty since
+# version 2.0 of the paper, whose census no longer counts the Lithuanian litas (ltl), a national currency.
+NOT_A_CRYPTOASSET = set()
 
 
 def garwood(deaths, exposure):
@@ -107,16 +108,28 @@ e20.reset_index().to_csv(OUT / "ever_top20.csv", index=False)
 rules = []
 for r in e20[e20.death == 1].reset_index().itertuples():
     q = panel.set_index("asset").loc[r.asset]
+    # an asset swapped for a successor token that later died is dated by the successor; its own trading had dried up
     rule = ("sudden collapse" if r.cat == 1 else "trading dried up" if bool(q.vol_dead_c)
             else "price below 1% of peak" if bool(q.econ_dead) else "data feed ended")
     rules.append(dict(asset=r.asset, rule=rule, feed_last_day=str(q["last"].date()),
                       volume_at_end_usd_a_day="" if pd.isna(q.final_vol_3m) else int(round(q.final_vol_3m, -3))))
 pd.DataFrame(rules).sort_values("asset").to_csv(OUT / "death_rules.csv", index=False)
 
-# The universe totals and the tables by age and by peak volume are the paper's as they stand: they
-# still count the one asset named in NOT_A_CRYPTOASSET, 1 of 1,815. The top-twenty cohort does not.
+# The age elasticity of the death rate and the census by period, from the paper's stored results.
+el = re.search(r"curated \(final\)\s*: deaths\s+\d+ \| no year effects \S+ \(\S+\) \| with year effects ([+-][\d.]+) \(([\d.]+)\)", (SRC / "age_elasticity.txt").read_text())
+ec = (SRC / "earlier_censuses.txt").read_text()
+def period_row(label):
+    x = [l for l in ec.splitlines() if l.strip().startswith(label)][0].split(":", 1)[1].replace("|", " ").split()
+    return dict(deaths_to_2024=int(x[0]), rate_to_2024=float(x[1]), deaths=int(x[2]), rate=float(x[3]))
+by_year = [dict(year=int(l.split(":")[0]), deaths=int(l.split()[1]), asset_years=int(l.split()[2]), rate=float(l.split()[3]))
+           for l in ec.splitlines() if re.match(r"\s+\d{4}:", l)]
 summary = dict(census_date=str(end.date()), first_asset_born=str(core.birth.min().date()), assets=int(len(core)), deaths=int(core.E.sum()),
                ever_top_twenty=int(len(e20)), ever_top_twenty_deaths=int((e20.death == 1).sum()),
-               age_elasticity_of_death=0.42, source="Papadogiannis (2026), Bitcoin's Required Return, Section 3 and Appendix C")
+               age_elasticity_of_death=round(float(el.group(1)), 2), age_elasticity_standard_error=round(float(el.group(2)), 2),
+               ever_top_twenty_asset_years=round(float(e20.exp_yr.sum()), 1),
+               ever_top_twenty_death_rate=round(100 * float((e20.death == 1).sum()) / float(e20.exp_yr.sum()), 2),
+               by_period={"all assets": period_row("all assets"), "ever top twenty": period_row("ever top twenty")},
+               death_rate_by_calendar_year=by_year,
+               source="Papadogiannis (2026), Bitcoin's Required Return, version 2.0, Section 3 and Appendix C")
 (OUT / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
 print(summary)

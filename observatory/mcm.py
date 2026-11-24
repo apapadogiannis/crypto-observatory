@@ -83,8 +83,9 @@ def required_return_band(btc: pd.DataFrame, market_return: pd.Series, risk_free:
     beta = pd.Series({both.index[i]: np.cov(window(i).b, window(i).m)[0, 1] / window(i).m.var()
                       for i in range(start, len(both))})
     corr = pd.Series({both.index[i]: window(i).corr().iloc[0, 1] for i in range(start, len(both))})
-    beta = beta.reindex(idx).bfill().ffill().clip(0, c["beta_cap"])
-    corr = corr.reindex(idx).bfill().ffill()
+    # carried forward where the equity series ends before the page does; never backward
+    beta = beta.reindex(idx).ffill().clip(0, c["beta_cap"])
+    corr = corr.reindex(idx).ffill()
     rf = risk_free.reindex(idx).ffill().bfill()
     market_term = beta * c["equity_risk_premium"]
 

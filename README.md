@@ -81,10 +81,9 @@ every death among the assets that were ever in the top twenty. It is where the m
 required return comes from. The census is the paper's, taken on 24 May 2026, and is not yet updated
 monthly. Each death carries the rule that classified it (trading dried up, price below 1% of its
 peak, the data feed ended, or a sudden collapse) and how much the asset still traded at the census
-date. One entry of the paper's census is left out: the Lithuanian litas, a national currency that
-the source carried among its assets. The paper counts 36 top-twenty deaths, this site 35; the upper
-mortality figure of 3.5% a year is kept at the paper's for now and will be brought to this site's own
-count (3.45%) when the paper is next revised.
+date. The census is that of version 2.0 of the paper: 1,624 assets and 471 deaths, of which 35
+among the 216 assets that were ever in the top twenty (3.46% a year, the upper mortality figure of
+3.5%). The deaths came in a wave in 2025 and 2026, so the page gives each rate with its period.
 
 It reports required returns. It forecasts nothing.
 

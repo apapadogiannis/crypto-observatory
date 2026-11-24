@@ -52,13 +52,15 @@ for name, rows in (("months", months), ("periods", periods), ("census_deaths", d
 # The census: no national currency among the deaths, every death carries the rule that classified it,
 # and the counts by rule add up. The upper mortality figure stays the paper's.
 c = doc["census"]
-assert "ltl" not in {d["asset"] for d in deaths} and c["ever_top_twenty_deaths"] == 35 and c["ever_top_twenty"] == 218
+assert "ltl" not in {d["asset"] for d in deaths} and c["ever_top_twenty_deaths"] == 35 and c["ever_top_twenty"] == 216
 rules = {"trading dried up", "price below 1% of peak", "data feed ended", "sudden collapse"}
 assert {d["rule"] for d in deaths} <= rules and sum(c["deaths_by_rule"].values()) == len(deaths)
 assert all((d["rule"] == "sudden collapse") == (d["kind"] == "sudden collapse") for d in deaths)
 assert all(float(d["volume_at_end_usd_a_day"]) > 250_000 for d in deaths if d["rule"] == "price below 1% of peak")
 top = next(r for r in c["death_rate_by_size"] if r["group"] == "Ever in the top twenty")
-assert top["deaths"] == 35 and c["death_rate_without_price_rule_deaths"] < top["rate"] < 3.5 == doc["meta"]["model"]["mortality"][1]
+assert top["deaths"] == 35 and c["death_rate_without_price_rule_deaths"] < top["rate"] == c["ever_top_twenty_death_rate"]
+assert round(top["rate"], 1) == 3.5 == doc["meta"]["model"]["mortality"][1]
+assert c["by_period"]["all assets"]["rate_to_2024"] < c["by_period"]["all assets"]["rate"]
 from observatory.census import FIAT  # noqa: E402
 assert "ltl" in FIAT and "usd" in FIAT
 

@@ -254,8 +254,8 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 - Holder's weight: {100 * mo['owner_weight_at_anchor']:.0f}% of an owner's financial assets at the {mo['anchor_date'][:4]} survey, carried to other
   dates by market value, ownership and an assumed path of wealth per owner; never above {100 * mo['weight_cap']:.0f}%.
   Fund and treasury investors are taken to hold {100 * mo['fund_investor_weight']:.1f}% of their wealth in Bitcoin.
-- Mortality {mo['mortality'][0]}% to {mo['mortality'][1]}% a year, the same in every month. The upper figure is the paper's:
-  {c['paper_counts']['ever_top_twenty_deaths']} deaths among {c['paper_counts']['ever_top_twenty']} assets, {c['paper_counts']['death_rate']}% a year.
+- Mortality {mo['mortality'][0]}% to {mo['mortality'][1]}% a year, the same in every month. The upper figure is the census's:
+  {c['ever_top_twenty_deaths']} deaths among {c['ever_top_twenty']} assets, {c['ever_top_twenty_death_rate']}% a year, rounded to one decimal.
 - The concentration term at the midpoint is what remains of the midpoint after the other three
   terms, and is not allowed below zero.
 - The past is computed with what is known today. The band for an earlier month uses surveys taken
@@ -314,11 +314,10 @@ files are under api/.
   at the census date (`volume_at_end_usd_a_day`): they are counted because a holder at the peak
   lost 99%, not because the asset stopped. Without them the top-twenty death rate would be {c['death_rate_without_price_rule_deaths']}% a
   year, not {next(r['rate'] for r in c['death_rate_by_size'] if r['group'] == 'Ever in the top twenty')}%.
-- The census here leaves out one entry the paper's census counts: the Lithuanian litas (ltl), a
-  national currency replaced by the euro in 2015. The paper has {c['paper_counts']['ever_top_twenty_deaths']} top-twenty deaths, these
-  files {c['ever_top_twenty_deaths']}. {c['mortality_to_be_adjusted']}
-  The universe totals ({c['assets']} assets, {c['deaths']} deaths) and the tables by age and by
-  size are the paper's and still include it.
+- The census is that of version {c['paper_version']} of the paper ({c['assets']} assets, {c['deaths']} deaths). {c['changed_since_version_1']}
+- The deaths came in a wave: the death rate of all assets was {c['by_period']['all assets']['rate_to_2024']}% a year to the end of 2024 and is
+  {c['by_period']['all assets']['rate']}% to the census date ({c['by_period']['ever top twenty']['rate_to_2024']}% and {c['by_period']['ever top twenty']['rate']}% for the top twenty). Rates by year are in
+  `death_rate_by_calendar_year`. Do not quote a death rate from the census without its period.
 - months.csv is recomputed at every build. For what was published at the time, use vintages.csv,
   which starts in November 2026.
 - In data.json, `comparison.rows` are required returns of other assets from the same equation,
