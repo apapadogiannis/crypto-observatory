@@ -25,6 +25,9 @@ with tempfile.TemporaryDirectory() as tmp:
     page = (out / "index.html").read_text(encoding="utf-8")
     read = lambda name: list(csv.DictReader((out / name).open(encoding="utf-8")))
     months, periods, deaths = read("months.csv"), read("periods.csv"), read("census_deaths.csv")
+    latest_json = json.loads((out / "latest.json").read_text(encoding="utf-8"))
+    assets_now, assets_all = read("assets.csv"), read("assets_monthly.csv")
+    latest_size = len((out / "latest.json").read_bytes())
     vintages = read("vintages.csv")
     api = {p.name: p.read_text(encoding="utf-8") for p in (ROOT / "api").iterdir()}
     for name, text in api.items():
@@ -44,10 +47,28 @@ for row, p in zip(periods, doc["periods"]):
 assert len(deaths) == doc["census"]["ever_top_twenty_deaths"] == len(doc["census"]["ever_top_twenty_deaths_list"])
 
 # Every column is described, in the order it appears.
-for name, rows in (("months", months), ("periods", periods), ("census_deaths", deaths), ("vintages", vintages)):
+for name, rows in (("months", months), ("periods", periods), ("census_deaths", deaths), ("vintages", vintages), ("assets", assets_now), ("assets_monthly", assets_all)):
     fields = next(r for r in pkg["resources"] if r["name"] == name)["schema"]["fields"]
     assert [f["name"] for f in fields] == list(rows[0].keys()), name
     assert all(f["description"] for f in fields)
+
+# The small file for assistants: one record per asset, Bitcoin's the page's own figure, the terms adding up,
+# and the same numbers as the tables. It stays small.
+la = {a["asset_id"]: a for a in latest_json["assets"]}
+assert list(la) == ["btc", "eth", "bnb", "sol", "trx"] and len(assets_now) == 5
+assert la["btc"]["required_midpoint_pct_per_year"] == doc["latest"]["required"]["midpoint"] and la["btc"]["kappa"] == 1.0
+assert latest_json["as_of_month_end"] == doc["latest"]["month_end"] and latest_json["source_data_to"] == doc["meta"]["data_to"]
+for a in la.values():
+    parts = a["risk_free_pct_per_year"] + a["market_term_pct_per_year"] + a["concentration_term_pct_per_year"] + a["mortality_term_pct_per_year"]
+    assert abs(parts - a["required_midpoint_pct_per_year"]) < 0.03, a["asset_id"]
+    assert a["required_lower_pct_per_year"] < a["required_midpoint_pct_per_year"] < a["required_upper_pct_per_year"]
+    assert abs(a["holder_weight_upper_pct"] - a["kappa"] * la["btc"]["holder_weight_upper_pct"]) < 0.1
+for row in assets_now:
+    assert float(row["required_midpoint_pct_per_year"]) == la[row["asset_id"]]["required_midpoint_pct_per_year"]
+assert latest_size < 12_000 and "latest.json" in guide.split("## Coverage")[0]
+# Ether's kappa in April 2026 is the paper's 0.70 to within 0.02, although the crypto market here is five assets.
+eth_apr = next(r for r in assets_all if r["asset_id"] == "eth" and r["month_end"] == "2026-04-30")
+assert abs(float(eth_apr["kappa"]) - 0.70) <= 0.02, eth_apr["kappa"]
 
 # The census: no national currency among the deaths, every death carries the rule that classified it,
 # and the counts by rule add up. The upper mortality figure stays the paper's.
@@ -87,7 +108,7 @@ assert f"{latest['midpoint']}% a year at the midpoint" in guide
 
 # No skill of its own: the guide and the page point to the one skill of the whole account.
 assert "SKILL.md" not in api and "apapadogiannis/main/skill/SKILL.md" in guide and "apapadogiannis/blob/main/skill/SKILL.md" in page
-for name in ("llms.txt", "data.json", "months.csv", "periods.csv", "census_deaths.csv", "vintages.csv", "datapackage.json"):
+for name in ("llms.txt", "latest.json", "assets.csv", "assets_monthly.csv", "data.json", "months.csv", "periods.csv", "census_deaths.csv", "vintages.csv", "datapackage.json"):
     assert name in api, name
 
 # The page says the answer without JavaScript, and no placeholder is left in it.

@@ -30,25 +30,27 @@
   --blue:#3987e5;--band:#173a66;--orange:#d95926;--aqua:#199e70;--violet:#9085e9;--rf:#6b6a64;--yellow:#c98500;--magenta:#d55181;--q1:#1c5cab;--q2:#3987e5;--q3:#6da7ec;--q4:#b7d3f6;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
-h1{font-size:26px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
-h2{font-size:17px;margin:0 0 2px}
-.lede{color:var(--ink2);max-width:720px;margin:0 0 6px}
+body{margin:0;background:var(--page);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:30px 22px 64px}
+h1{font-size:32px;line-height:1.15;margin:0 0 10px;letter-spacing:-.02em}
+h2{font-size:20px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
+.lede{color:var(--ink2);max-width:760px;margin:0 0 8px;font-size:18px;line-height:1.5}
+.lede b{color:var(--ink)}
 .stamp{display:inline-block;font-size:12.5px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:8px 0 18px;background:var(--surface)}
 .stale{display:none;border:1px solid #c98500;border-left-width:4px;border-radius:8px;padding:10px 14px;margin:0 0 16px;background:var(--surface);font-size:13.5px;max-width:760px}
-.sub{color:var(--ink2);font-size:13.5px;margin:0 0 10px;max-width:760px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 18px 12px;margin:0 0 16px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:0 0 16px}
-.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
-.tile .k{font-size:12.5px;color:var(--ink2)}
-.tile .v{font-size:28px;font-weight:650;letter-spacing:-.02em;line-height:1.25}
-.tile .n{font-size:12.5px;color:var(--mut)}
+.sub{color:var(--ink2);font-size:14.5px;margin:0 0 12px;max-width:780px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 24px 18px;margin:0 0 20px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:0 0 20px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.tile .k{font-size:13.5px;color:var(--ink2)}
+.tile .v{font-size:30px;font-weight:680;letter-spacing:-.02em;line-height:1.25}
+.tile .n{font-size:13px;color:var(--ink2)}
+.tile .v.long{font-size:21px;line-height:1.78;white-space:nowrap}
 .site{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;margin:0 0 22px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .site .brand{font-weight:700;font-size:15px;letter-spacing:.01em}
 .site .brand small{font-weight:400;color:var(--mut);font-size:12.5px;margin-left:8px}
 .site nav{display:flex;gap:4px;margin-left:auto}
-.site nav button{font:inherit;font-size:14px;color:var(--ink2);background:none;border:1px solid transparent;border-radius:999px;padding:5px 14px;cursor:pointer}
+.site nav button{font:inherit;font-size:14.5px;color:var(--ink2);background:none;border:1px solid transparent;border-radius:999px;padding:5px 14px;cursor:pointer}
 .site nav button[aria-current="page"]{color:var(--surface);background:var(--ink)}
 .site nav button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 .view{display:none}.view.on{display:block}
@@ -86,7 +88,7 @@ h2{font-size:17px;margin:0 0 2px}
 @media (max-width:820px){.result{padding:10px 14px}.result .big{font-size:26px}.result .stack{height:18px;margin:8px 0 6px}.result #eqn-rows{display:grid;grid-template-columns:1fr 1fr;column-gap:16px}.result .rrow{font-size:12.5px;padding:1px 0}.result .cmp{display:none}.cmp2{display:block}}
 .result .cmp{margin:10px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--ink2)}
 .tabs{display:flex;gap:2px;flex-wrap:wrap;border-bottom:1px solid var(--axis);margin:0 0 16px}
-.tabs button{font:inherit;font-size:14.5px;color:var(--ink2);background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;margin-bottom:-1px;cursor:pointer}
+.tabs button{font:inherit;font-size:15px;color:var(--ink2);background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;margin-bottom:-1px;cursor:pointer}
 .tabs button[aria-selected="true"]{color:var(--ink);font-weight:650;border-bottom-color:var(--ink)}
 .tabs button:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
 .pane{display:none}.pane.on{display:block}
@@ -134,8 +136,8 @@ table.now td{vertical-align:top}
 .tip .r b{font-weight:650}
 .tip .r span{color:var(--ink2);display:inline-flex;align-items:center;gap:6px}
 .tip .r i{display:inline-block;width:12px;border-top:2.5px solid}
-table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
-th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left;white-space:nowrap}
 th{font-weight:600;color:var(--ink2);font-size:12.5px;vertical-align:bottom}
 td{white-space:nowrap}
@@ -147,9 +149,7 @@ tr.tot td{font-weight:650;border-top:1.5px solid var(--axis)}
 /* phones: the same content, laid out for a narrow screen. Nothing here applies above 640px. */
 @media (max-width:640px){
   .wrap{padding:16px 12px 48px}
-  .card{padding:14px 14px 10px;border-radius:9px}
-  h1{font-size:23px}
-  .lede{font-size:15px}
+  .card{padding:16px 14px 12px;border-radius:12px}
   .site{margin-bottom:16px;padding-bottom:10px;gap:8px}
   .site .brand small{display:none}
   .site nav{margin-left:0;width:100%;gap:2px}
@@ -157,6 +157,10 @@ tr.tot td{font-weight:650;border-top:1.5px solid var(--axis)}
   .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-left:-12px;margin-right:-12px;padding:0 12px}
   .tabs::-webkit-scrollbar{display:none}
   .tabs button{white-space:nowrap;padding:9px 11px;flex:none}
+  .tabs{-webkit-mask-image:linear-gradient(90deg,#000 86%,transparent);mask-image:linear-gradient(90deg,#000 86%,transparent);padding-right:36px}
+  h1{font-size:26px}.lede{font-size:16px}h2{font-size:18px}
+  .acards{grid-template-columns:1fr 1fr;gap:8px}.acard{padding:11px 12px 10px}.acard .v{font-size:26px}
+  .site nav{overflow-x:auto;scrollbar-width:none}
   .filters .hint{display:none}
   .tiles{grid-template-columns:1fr 1fr;gap:8px}
   .tile{padding:10px 12px}
@@ -174,9 +178,29 @@ tr.tot td{font-weight:650;border-top:1.5px solid var(--axis)}
   .eq div{min-width:0;padding:7px 10px}
   .formula{font-size:16px}
 }
-.note{font-size:13.5px;color:var(--ink2);max-width:760px}
+.note{font-size:14.5px;color:var(--ink2);max-width:780px}
 .note li{margin:0 0 6px}
-footer{font-size:12.5px;color:var(--mut);margin-top:22px;max-width:820px}
+footer{font-size:13px;color:var(--mut);margin-top:26px;max-width:820px}
+.acards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:6px 0 22px}
+.acard{display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px 12px;color:inherit;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+a.acard:hover{border-color:var(--ink)}
+.acard .k{font-size:13.5px;color:var(--ink2);font-weight:600}
+.acard .v{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.acard .n{font-size:12.5px;color:var(--ink2)}
+.acard .stack{display:flex;gap:2px;height:8px;margin:9px 0 7px;background:none;border-radius:4px;overflow:hidden}
+.acard .stack i{display:block;height:100%;border-radius:2px;flex:0 0 auto}
+.plain{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px 26px;margin:16px 0 4px;padding-top:14px;border-top:1px solid var(--line)}
+.plain div b{display:flex;align-items:center;gap:8px;font-size:14.5px}
+.plain div b i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.plain div span{display:block;font-size:13.5px;color:var(--ink2);margin-top:2px}
+pre.prompt{white-space:pre-wrap;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--page);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0;max-width:780px;user-select:all}
+details.more>summary{cursor:pointer;font-weight:650;font-size:17px;padding:2px 0;list-style-position:inside}
+details.more>summary:hover{color:var(--blue)}
+details.more[open]>summary{margin-bottom:10px}
+.card>details.more:only-child{margin-bottom:4px}
+#t-files td:first-child{white-space:nowrap;font-weight:600}
+#t-files th{text-align:left}
+.sub a,#t-files a,.lede a{color:var(--blue)}
 footer a,.note a{color:var(--blue)}
 text{font-family:inherit}
 </style>
@@ -191,13 +215,59 @@ window.goatcounter = {path: function () { return location.pathname; }};
 <div class="wrap">
   <header class="site">
     <div class="brand">Crypto Observatory<small>required returns, risks and survival</small></div>
-    <nav aria-label="Sections"><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="equation">The equation</button><button type="button" data-view="census">Census of deaths</button></nav>
+    <nav aria-label="Sections"><button type="button" data-view="compare">Compare</button><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="equation">How it works</button><button type="button" data-view="census">Deaths</button><button type="button" data-view="data">Data</button></nav>
   </header>
+  <div class="view" id="view-compare">
+  <h1>What return should a cryptoasset's holders require?</h1>
+  <p class="lede">The return an investor should demand before holding each asset, given the risks it carries. It is a hurdle rate from one published equation, <b>not a forecast</b> of what the asset will deliver.</p>
+  <div class="stamp" id="a-stamp"></div>
+  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="#data">data</a></p>
+  <div class="stale" id="stale2" role="status"></div>
+  <div class="acards" id="a-cards"></div>
+
+  <section class="card" id="sec-a-bars">
+    <h2>What each required return is made of</h2>
+    <p class="sub">Each bar adds up to the required return, in percent a year. The thin line is the band: the range the answer takes when risk aversion and the holder's weight are set low or high. The US stock market is shown for scale.</p>
+    <div class="legend"><span><i style="background:var(--rf)"></i>risk-free rate</span><span><i style="background:var(--violet)"></i>market risk</span><span><i style="background:var(--orange)"></i>concentration risk</span><span><i style="background:var(--aqua)"></i>mortality risk</span><span><i class="ln" style="border-color:var(--ink)"></i>band</span></div>
+    <div class="chart" id="a-bars"></div>
+    <div class="plain">
+      <div><b><i style="background:var(--rf)"></i>Risk-free rate</b><span>What a ten-year US Treasury pays. Every investment has to beat it.</span></div>
+      <div><b><i style="background:var(--violet)"></i>Market risk</b><span>The asset falls when stocks fall. The more it moves with stocks (its beta), the more holders must be paid.</span></div>
+      <div><b><i style="background:var(--orange)"></i>Concentration risk</b><span>Crypto owners keep a large share of their wealth in a volatile asset, and cannot diversify that away. Stocks have none of it.</span></div>
+      <div><b><i style="background:var(--aqua)"></i>Mortality risk</b><span>Cryptoassets die. The pay for that is measured from how often top-twenty assets have died.</span></div>
+    </div>
+  </section>
+
+  <section class="card" id="sec-a-table">
+    <h2>The inputs behind each figure</h2>
+    <p class="sub" id="a-table-sub"></p>
+    <div class="scroll"><table id="t-assets"></table></div>
+    <ul class="note" style="margin-top:12px" id="a-notes"></ul>
+  </section>
+
+  <section class="card" id="sec-a-hist">
+    <h2>How the required returns have moved</h2>
+    <p class="sub">The midpoint of each asset's band at every month-end since it has been priced, percent a year. A required return falls when the asset becomes less volatile, moves less with stocks, or when more diversified investors hold it.</p>
+    <div class="chart" id="a-hist"></div>
+  </section>
+
+  <section class="card" id="sec-a-read">
+    <h2>How to read this page</h2>
+    <ul class="note">
+      <li><b>A hurdle, not a forecast.</b> A required return is what holders should ask for given the risk. An asset can deliver more or less for years.</li>
+      <li><b>Quote the figure with its band.</b> Risk aversion and the holder's weight are not known exactly, so the answer is a range. The band is a range of inputs, not a statistical confidence interval.</li>
+      <li><b>Average and compound are different things.</b> The required return is an average yearly return. A volatile asset compounds at much less: about half its variance is lost each year. The table gives both.</li>
+      <li><b>Only Bitcoin is tested.</b> Bitcoin's requirement is set against what it delivered since 2012, under <a href="#overview">Bitcoin</a>. The other assets are priced with the same equation and have too short a record to test.</li>
+      <li><b>A low figure is not a safety rating.</b> An asset that has moved little with stocks gets a small market term. That says nothing about who controls it or how it is run.</li>
+    </ul>
+  </section>
+  </div>
+
   <div class="view" id="view-bitcoin">
   <h1>What return should Bitcoin's holders require?</h1>
   <p class="lede" id="lede-btc">What Bitcoin's holders should require for the market, concentration and mortality risk they carry, set against what Bitcoin delivered.</p>
   <div class="stamp" id="stamp"></div>
-  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
+  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="#data">data</a></p>
   <div class="stale" id="stale" role="status"></div>
 
   <noscript>
@@ -212,8 +282,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <button type="button" role="tab" data-tab="required-return">Required return</button>
     <button type="button" role="tab" data-tab="holders">Holders</button>
     <button type="button" role="tab" data-tab="tests">Tests</button>
-    <button type="button" role="tab" data-tab="compared">Compared</button>
-    <button type="button" role="tab" data-tab="notes">Data and notes</button>
+    <button type="button" role="tab" data-tab="compared">Versus stocks</button>
   </nav>
 
   <div class="filters"><span>Period</span>
@@ -233,18 +302,6 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i style="background:var(--blue);height:5px"></i>required, three-year average</span><span><i class="dot"></i>delivered, three-year average</span></div>
     <div class="chart" id="c-band"></div>
     <div class="scroll"><table id="t-gap"></table></div>
-  </section>
-
-  <section class="card" id="sec-why">
-    <h2>Why delivered differed from required</h2>
-    <p class="sub">Read each period in two moves. <b>First, the gap.</b> The blue bar is the premium holders required over the risk-free rate, and the circle is what Bitcoin delivered. The black line between them is the gap: delivered minus required. <b>Then, where the gap came from.</b> Part of it came with the equity market: equities paid more, or less, than the 4% a year the equation assumes, and Bitcoin moves with them in proportion to its beta. The rest is left unexplained by the equation: it is the part specific to Bitcoin. Percent a year.</p>
-    <div class="mini" style="margin:4px 0 12px"><h3 id="why-title"></h3><p>percent a year over the risk-free rate</p>
-      <div class="eq" id="why-eq"></div>
-      <p class="sub" style="margin-top:10px"><b>Gap</b> = <span id="why-gap"></span><br><b>Unexplained</b> = delivered − required − beta × (equity market return − risk-free rate − 4%). Put another way, it is what Bitcoin delivered beyond the pay for all three risks, with the market part counted at what equities actually paid instead of the assumed 4%: delivered − beta × (equities' actual return over the risk-free rate) − concentration − mortality.</p></div>
-    <div class="legend"><span><i style="background:var(--blue)"></i>required premium</span><span><i class="dot"></i>delivered</span><span><i class="ln" style="border-color:var(--ink)"></i>gap: delivered minus required</span><span><i style="background:var(--violet)"></i>of the gap: came with the equity market</span><span><i style="background:var(--ink2)"></i>of the gap: left unexplained, specific to Bitcoin</span></div>
-    <div class="chart" id="c-why"></div>
-    <div class="scroll"><table id="t-why"></table></div>
-    <p class="sub" style="margin-top:10px">The gap is the paper's monthly test. The unexplained return is the quantity behind the paper's "share explained", and its regression alpha is within a point or two of it (both under Tests). Showing one inside the other is the observatory's own reading and involves no new estimate. Two cautions. The split depends on the 4% equity premium, which is a convention: with a higher premium, more of the gap would count as required and less as coming with the equity market. And the equity part is only as firm as the beta: where the correlation with equities is low, as in the early periods, the beta is poorly measured and so is the split.</p>
   </section>
 
   </div>
@@ -381,9 +438,21 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--ink2)"></i>left unexplained by the MCM equation, with ± one standard error</span></div>
     <div class="chart" id="c-per"></div>
     <div class="scroll"><table id="t-per"></table></div>
-    <div class="mini" style="margin-top:18px"><h3>The same test as a regression</h3><p>percent a year</p>
+    <details class="more"><summary>The same test as a regression</summary><div class="mini"><p>percent a year</p>
       <p class="sub">The standard test of a pricing model regresses the asset's return over the risk-free rate on the equity market's and asks whether the intercept, alpha, is zero. For the MCM equation the concentration and mortality terms are subtracted from Bitcoin's return first. Here the slope is fitted by the regression; in the table above the beta is the rolling one known at each month-end, which is why the two differ slightly.</p>
-      <div class="scroll"><table id="t-reg"></table></div></div>
+      <div class="scroll"><table id="t-reg"></table></div></div></details>
+  </section>
+
+  <section class="card" id="sec-why">
+    <h2>Why delivered differed from required</h2>
+    <p class="sub">Read each period in two moves. <b>First, the gap.</b> The blue bar is the premium holders required over the risk-free rate, and the circle is what Bitcoin delivered. The black line between them is the gap: delivered minus required. <b>Then, where the gap came from.</b> Part of it came with the equity market: equities paid more, or less, than the 4% a year the equation assumes, and Bitcoin moves with them in proportion to its beta. The rest is left unexplained by the equation: it is the part specific to Bitcoin. Percent a year.</p>
+    <div class="mini" style="margin:4px 0 12px"><h3 id="why-title"></h3><p>percent a year over the risk-free rate</p>
+      <div class="eq" id="why-eq"></div>
+      <p class="sub" style="margin-top:10px"><b>Gap</b> = <span id="why-gap"></span><br><b>Unexplained</b> = delivered − required − beta × (equity market return − risk-free rate − 4%). Put another way, it is what Bitcoin delivered beyond the pay for all three risks, with the market part counted at what equities actually paid instead of the assumed 4%: delivered − beta × (equities' actual return over the risk-free rate) − concentration − mortality.</p></div>
+    <div class="legend"><span><i style="background:var(--blue)"></i>required premium</span><span><i class="dot"></i>delivered</span><span><i class="ln" style="border-color:var(--ink)"></i>gap: delivered minus required</span><span><i style="background:var(--violet)"></i>of the gap: came with the equity market</span><span><i style="background:var(--ink2)"></i>of the gap: left unexplained, specific to Bitcoin</span></div>
+    <div class="chart" id="c-why"></div>
+    <div class="scroll"><table id="t-why"></table></div>
+    <p class="sub" style="margin-top:10px">The gap is the paper's monthly test. The unexplained return is the quantity behind the paper's "share explained", and its regression alpha is within a point or two of it (both under Tests). Showing one inside the other is the observatory's own reading and involves no new estimate. Two cautions. The split depends on the 4% equity premium, which is a convention: with a higher premium, more of the gap would count as required and less as coming with the equity market. And the equity part is only as firm as the beta: where the correlation with equities is low, as in the early periods, the beta is poorly measured and so is the split.</p>
   </section>
 
   <section class="card" id="sec-trail">
@@ -394,14 +463,15 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </section>
 
   <section class="card" id="sec-cum">
-    <h2>Unexplained return, added up</h2>
+    <details class="more"><summary>Unexplained return, added up</summary>
     <p class="sub">Each month's return less what the model allows, summed from the start of the period. Percentage points. A flat line means the model accounts for what Bitcoin delivered.</p>
     <div class="legend"><span><i class="ln" style="border-color:var(--orange)"></i>CAPM</span><span><i class="ln" style="border-color:var(--blue)"></i>MCM equation</span></div>
     <div class="chart" id="c-cum"></div>
+    </details>
   </section>
 
   <section class="card" id="sec-erp">
-    <h2>Does the assumed equity premium matter?</h2>
+    <details class="more"><summary>Does the assumed equity premium matter?</summary>
     <p class="sub">The market term is beta times the equity premium, which the paper holds at 4% a year. The premium that stock prices imply is not constant, so this section reruns everything with it, month by month, and with other fixed values. The required return moves by about beta times the change in the premium. The tests of fit hardly move, because the unexplained return is computed from what equities actually returned, not from the premium assumed.</p>
     <div class="grid2">
       <div class="mini"><h3>The equity premium implied by US stock prices</h3><p>percent a year, at each month-end; the flat line is the 4% used on this site</p>
@@ -413,6 +483,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </div>
     <div class="scroll" style="margin-top:10px"><table id="t-erp"></table></div>
     <p class="sub" id="erp-note" style="margin-top:10px"></p>
+    </details>
   </section>
   </div>
 
@@ -435,27 +506,6 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <li><b>While it survives.</b> Bitcoin's figures are what holders require in the years the asset lives. <span id="cmp-death"></span></li>
       <li><b>How each column is measured.</b> <span id="cmp-sample"></span> Bitcoin's beta and volatility are the ones used in its required return, with recent months weighted more. The Sharpe ratio on the compound return is descriptive: the measure is defined on average returns.</li>
       <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Ether, gold and the Nasdaq-100, which the paper also shows, are not here yet.</li>
-    </ul>
-  </section>
-  </div>
-
-  <div class="pane" id="pane-notes">
-  <section class="card" id="sec-supply">
-    <h2>Supply and holders, for context</h2>
-    <p class="sub">Measured series, shown beside the tests and not as part of them.</p>
-    <div class="grid2">
-      <div class="mini"><h3>New issuance</h3><p>percent of supply a year</p><div class="chart" id="m-iss"></div></div>
-      <div class="mini"><h3>Held through funds and by public companies</h3><p>percent of supply</p><div class="chart" id="m-inst"></div></div>
-    </div>
-  </section>
-
-  <section class="card" id="sec-claims">
-    <h2>What this page does not claim</h2>
-    <ul class="note">
-      <li><b>The unexplained return is not a supply and demand measure.</b> It is what the equation leaves over. <span id="n-flows"></span></li>
-      <li><b>Repricing is not shown as a separate part.</b> <span id="n-repricing"></span></li>
-      <li><b>Short windows say little.</b> <span id="n-short"></span> The tests are informative over years, not months.</li>
-      <li><b>Nothing here is a forecast.</b> A required return is what holders should ask for given the risk, not what the asset will deliver.</li>
     </ul>
   </section>
   </div>
@@ -567,7 +617,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub" id="grave-sub"></p>
     <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
     <div class="chart" id="c-deaths"></div>
-    <div class="scroll"><table id="t-grave"></table></div>
+    <details class="more"><summary>Show the list</summary><div class="scroll"><table id="t-grave"></table></div></details>
     <p class="note" id="grave-rules"></p>
   </section>
 
@@ -583,14 +633,46 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </section>
   </div>
 
-  <footer>
-    <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Market Risk, Concentration and Mortality", working paper, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">doi.org/10.2139/ssrn.7705239</a>. Replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>, archived at <a href="https://doi.org/10.5281/zenodo.24003938" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24003938</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. On data to May 2026 the paper reports an MCM alpha of 34 points a year over the whole sample and 2 since 2018.</p>
+  <div class="view" id="view-data">
+  <h1>Use the data</h1>
+  <p class="lede">Every number on this site is published as small files that a person, a spreadsheet or an AI assistant can read directly. Free to reuse with credit.</p>
+
+  <section class="card" id="sec-d-ai">
+    <h2>Ask an AI assistant</h2>
+    <p class="sub">Paste this into an assistant that can open web pages. It reads a short guide, then one small file, and answers with the current figures and their source.</p>
+    <pre class="prompt" id="d-prompt">Read https://apapadogiannis.github.io/crypto-observatory/llms.txt and the file it tells you to start with. Then tell me what return the holders of Bitcoin and of Ether should require now, what each figure is made of, and how to cite it.</pre>
+    <p class="sub" style="margin-top:10px">For an assistant that uses skills, <a href="https://github.com/apapadogiannis/apapadogiannis/blob/main/skill/SKILL.md" target="_blank" rel="noopener">one skill</a> covers this tool and the rest of the research.</p>
+  </section>
+
+  <section class="card" id="sec-d-files">
+    <h2>The files</h2>
+    <p class="sub">All figures are percent a year unless the name says otherwise. Column and field names carry their units.</p>
+    <div class="scroll"><table id="t-files" class="now"></table></div>
+  </section>
+
+  <section class="card" id="sec-claims">
+    <h2>What this site does not claim</h2>
+    <ul class="note">
+      <li><b>Nothing here is a forecast.</b> A required return is what holders should ask for given the risk, not what the asset will deliver.</li>
+      <li><b>The unexplained return is not a supply and demand measure.</b> It is what the equation leaves over. <span id="n-flows"></span></li>
+      <li><b>Repricing is not shown as a separate part.</b> <span id="n-repricing"></span></li>
+      <li><b>Short windows say little.</b> <span id="n-short"></span> The tests are informative over years, not months.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="sec-d-method">
+    <h2>Method, sources and dates</h2>
+    <div class="note">    <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Market Risk, Concentration and Mortality", working paper, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">doi.org/10.2139/ssrn.7705239</a>. Replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>, archived at <a href="https://doi.org/10.5281/zenodo.24003938" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24003938</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. On data to May 2026 the paper reports an MCM alpha of 34 points a year over the whole sample and 2 since 2018.</p>
     <p id="asof"></p>
-    <p>To cite this page: A. Papadogiannis (2026), "Crypto Observatory: required returns, risks and survival", Zenodo, <a href="https://doi.org/10.5281/zenodo.24403325" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24403325</a>, together with the paper above.</p>
     <p>Data: Coin Metrics community data (CC BY-NC 4.0); the US equity market return from the Kenneth R. French data library; the implied equity premium by month from Aswath Damodaran (NYU Stern); the ten-year yield from the US Treasury's daily par yield curve rates; survey and filing anchors as cited in the paper. The paper itself used an S&amp;P 500 ETF and the CBOE ten-year yield index, so figures here can differ slightly from the paper's. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>. For programs and AI agents there are also <a href="months.csv" target="_blank" rel="noopener">months.csv</a>, <a href="periods.csv" target="_blank" rel="noopener">periods.csv</a> and <a href="census_deaths.csv" target="_blank" rel="noopener">census_deaths.csv</a>, and a guide to all of them, <a href="llms.txt" target="_blank" rel="noopener">llms.txt</a>. To use the Observatory from your own AI assistant, add <a href="https://github.com/apapadogiannis/apapadogiannis/blob/main/skill/SKILL.md" target="_blank" rel="noopener">the one skill</a> that covers this tool and the rest of the research.</p>
-    <p>Built and maintained by <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a>, whose other research, with its data and code, is listed on that page.</p>
+</div>
+  </section>
+  </div>
+
+  <footer>
+    <p>To cite this page: A. Papadogiannis (2026), "Crypto Observatory: required returns, risks and survival", Zenodo, <a href="https://doi.org/10.5281/zenodo.24403325" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24403325</a>, together with the paper it implements, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a>.</p>
     <p>© <span id="copy-year">2026</span> Agisilaos Papadogiannis. The text, charts and numbers of this site, including <a href="data.json" target="_blank" rel="noopener">data.json</a>, may be reused with credit under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. The code is under the <a href="https://github.com/apapadogiannis/crypto-observatory/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>. The source data keep their own terms: Coin Metrics community data are CC BY-NC 4.0, for non-commercial use.</p>
-    <p>Independent research, for informational and academic purposes only. Not financial, investment, tax or legal advice, and not a recommendation to buy or sell any financial instrument.</p>
+    <p>Independent research, for informational and academic purposes only. Not financial, investment, tax or legal advice, and not a recommendation to buy or sell any financial instrument. Built and maintained by <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a>. Method, sources and files: <a href="#data">Data</a>.</p>
   </footer>
 </div>
 
@@ -780,7 +862,7 @@ function whyChart(){
     G.append("circle").attr("cx",xg).attr("cy",ye).attr("r",5).attr("fill",css("--surface")).attr("stroke",css("--ink")).attr("stroke-width",2);
     const up=gapOf(p)>=0, lab=(wide?"gap ":"")+sgn(gapOf(p));
     if(wide) txt(xg+10,ye+4,lab,{w:650,z:12,a:"start"}); else txt(xg,up?ye-10:ye+18,lab,{w:650,z:12}); });
-  table("t-why",["Period","Required premium","Delivered","Gap","of which equities","of which unexplained","Standard error of the unexplained","Average beta","Correlation with equities"],
+  table("t-why",["Period","Required, over the risk-free rate","Delivered, over the risk-free rate","Gap","of which equities","of which unexplained","Standard error of the unexplained","Average beta","Correlation with equities"],
     p=>[p.p,p.prem.toFixed(0),p.ex.toFixed(0),sgn(gapOf(p)),sgn(p.eq),sgn(p.alpha),"±"+p.se.toFixed(0),p.beta.toFixed(2),p.corr.toFixed(2)]);
   const s=totals().slice(-1)[0], E=document.getElementById("why-eq"); E.textContent="";
   document.getElementById("why-title").textContent="The whole sample "+(s.p.startsWith("2018")?"since 2018":"since 2012")+", as an equation";
@@ -1068,18 +1150,18 @@ function notesText(){
 }
 function tiles(){
   const m=DATA.meta, a=DATA.per.find(p=>p.sum&&p.p.startsWith("2012")), b=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
-  const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% a year · at the latest month-end"],
-           ["Explained by the MCM equation, since 2018",b.s_mcm+"%","of Bitcoin's return over the risk-free rate · CAPM alone "+b.s_capm+"%"],
-           ["Explained by the MCM equation, since 2012",a.s_mcm+"%","of Bitcoin's return over the risk-free rate · CAPM alone "+a.s_capm+"%"],
-           ["Left unexplained by MCM, last three years",sgn(m.tmcm)+" pts","a year, to "+fmtM(parse(m.to))+" · by the CAPM "+sgn(m.tcapm)]];
+  const eq=m.cmp.rows.find(r=>r.priced_by==="CAPM"), n0=m.now;
+  const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","a year · band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% · a hurdle rate, not a forecast"],
+           ["What it is made of",n0.rf.toFixed(1)+" + "+n0.mkt.toFixed(1)+" + "+n0.conc.toFixed(1)+" + "+n0.mort.toFixed(1),"risk-free rate + market risk + concentration risk + mortality risk, in points a year"],
+           ["US stock market, for scale",eq.average.toFixed(1)+"%","a year · risk-free rate plus the "+m.cmp.equity_risk_premium.toFixed(0)+"% equity premium"],
+           ["Did Bitcoin deliver it? Since 2018",b.s_mcm+"%","of Bitcoin's return over the risk-free rate is accounted for by these three risks · by market risk alone "+b.s_capm+"%"]];
   const el=document.getElementById("tiles"); el.textContent="";
-  T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c; s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
+  T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c+(c==="v"&&v.length>10?" long":""); s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
   const day=d3.timeParse("%Y-%m-%d"), longDate=d3.timeFormat("%-d %B %Y"), monthEnd=day(m.month_end);
   document.getElementById("copy-year").textContent=DATA.meta.data_to.slice(0,4)==="2026"?"2026":"2026–"+DATA.meta.data_to.slice(0,4);
   document.getElementById("stamp").textContent="Bitcoin · month-end "+longDate(monthEnd)+" · updated monthly";
   { const n=DATA.meta.now, s=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
-    document.getElementById("lede-btc").textContent=n.mid.toFixed(1)+"% a year at the end of "+d3.timeFormat("%B %Y")(parse(n.asof))+", for the market, concentration and mortality risk they carry."
-      +(s?" Since 2018 these risks account for "+s.s_mcm+"% of what Bitcoin delivered over the risk-free rate; market risk alone, as in the CAPM, for "+s.s_capm+"%.":""); }
+    document.getElementById("lede-btc").textContent=n.mid.toFixed(1)+"% a year at the end of "+d3.timeFormat("%B %Y")(parse(n.asof))+": the return an investor should demand for the three risks Bitcoin carries. It is a hurdle rate, not a forecast."; }
   const age=Math.floor((Date.now()-monthEnd.getTime())/864e5), stale=document.getElementById("stale");
   if(age>50){ stale.textContent="These figures are for "+longDate(monthEnd)+", "+age+" days ago. The monthly update has not run since, so they may be out of date."; stale.style.display="block"; }
   else if((DATA.meta.anchors_overdue||[]).length){ const A=DATA.meta.anchors_age, what={ownership_survey:"the last ownership survey entered is "+A.ownership_survey+" months old", fund_and_treasury_holdings:"the last count of Bitcoin held by funds and companies is "+A.fund_and_treasury_holdings+" months old"};
@@ -1138,6 +1220,78 @@ function holdersTab(){
   const few=H.early_holder_all_in_below_ownership, dfmt=d3.timeFormat("%B %Y"), dp=d3.timeParse("%Y-%m-%d");
   plainTable("t-h-own",["US survey","Adults owning crypto","Early holder's weight"],H.us_ownership_surveys.map(o=>[dfmt(dp(o.date)),o.ownership_pct+"%",Math.min(100,100*few/o.ownership_pct).toFixed(0)+"%"]));
 }
+const A_COL={btc:"--ink",eth:"--blue",bnb:"--yellow",sol:"--magenta",trx:"--aqua"};
+function compareView(){
+  const A=DATA.meta.assets.latest, m=DATA.meta, eq=m.cmp.rows.find(r=>r.priced_by==="CAPM"), f1=v=>v.toFixed(1);
+  const month=d3.timeFormat("%B %Y")(parse(m.now.asof)), el=id=>document.getElementById(id);
+  el("a-stamp").textContent="Month-end "+longDateOf(m.month_end)+" · "+A.length+" assets · updated monthly";
+  // cards
+  const C=el("a-cards"); C.textContent="";
+  const card=(name,big,band,parts,foot,href)=>{ const d=document.createElement(href?"a":"div"); d.className="acard"; if(href) d.href=href;
+    const add=(c,t)=>{const e=document.createElement("div"); e.className=c; e.textContent=t; d.appendChild(e); return e;};
+    add("k",name); add("v",big); add("n",band);
+    const s=add("stack",""); parts.forEach(([v,c])=>{const i=document.createElement("i"); i.style.flexBasis=v+"%"; i.style.background=css(c); s.appendChild(i);});
+    add("n",foot); C.appendChild(d); };
+  const scale=Math.max(...A.map(a=>a.required_return));
+  A.forEach(a=>card(a.name,f1(a.required_return)+"%","band "+f1(a.required_low)+" to "+f1(a.required_high)+"% a year",
+    [[100*a.risk_free/scale,"--rf"],[100*a.market_term/scale,"--violet"],[100*a.concentration_term/scale,"--orange"],[100*a.mortality_term/scale,"--aqua"]],
+    "compounds at "+f1(a.compound_required_return)+"%"+(a.asset==="btc"?" · full detail →":""),a.asset==="btc"?"#overview":null));
+  card("US stock market, for scale",f1(eq.average)+"%","risk-free rate plus the "+m.cmp.equity_risk_premium.toFixed(0)+"% equity premium",
+    [[100*m.cmp.risk_free/scale,"--rf"],[100*(eq.average-m.cmp.risk_free)/scale,"--violet"]],"compounds at "+f1(eq.compound)+"%",null);
+  // stacked bars
+  const rows=A.map(a=>({n:a.name,t:a.required_return,lo:a.required_low,hi:a.required_high,p:[["risk-free rate",a.risk_free,"--rf"],["market risk",a.market_term,"--violet"],["concentration risk",a.concentration_term,"--orange"],["mortality risk",a.mortality_term,"--aqua"]]}))
+    .sort((a,b)=>b.t-a.t).concat([{n:"US stock market",t:eq.average,ref:1,p:[["risk-free rate",m.cmp.risk_free,"--rf"],["market risk",eq.average-m.cmp.risk_free,"--violet"]]}]);
+  const B=el("a-bars"), small=(B.clientWidth||600)<480, rh=small?46:40, f=frame(B,rows.length*rh+34,{l:small?8:120,r:54,t:6,b:26});
+  const x=d3.scaleLinear().domain([0,Math.max(...rows.map(r=>r.hi||r.t))*1.04]).nice().range([0,f.iw]);
+  const g=f.svg.append("g").attr("transform",`translate(${f.m.l},${f.m.t})`), bh=small?16:20;
+  x.ticks(6).forEach(t=>{ g.append("line").attr("x1",x(t)).attr("x2",x(t)).attr("y1",0).attr("y2",f.ih).attr("stroke",css("--line"));
+    g.append("text").attr("x",x(t)).attr("y",f.ih+18).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--mut")).text(t+"%"); });
+  rows.forEach((r,i)=>{ const y0=i*rh+(small?20:(rh-bh)/2); let acc=0;
+    g.append("text").attr("x",small?0:-10).attr("y",small?y0-6:y0+bh/2).attr("dy",small?0:"0.32em").attr("text-anchor",small?"start":"end").attr("font-size",13).attr("font-weight",r.ref?400:600).attr("fill",css(r.ref?"--ink2":"--ink")).text(r.n);
+    r.p.forEach(([n,v,c],j)=>{ const w=Math.max(0,x(acc+v)-x(acc)-2);
+      g.append("rect").attr("x",x(acc)).attr("y",y0).attr("width",w).attr("height",bh).attr("rx",j===r.p.length-1?4:0).attr("fill",css(c)).attr("opacity",r.ref?.75:1).append("title").text(r.n+": "+n+" "+v.toFixed(1)+" points");
+      if(w>34) g.append("text").attr("x",x(acc)+w/2).attr("y",y0+bh/2).attr("dy","0.32em").attr("text-anchor","middle").attr("font-size",11).attr("fill",c==="--rf"?css("--ink"):"#fff").text(v.toFixed(1));
+      acc+=v; });
+    if(r.hi!=null){ const yy=y0+bh+4; g.append("line").attr("x1",x(r.lo)).attr("x2",x(r.hi)).attr("y1",yy).attr("y2",yy).attr("stroke",css("--ink")).attr("stroke-width",1.5);
+      [r.lo,r.hi].forEach(v=>g.append("line").attr("x1",x(v)).attr("x2",x(v)).attr("y1",yy-3).attr("y2",yy+3).attr("stroke",css("--ink")).attr("stroke-width",1.5)); }
+    g.append("text").attr("x",x(Math.max(acc,r.hi||0))+8).attr("y",y0+bh/2).attr("dy","0.32em").attr("font-size",13).attr("font-weight",700).attr("fill",css("--ink")).text(r.t.toFixed(1)+"%"); });
+  // table
+  el("a-table-sub").textContent="At the end of "+month+". Volatility, beta and the share of a crypto holding that moves with each asset are measured from its own prices, the same way for all five. The holder's weight and the mortality rate come from surveys, filings and the census of deaths.";
+  const T=el("t-assets"); T.textContent=""; const hr=T.insertRow();
+  ["Asset","Required return","Band","Volatility","Beta to US stocks","Moves with it","Holder's weight","Compounds at","Priced since"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+  A.forEach(a=>{ const r=T.insertRow(); [a.name,f1(a.required_return)+"%",f1(a.required_low)+" to "+f1(a.required_high)+"%",a.volatility.toFixed(0)+"%",a.beta_to_us_equities.toFixed(2),(100*a.kappa).toFixed(0)+"%",f1(a.holder_weight_low)+" to "+f1(a.holder_weight_high)+"%",f1(a.compound_required_return)+"%",fmtM(parse(a.priced_since))].forEach(v=>{r.insertCell().textContent=v;}); });
+  { const r=T.insertRow(); r.className="tot"; [ "US stock market",f1(eq.average)+"%","",eq.volatility.toFixed(0)+"%","1.00","","",f1(eq.compound)+"%",""].forEach(v=>{r.insertCell().textContent=v;}); }
+  const N=el("a-notes"); N.textContent=""; const hi=[...A].sort((a,b)=>b.required_return-a.required_return)[0], lo=[...A].sort((a,b)=>a.required_return-b.required_return)[0], neg=A.filter(a=>a.compound_required_return<0);
+  const notes=[["Moves with it.","An owner holds a mix of coins. What matters for one of them is how much of her whole crypto holding moves when it moves, not its slice of the holding. For Bitcoin that is all of it. The holder's weight of another asset is this share times the crypto owner's weight (19% of financial assets for the surveyed owner, less once investors in funds and in companies that hold Bitcoin are counted)."],
+    ["Highest and lowest.",hi.name+" has the highest requirement ("+f1(hi.required_return)+"%): volatility of "+hi.volatility.toFixed(0)+"% and a beta of "+hi.beta_to_us_equities.toFixed(2)+". "+lo.name+" has the lowest ("+f1(lo.required_return)+"%): over the last four years it has moved little with stocks (beta "+lo.beta_to_us_equities.toFixed(2)+") and its volatility is "+lo.volatility.toFixed(0)+"%. A trailing beta can change quickly."]];
+  if(neg.length) notes.push(["A negative compound figure.","At "+neg.map(a=>a.name+"'s").join(" and ")+" volatility, the required average return does not cover what volatility takes away, so a holder who receives exactly the required return would not grow her money."]);
+  notes.forEach(([b,t])=>{const li=document.createElement("li"), s=document.createElement("b"); s.textContent=b+" "; li.appendChild(s); li.appendChild(document.createTextNode(t)); N.appendChild(li);});
+  // history
+  const H=m.assets.hist, HE=el("a-hist"), fh=frame(HE,300,{l:44,r:70,t:10,b:26}), start="2019-01";
+  const S=A.map(a=>({id:a.asset,n:a.name,d:(H[a.asset]||[]).filter(p=>p[0]>=start).map(p=>({t:parse(p[0]),v:p[1]}))}));
+  const xs=d3.scaleTime().domain([parse(start),d3.max(S,s=>d3.max(s.d,p=>p.t))]).range([0,fh.iw]);
+  const ys=d3.scaleLinear().domain([0,d3.max(S,s=>d3.max(s.d,p=>p.v))]).nice().range([fh.ih,0]);
+  const gh=axes(fh,xs,ys,{yfmt:v=>v+"%"}), ends=[];
+  S.forEach(s=>{ gh.append("path").datum(s.d).attr("fill","none").attr("stroke",css(A_COL[s.id])).attr("stroke-width",s.id==="btc"?2.6:2).attr("stroke-linejoin","round").attr("d",d3.line().x(p=>xs(p.t)).y(p=>ys(p.v)));
+    const L=s.d[s.d.length-1]; ends.push({y:ys(L.v),n:s.n,c:A_COL[s.id]}); });
+  ends.sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<14) ends[i].y=ends[i-1].y+14;
+  ends.forEach(e=>{ gh.append("circle").attr("cx",fh.iw+7).attr("cy",e.y).attr("r",4).attr("fill",css(e.c)); gh.append("text").attr("x",fh.iw+15).attr("y",e.y).attr("dy","0.32em").attr("font-size",12).attr("font-weight",600).attr("fill",css("--ink")).text(e.n); });
+}
+function dataView(){
+  const T=document.getElementById("t-files"); if(T.rows.length) return;
+  const F=[["latest.json","Start here. The latest required return of every asset with its terms and inputs, the comparison with stocks, the licence and the citation. One small file."],
+    ["assets.csv","The same figures as a table: one row per asset at the latest month-end."],
+    ["assets_monthly.csv","One row per asset and month-end, since each asset has been priced."],
+    ["months.csv","Bitcoin in full: the band, its four terms, the inputs and the next month's outcome, one row per month-end since 2012."],
+    ["periods.csv","Bitcoin by three-year period: delivered, required, and what each model explains."],
+    ["census_deaths.csv","Every cryptoasset that was ever in the top twenty and died, with the rule that classified it."],
+    ["vintages.csv","Bitcoin's required return as first published each month. Rows are added and never rewritten."],
+    ["datapackage.json","The meaning of every column, the licence and the citation."],
+    ["llms.txt","The guide an AI assistant should read first."],
+    ["data.json","Everything behind the page in one large file."]];
+  const hr=T.insertRow(); ["File","What is in it"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+  F.forEach(([f,w])=>{const r=T.insertRow(), a=document.createElement("a"); a.href=f; a.textContent=f; a.target="_blank"; a.rel="noopener"; r.insertCell().appendChild(a); const c=r.insertCell(); c.textContent=w; c.style.textAlign="left"; c.style.whiteSpace="normal";});
+}
 function draw(){
   bandChart(); whyChart(); termsChart(); perChart(); trailChart(); cumChart();
   mini("m-mkt",[{k:"mkt",n:"market term",c:"--violet"}],v=>v.toFixed(1));
@@ -1147,25 +1301,25 @@ function draw(){
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
   holdersTab(); edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard(); markScroll();
-  mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
-  mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
+  compareView(); dataView();
 }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
-const TABS=["overview","required-return","holders","tests","compared","notes"];
+const TABS=["overview","required-return","holders","tests","compared"], VIEWS=["compare","bitcoin","equation","census","data"];
 function showTab(){
-  const h=location.hash.slice(1), view=h==="census"||h==="equation"?h:"bitcoin";
-  ["bitcoin","census","equation"].forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));
+  const h=location.hash.slice(1), view=TABS.includes(h)||h==="bitcoin"?"bitcoin":VIEWS.includes(h)?h:"compare";
+  VIEWS.forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));
   document.querySelectorAll(".site nav button").forEach(b=>{ if(b.dataset.view===view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
   const name=TABS.includes(h)?h:"overview";
   TABS.forEach(n=>document.getElementById("pane-"+n).classList.toggle("on",n===name));
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));
-  document.querySelector(".filters").style.display=name==="compared"?"none":"";      // this tab is a snapshot of one month-end
+  document.querySelector(".filters").style.display=name==="compared"||name==="holders"?"none":"";      // this tab is a snapshot of one month-end
   draw();                                   // charts size themselves from their container, so draw once the pane is visible
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ if(location.hash.slice(1)===b.dataset.tab) return; location.hash=b.dataset.tab; }));
 document.querySelectorAll(".site nav button").forEach(b=>b.addEventListener("click",()=>{ const to=b.dataset.view==="bitcoin"?"overview":b.dataset.view; if(location.hash.slice(1)!==to) location.hash=to; }));
 window.addEventListener("hashchange",()=>{showTab(); window.scrollTo(0,0);});
 tiles(); showTab();
+document.querySelectorAll("details.more").forEach(d=>d.addEventListener("toggle",()=>{ if(d.open) draw(); }));
 let rt; window.addEventListener("resize",()=>{clearTimeout(rt); rt=setTimeout(draw,120);});
 matchMedia("(prefers-color-scheme:dark)").addEventListener("change",draw);
 </script>

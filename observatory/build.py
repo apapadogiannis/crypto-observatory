@@ -157,8 +157,8 @@ def build(data: Path, out: Path) -> dict:
                 "mortality": [pct(c["mortality_low"]), pct(c["mortality_high"])],
                 "volatility_halflife_months": c["volatility_halflife_months"],
                 "beta_window_months": c["beta_window_months"], "beta_min_months": c["beta_min_months"], "beta_cap": c["beta_cap"],
-                "weight_cap": c["weight_cap"], "owner_weight": c["owner_weight"],
-                "fund_investor_weight": c["fund_investor_weight"],
+                "weight_cap_pct": 100 * c["weight_cap"], "owner_weight_pct": round(100 * c["owner_weight"], 1),
+                "fund_investor_weight_pct": round(100 * c["fund_investor_weight"], 1),
                 "beta_carried_forward_from": mkt.dropna().index[-1].strftime("%Y-%m"),
                 "history_uses_later_anchors": True,
             },
@@ -191,6 +191,7 @@ def build(data: Path, out: Path) -> dict:
         "equity_premium": premium_doc,
         "census": census_doc,
         "holders": _holders(data, cfg),
+        "assets": _assets(data, btc, band, mkt, cfg),
     }
     out.mkdir(parents=True, exist_ok=True)
     doc["vintages"] = _vintages(data, doc)
@@ -267,6 +268,35 @@ def _static(doc: dict) -> dict:
     return {"<!--STATIC-->": summary, "/*LD*/": json.dumps(ld, separators=(",", ":"), ensure_ascii=False)}
 
 
+def _assets(data: Path, btc: pd.DataFrame, band: pd.DataFrame, mkt: pd.Series, cfg: dict) -> dict:
+    """Bitcoin and the other priced assets side by side: the latest month-end, and every month each has been priced."""
+    from . import assets
+    other = assets.required_returns(data, btc, band, mkt, cfg)
+    names = {"btc": "Bitcoin", **cfg["other_assets"]}
+    frames = {"btc": pd.DataFrame({"risk_free": band.risk_free, "volatility": band.volatility, "beta": band.beta, "kappa": 1.0,
+                                   "w_lower": band.w_with_funds, "w_upper": band.w_surveyed, "market_term": band.market_term,
+                                   "mortality_term": band.mortality_term, "concentration_term": band.concentration_term,
+                                   "lower": band.lower, "upper": band.upper, "midpoint": band.midpoint,
+                                   "market_share": other["market_weights"]["btc"]}), **other["assets"]}
+
+    def record(code, d, b):
+        vol, mid, rf = 100 * b.volatility, 100 * b.midpoint, 100 * b.risk_free
+        drag = vol ** 2 / 200
+        return {"month_end": d.strftime("%Y-%m-%d"), "asset": code, "name": names[code],
+                "required_return": _r(mid), "required_low": _r(100 * b.lower), "required_high": _r(100 * b.upper),
+                "risk_free": _r(rf), "market_term": _r(100 * b.market_term), "concentration_term": _r(100 * b.concentration_term),
+                "mortality_term": _r(100 * b.mortality_term), "volatility": _r(vol, 1), "beta_to_us_equities": _r(b.beta),
+                "kappa": _r(b.kappa), "holder_weight_low": _r(100 * b.w_lower, 1), "holder_weight_high": _r(100 * b.w_upper, 1),
+                "volatility_drag": _r(drag), "compound_required_return": _r(mid - drag),
+                "sharpe_ratio": _r((mid - rf) / vol), "share_of_crypto_market": None if pd.isna(b.market_share) else _r(100 * b.market_share, 1)}
+
+    monthly = [record(code, d, b) for code, f in frames.items() for d, b in f.iterrows()]
+    latest = [{**record(code, f.index[-1], f.iloc[-1]), "priced_since": f.index[0].strftime("%Y-%m")} for code, f in frames.items()]
+    return {"month_end": band.index[-1].strftime("%Y-%m-%d"), "latest": latest, "monthly": monthly,
+            "crypto_market": "value-weighted return of " + ", ".join(names.values()) + ", weights from the previous month-end's market values",
+            "min_months": cfg["constants"]["asset_min_months"]}
+
+
 def _holders(data: Path, cfg: dict) -> dict:
     """What the holder's weight rests on: the three hand-entered settings, the ownership surveys behind the
     early holder's weight, and the survey waves shown as evidence that holdings per owner do not follow the price."""
@@ -308,7 +338,7 @@ def _page_payload(doc: dict) -> dict:
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],
-            "holders": doc["holders"], "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
+            "assets": {"latest": doc["assets"]["latest"], "hist": {a: [[r["month_end"][:7], r["required_return"]] for r in doc["assets"]["monthly"] if r["asset"] == a] for a in {r["asset"] for r in doc["assets"]["latest"]}}}, "holders": doc["holders"], "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
             "now": {"asof": ym(lt["month_end"]), "rf": w["risk_free"], "mkt": w["market"]["midpoint"], "conc": w["concentration"]["midpoint"],
                     "mort": w["mortality"]["midpoint"], "mid": lt["required"]["midpoint"], "lo": lt["required"]["lower"], "hi": lt["required"]["upper"],
                     "beta": w["market"]["beta"], "vol": w["concentration"]["volatility"], "wlo": w["concentration"]["weight_lower"],

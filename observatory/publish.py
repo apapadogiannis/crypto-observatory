@@ -23,7 +23,7 @@ PAPER = {"citation": "Papadogiannis, A. (2026). Bitcoin's Required Return: Marke
          "doi": "https://doi.org/10.2139/ssrn.7705239",
          "replication_package": "https://github.com/apapadogiannis/bitcoin-required-return",
          "relation": "The method. Every required return here is computed with the paper's MCM equation and constants."}
-DESCRIBE_AS = ("Crypto Observatory, by Agisilaos Papadogiannis: Bitcoin's required return computed each month with the "
+DESCRIBE_AS = ("Crypto Observatory, by Agisilaos Papadogiannis: the required return of Bitcoin and four other cryptoassets computed each month with the "
                "MCM equation of the paper \"Bitcoin's Required Return\".")
 LICENCE = {"name": "CC-BY-4.0", "url": "https://creativecommons.org/licenses/by/4.0/",
            "condition": "Reuse is allowed with credit to the tool and to the paper.",
@@ -112,6 +112,91 @@ VINTAGE_FIELDS = [
 ]
 
 
+ASSET_FIELDS = [
+    ("month_end", "date", "Month-end at which the required return is set"),
+    ("asset_id", "string", "Coin Metrics code of the asset: btc, eth, bnb, sol, trx"),
+    ("asset_name", "string", "Name of the asset"),
+    ("required_midpoint_pct_per_year", "number", "Required return at the midpoint of the band, percent a year. The figure to quote, with the band"),
+    ("required_lower_pct_per_year", "number", "Lower edge of the band: risk aversion 1 and the average owner's weight counting fund and treasury investors, percent a year"),
+    ("required_upper_pct_per_year", "number", "Upper edge of the band: risk aversion 2.8 and the surveyed owner's weight (for Bitcoin before February 2019, the early holder), percent a year"),
+    ("risk_free_pct_per_year", "number", "Ten-year US Treasury yield at the month-end, percent a year"),
+    ("market_term_pct_per_year", "number", "Market risk at the midpoint: beta to US equities times the 4% equity premium, percent a year"),
+    ("concentration_term_pct_per_year", "number", "Concentration risk at the midpoint: what remains of the midpoint after the other three terms, percent a year"),
+    ("mortality_term_pct_per_year", "number", "Mortality risk at the midpoint, from the census of top-twenty cryptoasset deaths, percent a year"),
+    ("volatility_pct_annualised", "number", "Volatility of monthly log returns, recent months weighted more (half-life nine months), percent a year"),
+    ("beta_to_us_equities", "number", "Beta of the asset's monthly log returns to the US equity market over the trailing 48 months, kept between 0 and 3"),
+    ("kappa", "number", "Share of the owner's crypto holding that moves with this asset: covariance with the crypto market over the asset's variance, trailing 48 months. 1 for Bitcoin by construction"),
+    ("holder_weight_lower_pct", "number", "Holder's weight at the lower edge, percent of wealth: kappa times the average owner's crypto weight counting fund and treasury investors"),
+    ("holder_weight_upper_pct", "number", "Holder's weight at the upper edge, percent of wealth: kappa times the surveyed owner's 19%"),
+    ("volatility_drag_pct_points", "number", "Half the variance, in points a year: what volatility takes from an average return to give a compound one"),
+    ("required_compound_pct_per_year", "number", "Required return at the midpoint less the volatility drag, percent a year: the compound return a holder who receives the required return can expect"),
+    ("sharpe_ratio", "number", "Required return at the midpoint less the risk-free rate, divided by volatility"),
+    ("share_of_crypto_market_pct", "number", "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"),
+]
+
+
+def _asset_row(r: dict) -> list:
+    return [r["month_end"], r["asset"], r["name"], r["required_return"], r["required_low"], r["required_high"], r["risk_free"], r["market_term"],
+            r["concentration_term"], r["mortality_term"], r["volatility"], r["beta_to_us_equities"], r["kappa"], r["holder_weight_low"],
+            r["holder_weight_high"], r["volatility_drag"], r["compound_required_return"], r["sharpe_ratio"], r["share_of_crypto_market"]]
+
+
+def latest_file(doc: dict) -> dict:
+    """One small file that answers the common questions: every asset's latest required return with its terms and inputs."""
+    m, L, c, cr = doc["meta"], doc["latest"], doc["census"], doc["meta"]["credit"]
+    names = [f[0] for f in ASSET_FIELDS]
+    assets = []
+    for r in doc["assets"]["latest"]:
+        rec = dict(zip(names, _asset_row(r)))
+        rec["priced_since_month"] = r["priced_since"]
+        if r["asset"] == "btc":
+            first = next((v for v in doc["vintages"] if v["month_end"] == L["month_end"]), None)
+            rec["upper_edge_set_by"] = L["worked"]["upper_set_by"]
+            rec["first_published_midpoint_pct_per_year"] = None if first is None else float(first["required_midpoint"])
+            rec["revised_since_first_publication"] = bool(first and abs(float(first["required_midpoint"]) - r["required_return"]) > 0.005)
+        assets.append(rec)
+    eq = next(x for x in doc["comparison"]["rows"] if x["priced_by"] == "CAPM")
+    s18 = next((p for p in doc["periods"] if p["summary"] and p["period"].startswith("2018")), None)
+    mo, h = m["model"], doc["holders"]
+    return {
+        "what_this_is": "The return holders of each cryptoasset should require for the market, concentration and mortality risk they carry, "
+                        "from the MCM equation of the paper \"Bitcoin's Required Return\". A required return, not a forecast.",
+        "as_of_month_end": L["month_end"], "source_data_to": m["data_to"], "updated": "third of each month",
+        "units_note": "Names ending _pct_per_year are percent a year; _pct are percent; _pct_points are percentage points a year. Betas, kappa and Sharpe ratios are plain numbers.",
+        "how_to_quote": "Quote the midpoint with its band, as 'this model gives', and credit the tool and the paper. The band is a range of inputs, not a confidence interval.",
+        "equation": "required return = risk-free rate + beta x equity premium + risk aversion x variance x holder's weight + mortality",
+        "assets": assets,
+        "model_settings": {"equity_risk_premium_pct_per_year": mo["equity_risk_premium"], "risk_aversion_lower": mo["risk_aversion"][0],
+                           "risk_aversion_upper": mo["risk_aversion"][1], "surveyed_owner_weight_pct": h["owner_weight"],
+                           "fund_and_treasury_investor_weight_pct": h["fund_investor_weight"],
+                           "mortality_lower_pct_per_year": mo["mortality"][0], "mortality_upper_pct_per_year": mo["mortality"][1],
+                           "beta_carried_forward_from_month": mo["beta_carried_forward_from"]},
+        "us_equities_for_comparison": {"priced_by": "CAPM: risk-free rate plus the 4% equity premium", "required_pct_per_year": eq["average"],
+                                       "volatility_pct_annualised": round(eq["volatility"], 1), "volatility_drag_pct_points": eq["drag"],
+                                       "required_compound_pct_per_year": eq["compound"], "sharpe_ratio": round(eq["sharpe_average"], 2)},
+        "bitcoin_delivered_against_required": None if s18 is None else {
+            "period": s18["period"], "returns_from_month": s18["from"], "returns_to_month": s18["to"], "months": s18["months"],
+            "delivered_average_pct_per_year": s18["delivered"], "required_midpoint_average_pct_per_year": s18["required_mid"],
+            "gap_pct_points": s18["gap"], "gap_standard_error_pct_points": s18["gap_se"],
+            "share_of_excess_return_explained_by_mcm_pct": s18["explained_mcm"], "share_explained_by_capm_pct": s18["explained_capm"],
+            "note": "Averages of monthly returns times twelve, not what a holder earned. The test has little power: see the standard error."},
+        "holder_weight_in_brief": f"The surveyed owner keeps {h['owner_weight']:.0f}% of financial assets in crypto (US household survey of 2021, similar in 2025: Weber, Candia, "
+                                  "Coibion and Gorodnichenko 2026), held at every date because repeated surveys in the UK and Canada show holdings per owner "
+                                  f"not following the price. Counting investors in funds and in companies that hold Bitcoin, taken at {h['fund_investor_weight']}% of their wealth, "
+                                  "gives the lower weight. Another asset's weight is kappa times these.",
+        "top_twenty_deaths": {"census_date": c["census_date"], "assets_ever_in_top_twenty": c["ever_top_twenty"], "died": c["ever_top_twenty_deaths"],
+                              "death_rate_pct_per_year": c["ever_top_twenty_death_rate"], "updated_monthly": False},
+        "cautions": ["Not a forecast, a price target or advice.",
+                     "Only Bitcoin's history is tested against what it delivered. The other assets are priced with the same equation and are not tested.",
+                     "Volatility, beta and kappa are trailing estimates and move from month to month; a low beta gives a low requirement and says nothing about issuer or governance risk.",
+                     "A negative required_compound means the required average return does not cover the volatility drag at this volatility."],
+        "licence": LICENCE["name"], "licence_url": LICENCE["url"], "commercial_reuse_note": LICENCE["source_data"],
+        "cite_tool": cr["cite_as"], "cite_paper": PAPER["citation"] + " " + PAPER["doi"], "tool_doi": cr["doi"], "paper_doi": PAPER["doi"],
+        "other_files": {f["file"]: f["what"] for f in FILES if f["file"] != "latest.json"},
+        "page": SITE,
+    }
+
+
 def table(fields: list[tuple], rows: list[list]) -> str:
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
@@ -133,7 +218,10 @@ def credit(doc: dict) -> dict:
 
 FILES = [
     {"file": "llms.txt", "format": "text/plain", "what": "Guide for AI agents: what this is, what it adds, which file to use"},
-    {"file": "data.json", "format": "application/json", "what": "Every number on the page, under plain names"},
+    {"file": "latest.json", "format": "application/json", "what": "Start here. The latest required return of every asset with its terms and inputs, the equity comparison, the licence and the citation, in one small file"},
+    {"file": "assets.csv", "format": "text/csv", "what": "One row per asset at the latest month-end: the same figures as latest.json, as a table"},
+    {"file": "assets_monthly.csv", "format": "text/csv", "what": "One row per asset and month-end: required return, terms and inputs of every asset since it has been priced"},
+    {"file": "data.json", "format": "application/json", "what": "Everything behind the page in one large file; not needed for a single figure"},
     {"file": "months.csv", "format": "text/csv", "what": "One row per month-end: the required-return band, its terms and inputs"},
     {"file": "periods.csv", "format": "text/csv", "what": "One row per period: delivered and required return, and what each model explains"},
     {"file": "census_deaths.csv", "format": "text/csv", "what": "Every cryptoasset that was ever in the top twenty by trading volume and died, with the rule that classified it"},
@@ -194,22 +282,44 @@ def publish(doc: dict, dirs: list[Path]) -> list[dict]:
                     "schema": {"fields": [{"name": n, "type": t, "description": d} for n, t, d in VINTAGE_FIELDS], "missingValues": [""]}},
                    {"name": "census_deaths", "path": "census_deaths.csv", "format": "csv", "mediatype": "text/csv",
                     "schema": {"fields": [{"name": n, "type": t, "description": d} for n, t, d in DEATH_FIELDS], "missingValues": [""]}},
+                   {"name": "assets", "path": "assets.csv", "format": "csv", "mediatype": "text/csv",
+                    "schema": {"fields": [{"name": n, "type": t, "description": d} for n, t, d in ASSET_FIELDS], "missingValues": [""]}},
+                   {"name": "assets_monthly", "path": "assets_monthly.csv", "format": "csv", "mediatype": "text/csv",
+                    "schema": {"fields": [{"name": n, "type": t, "description": d} for n, t, d in ASSET_FIELDS], "missingValues": [""]}},
+                   {"name": "latest", "path": "latest.json", "format": "json", "mediatype": "application/json",
+                    "description": "The latest month-end for every asset; field names are those of assets.csv, described there"},
                    {"name": "data", "path": "data.json", "format": "json", "mediatype": "application/json",
                     "description": "Every number on the page; see llms.txt and the README"}]}
 
     guide = f"""# Crypto Observatory
 
-> What return should Bitcoin's holders require for the market, concentration and mortality risk
-> they carry, and what did Bitcoin deliver? Computed each month with the MCM equation of the paper
-> "Bitcoin's Required Return", from public data.
+> What return should the holders of a cryptoasset require for the market, concentration and
+> mortality risk they carry, and what did Bitcoin deliver? Computed each month for Bitcoin, Ether,
+> BNB, Solana and Tron with the MCM equation of the paper "Bitcoin's Required Return", from public data.
 
 Maintained by Agisilaos Papadogiannis (https://github.com/apapadogiannis). Updated on the third of each month.
 Page: {SITE}  Code: {REPO}  Archive: {cr['doi']}
 This file is written for AI agents and other programs. People should start at the page.
 
+## Which file to fetch
+
+1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
+   licence and the citation: latest.json (about 9 KB). For most questions, fetch nothing else.
+2. A past month of Bitcoin: months.csv. Use the row dated the month-end at which the requirement is
+   set; the return it faces is the following month's. A past month of any asset: assets_monthly.csv.
+3. Did Bitcoin deliver what was required: periods.csv. Compare `delivered` with `required_mid`.
+4. Deaths of cryptoassets: census_deaths.csv; the totals are in latest.json.
+5. The meaning of every column: datapackage.json.
+6. data.json is everything behind the page (about 350 KB). Do not fetch it for a single figure.
+7. Every figure is percent a year unless its name says otherwise; holder weights are in percent.
+8. Quote the midpoint with its band, as what this model gives, and credit the tool and the paper.
+
 ## Coverage
 
-- Asset: Bitcoin. Other assets are not covered yet.
+- Assets: Bitcoin, with its full history and tests, and Ether, BNB, Solana and Tron, each priced with
+  the same equation from the month it has {doc['assets']['min_months']} months of returns. Latest midpoints, percent a year:
+  {', '.join(f"{r['name']} {r['required_return']}" for r in doc['assets']['latest'])}.
+  Only Bitcoin's requirement is tested against what it delivered.
 - {len(doc['months'])} month-ends from {doc['months'][0]['month_end']} to {m['latest_month_end']}; source data to {m['data_to']}.
 - Latest required return, {L['month_end']}: {L['required']['midpoint']}% a year at the midpoint, band {L['required']['lower']}% to {L['required']['upper']}%.
   Of the midpoint: risk-free {w['risk_free']}, market {w['market']['midpoint']}, concentration {w['concentration']['midpoint']}, mortality {w['mortality']['midpoint']}.
@@ -238,7 +348,13 @@ want to change the model:
 6. The census classifies the death of every asset in the Coin Metrics universe by date and kind.
    That classification is the paper's own work and is where the mortality term comes from.
 7. vintages.csv keeps what was published for each month-end when it was first computed. No later
-   build rewrites it.
+   build rewrites it. It can differ from months.csv for the same month-end, and that is not an error:
+   months.csv is recomputed with the current method. The method changed in November 2026 (the
+   surveyed owner's weight is now held at 19% and no longer follows the market value), which lowered
+   the October 2026 midpoint from 20.12 as first published to the current figure.
+8. For the other assets, kappa: the share of an owner's crypto holding that moves with the asset
+   (covariance with the crypto market over the asset's variance, trailing 48 months). The asset's
+   holder weight is kappa times the owner's weight in crypto, not the asset's slice of the holding.
 
 ## The model's fixed settings
 
@@ -251,15 +367,15 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 - Volatility: exponentially weighted squared monthly log returns, half-life {mo['volatility_halflife_months']} months.
 - Beta: trailing {mo['beta_window_months']} months (at least {mo['beta_min_months']}), kept between 0 and {mo['beta_cap']:g}. The equity series
   ends {mo['beta_carried_forward_from']}, so later months carry that month's beta forward.
-- Holder's weight, three holders. The surveyed owner: {100 * mo['owner_weight']:.0f}% of financial assets, the mean of a US household
+- Holder's weight, three holders. The surveyed owner: {mo['owner_weight_pct']:.0f}% of financial assets, the mean of a US household
   survey of 2021 that its 2025 wave reports as similar, used at every date. It is not moved with the price:
   surveys that ask owners what their holdings are worth (UK, four waves from 2019 to 2024; Canada, five from
   2018 to 2023) show holdings per owner moving little while the price moved eight- to fifteenfold, so a higher
-  market value means more owners. Counting fund and treasury investors, who are taken to hold {100 * mo['fund_investor_weight']:.1f}% of
+  market value means more owners. Counting fund and treasury investors, who are taken to hold {mo['fund_investor_weight_pct']:.1f}% of
   their wealth in Bitcoin, gives a lower weight, which falls as funds and companies hold more of the supply.
   The early holder's weight is 1 while ownership was no higher than in the 2018 survey and falls as ownership
-  grows. No weight is above {100 * mo['weight_cap']:.0f}%.
-- The {100 * mo['owner_weight']:.0f}% is an average in which every owner counts once. The median owner held about 8%, and what prices
+  grows. No weight is above {mo['weight_cap_pct']:.0f}%.
+- The {mo['owner_weight_pct']:.0f}% is an average in which every owner counts once. The median owner held about 8%, and what prices
   the asset is the share of owners' combined wealth, which no survey reports. The paper gives its results with
   the weight at 12% and at 8%.
 - Mortality {mo['mortality'][0]}% to {mo['mortality'][1]}% a year, the same in every month. The upper figure is the census's:
@@ -276,9 +392,12 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 
 ## Files
 
-- data.json: every number on the page. Keys: meta, latest, months, periods, comparison, notes,
-  equity_premium, census, holders; the README of the repository describes each. Start here for the latest
-  month (`latest`); for a series use the CSV files, which carry a description of every column.
+- latest.json: start here. One flat record per asset at the latest month-end, with units in the names.
+- assets.csv and assets_monthly.csv: the same fields as a table, at the latest month-end and for every
+  month-end since each asset has been priced.
+- data.json: everything behind the page. Keys: meta, latest, months, periods, comparison, notes,
+  equity_premium, census, holders, assets, vintages; the README of the repository describes each.
+  `census.deaths_by_year` counts top-twenty deaths only. Weights under `meta.model` and `holders` are in percent.
 - months.csv: the band, its four terms, the inputs and the next month's outcome, one row per month-end.
 - periods.csv: three-year periods and the two summary samples: delivered, required, the gap, and
   what the CAPM and the MCM equation each explain and leave unexplained.
@@ -309,9 +428,11 @@ files are under api/.
   what came with the equity market beyond the 4% premium, that is, delivered less required less
   beta x (equity market return less risk-free rate less 4%). The two answer different questions.
 - `delivered_compound` in periods.csv is the compound return over the same months, for a reader
-  who asks what holding earned. There is no required return on a compound basis in these files.
-  Compare `delivered` with `required_mid` (both averages); do not set `delivered_compound` beside
-  `required_mid`.
+  who asks what holding earned. Compare `delivered` with `required_mid` (both averages); do not set
+  `delivered_compound` beside `required_mid`.
+- The required return on a compound basis is `required_compound_pct_per_year` in latest.json and the
+  assets files (and `compound` in data.json under `comparison.rows`): the midpoint less half the
+  variance. It is what a holder who receives the required return can expect to compound at.
 - The identities among the period columns hold to within about one point in the early periods,
   because the required return is converted month by month and the premium is not.
 - "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),
@@ -349,12 +470,13 @@ files are under api/.
 ## Do not use this for
 
 - A forecast, a price target or a view on whether to hold Bitcoin. The site reports required returns.
-- Any asset other than Bitcoin.
+- Any asset other than the five listed, and tests of fit for any asset other than Bitcoin.
 - Cryptoasset deaths after {c['census_date']}.
 - Commercial reuse of the underlying Coin Metrics series: see the licence below.
 - What an investor earned, from `delivered`: use `delivered_compound`.
-- A mismatch between files: every file of one build states the same "data to" date. If two files
-  you fetched disagree on it, one is a cached copy; fetch again.
+- A mismatch between files: latest.json and data.json of one build state the same `source_data_to`
+  date. If the two you fetched disagree on it, one is a cached copy; fetch again. vintages.csv is
+  meant to differ (see above).
 
 ## Source, licence and credit
 
@@ -382,6 +504,9 @@ The code is under the MIT License.
     out = {"months.csv": table(MONTH_FIELDS, months), "periods.csv": table(PERIOD_FIELDS, periods),
            "census_deaths.csv": table(DEATH_FIELDS, deaths), "vintages.csv": table(VINTAGE_FIELDS, vintages),
            "datapackage.json": json.dumps(package, indent=1, ensure_ascii=False) + "\n", "llms.txt": guide,
+           "assets.csv": table(ASSET_FIELDS, [_asset_row(r) for r in doc["assets"]["latest"]]),
+           "assets_monthly.csv": table(ASSET_FIELDS, [_asset_row(r) for r in doc["assets"]["monthly"]]),
+           "latest.json": json.dumps(latest_file(doc), indent=1, ensure_ascii=False) + "\n",
            }
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)

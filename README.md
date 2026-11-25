@@ -35,7 +35,10 @@ live page's address.
 
 | File | Content |
 |---|---|
-| `api/data.json` | every number on the page, under plain names |
+| `api/latest.json` | start here: the latest required return of every asset with its terms and inputs, the comparison with stocks, the licence and the citation, in one small file with units in the field names |
+| `api/assets.csv` | the same figures as a table, one row per asset |
+| `api/assets_monthly.csv` | one row per asset and month-end, since each asset has been priced |
+| `api/data.json` | everything behind the page in one large file |
 | `api/months.csv` | one row per month-end: the required-return band, its terms and inputs |
 | `api/periods.csv` | one row per period: delivered and required return, and what each model explains |
 | `api/census_deaths.csv` | every cryptoasset that was ever in the top twenty by trading volume and died, with the rule that classified it |
@@ -58,29 +61,36 @@ required return = risk-free rate + market risk + concentration risk + mortality 
                 = r_f + beta x ERP + gamma x sigma^2 x w + lambda x (1 - delta)
 ```
 
-The site has three sections: Bitcoin, the equation and the census of deaths. **Bitcoin** has six tabs:
+The site has five sections.
 
-1. **Overview.** The required return and what was delivered, by three-year period, and why the two
-   differed: the premium holders required, what came with the equity market, and what the equation
-   leaves unexplained.
+**Compare** is the landing page: the required return of Bitcoin, Ether, BNB, Solana and Tron side by
+side, what each is made of (risk-free rate, market, concentration and mortality risk), the inputs
+behind it, and how each has moved. The US stock market is shown for scale. The other four assets are
+priced with the paper's equation for other cryptoassets: an asset's holder weight is the crypto
+owner's weight times the share of a crypto holding that moves with the asset (kappa).
+
+**Bitcoin** has the full history and the tests, in five tabs:
+
+1. **Overview.** The required return and what was delivered, by three-year period.
 2. **Required return.** How the band is built, which holder sets each edge, and the three risks
    (market, concentration, mortality), each with its formula and the inputs that move it.
 3. **Holders.** Where the holder's weight in the concentration term comes from: the surveyed owner at
    19%, the surveys in the United Kingdom and Canada that show holdings per owner not following the
-   price, the lower weight once fund and treasury investors are counted (worked out for the latest
-   month), the early holder, and what is uncertain.
-4. **Tests.** How much of the delivered return the CAPM explains, how much the MCM equation explains,
-   and the alpha each leaves, by period and through time. A last section reruns everything with the
-   equity premium implied by stock prices month by month, in place of the paper's fixed 4%.
-5. **Compared.** Bitcoin beside the US stock market, developed markets and US small caps: average and
-   compound required returns, drag and Sharpe ratios.
-6. **Data and notes.** Supply and holders for context, and what the page does not claim.
+   price, the lower weight once fund and treasury investors are counted, and the early holder.
+4. **Tests.** How much of the delivered return the CAPM and the MCM equation each explain, why
+   delivered differed from required, and, folded away, the regression, the cumulative view and the
+   rerun with the equity premium implied by stock prices.
+5. **Versus stocks.** Bitcoin beside the US stock market, developed markets and US small caps: average
+   and compound required returns, drag and Sharpe ratios.
 
-**The equation** explains the MCM equation term by term, with sliders: start from one of five cases
+**Data** lists the files, gives a prompt to paste into an AI assistant, and says what the site does
+not claim, with the method, sources and dates.
+
+**How it works** explains the MCM equation term by term, with sliders: start from one of five cases
 taken from the site's own data (two Bitcoin holders, Bitcoin at a negligible weight, an early holder in
 2013, a stock index fund) and see the required return rebuild as the inputs move.
 
-**Census of deaths** shows how often cryptoassets die, by age and by size, how long they last, and
+**Deaths** shows how often cryptoassets die, by age and by size, how long they last, and
 every death among the assets that were ever in the top twenty. It is where the mortality term of the
 required return comes from. The census is the paper's, taken on 24 May 2026, and is not yet updated
 monthly. Each death carries the rule that classified it (trading dried up, price below 1% of its
@@ -125,7 +135,8 @@ observatory/tests_of_fit.py   the monthly test, CAPM and MCM alpha, shares expla
 observatory/compare.py        Bitcoin beside equities: average and compound required returns
 observatory/build.py          builds the page and the data file from the stored data
 observatory/publish.py        writes the files for programs and AI agents (api/)
-api/                          those files: months.csv, periods.csv, census_deaths.csv, datapackage.json, llms.txt
+api/                          those files: latest.json, assets.csv, assets_monthly.csv, months.csv, periods.csv, census_deaths.csv, vintages.csv, datapackage.json, llms.txt
+observatory/assets.py         the same equation for Ether, BNB, Solana and Tron (kappa, the crypto market)
 tools/census_from_paper.py     builds the census tables in data/census/ from the paper's result files (run once)
 observatory/inputs.py         reads the stored files
 observatory/update.py         downloads the latest data into data/ (the only code that uses the network)
@@ -152,6 +163,7 @@ can read it without scraping the page.
 | `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
 | `equity_premium` | the tests of fit recomputed with other equity risk premia: the paper's fixed 4%, and the premium implied by stock prices each month |
+| `assets` | Bitcoin, Ether, BNB, Solana and Tron side by side: the latest month-end and every month each has been priced |
 | `holders` | what the holder's weight rests on: the owners' weight, the weight of fund and treasury investors, the ownership surveys behind the early holder's weight, and the British and Canadian survey waves shown under Holders |
 | `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, the list of top-twenty deaths with the rule behind each, the counts by rule, and what is left out |
 | `vintages` | what was published for each month-end when it was first computed |

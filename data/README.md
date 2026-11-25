@@ -7,6 +7,7 @@ every published number can be recomputed from what is stored.
 | File | What it is | Source and license |
 |---|---|---|
 | `coinmetrics/btc.csv` | Daily funded addresses, market value, flows into and out of exchanges, issuance, price and supply of Bitcoin | Coin Metrics community data, CC BY-NC 4.0 (non-commercial, with attribution). Days to 23 May 2026 are from the public archive at github.com/coinmetrics/data, which stopped updating on 24 May 2026 (last commit `f1a36afb`). Later days are from the Coin Metrics Community API. |
+| `coinmetrics/eth.csv`, `bnb.csv`, `sol.csv`, `trx.csv` | Daily price (`PriceUSD`) and market value (`MarketCapUSD`) of Ether, BNB, Solana and Tron. The market value is Coin Metrics' current-supply figure for Ether and its estimate for the other three | Coin Metrics Community API, CC BY-NC 4.0, retrieved 25 November 2026 and appended to by `update.py` |
 | `rates/treasury_10y_daily.csv` | Daily ten-year par yield | US Department of the Treasury, Daily Treasury Par Yield Curve Rates |
 | `market/us_market_monthly.csv` | Monthly excess return of the US equity market (`mkt_rf`) and the one-month bill rate (`rf`), in percent | Kenneth R. French data library, Fama/French 3 Factors. Copyright Kenneth R. French. Published with a lag of one to two months. |
 | `market/developed_markets_monthly.csv` | The same two columns for developed-market equities, in US dollars | Kenneth R. French data library, Fama/French Developed 3 Factors. Copyright Kenneth R. French. |

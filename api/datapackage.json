@@ -1,7 +1,7 @@
 {
  "name": "crypto-observatory",
  "title": "Crypto Observatory: required returns, risks and survival",
- "description": "Crypto Observatory, by Agisilaos Papadogiannis: Bitcoin's required return computed each month with the MCM equation of the paper \"Bitcoin's Required Return\".",
+ "description": "Crypto Observatory, by Agisilaos Papadogiannis: the required return of Bitcoin and four other cryptoassets computed each month with the MCM equation of the paper \"Bitcoin's Required Return\".",
  "homepage": "https://apapadogiannis.github.io/crypto-observatory/",
  "repository": "https://github.com/apapadogiannis/crypto-observatory",
  "doi": "https://doi.org/10.5281/zenodo.24403325",
@@ -457,6 +457,229 @@
      ""
     ]
    }
+  },
+  {
+   "name": "assets",
+   "path": "assets.csv",
+   "format": "csv",
+   "mediatype": "text/csv",
+   "schema": {
+    "fields": [
+     {
+      "name": "month_end",
+      "type": "date",
+      "description": "Month-end at which the required return is set"
+     },
+     {
+      "name": "asset_id",
+      "type": "string",
+      "description": "Coin Metrics code of the asset: btc, eth, bnb, sol, trx"
+     },
+     {
+      "name": "asset_name",
+      "type": "string",
+      "description": "Name of the asset"
+     },
+     {
+      "name": "required_midpoint_pct_per_year",
+      "type": "number",
+      "description": "Required return at the midpoint of the band, percent a year. The figure to quote, with the band"
+     },
+     {
+      "name": "required_lower_pct_per_year",
+      "type": "number",
+      "description": "Lower edge of the band: risk aversion 1 and the average owner's weight counting fund and treasury investors, percent a year"
+     },
+     {
+      "name": "required_upper_pct_per_year",
+      "type": "number",
+      "description": "Upper edge of the band: risk aversion 2.8 and the surveyed owner's weight (for Bitcoin before February 2019, the early holder), percent a year"
+     },
+     {
+      "name": "risk_free_pct_per_year",
+      "type": "number",
+      "description": "Ten-year US Treasury yield at the month-end, percent a year"
+     },
+     {
+      "name": "market_term_pct_per_year",
+      "type": "number",
+      "description": "Market risk at the midpoint: beta to US equities times the 4% equity premium, percent a year"
+     },
+     {
+      "name": "concentration_term_pct_per_year",
+      "type": "number",
+      "description": "Concentration risk at the midpoint: what remains of the midpoint after the other three terms, percent a year"
+     },
+     {
+      "name": "mortality_term_pct_per_year",
+      "type": "number",
+      "description": "Mortality risk at the midpoint, from the census of top-twenty cryptoasset deaths, percent a year"
+     },
+     {
+      "name": "volatility_pct_annualised",
+      "type": "number",
+      "description": "Volatility of monthly log returns, recent months weighted more (half-life nine months), percent a year"
+     },
+     {
+      "name": "beta_to_us_equities",
+      "type": "number",
+      "description": "Beta of the asset's monthly log returns to the US equity market over the trailing 48 months, kept between 0 and 3"
+     },
+     {
+      "name": "kappa",
+      "type": "number",
+      "description": "Share of the owner's crypto holding that moves with this asset: covariance with the crypto market over the asset's variance, trailing 48 months. 1 for Bitcoin by construction"
+     },
+     {
+      "name": "holder_weight_lower_pct",
+      "type": "number",
+      "description": "Holder's weight at the lower edge, percent of wealth: kappa times the average owner's crypto weight counting fund and treasury investors"
+     },
+     {
+      "name": "holder_weight_upper_pct",
+      "type": "number",
+      "description": "Holder's weight at the upper edge, percent of wealth: kappa times the surveyed owner's 19%"
+     },
+     {
+      "name": "volatility_drag_pct_points",
+      "type": "number",
+      "description": "Half the variance, in points a year: what volatility takes from an average return to give a compound one"
+     },
+     {
+      "name": "required_compound_pct_per_year",
+      "type": "number",
+      "description": "Required return at the midpoint less the volatility drag, percent a year: the compound return a holder who receives the required return can expect"
+     },
+     {
+      "name": "sharpe_ratio",
+      "type": "number",
+      "description": "Required return at the midpoint less the risk-free rate, divided by volatility"
+     },
+     {
+      "name": "share_of_crypto_market_pct",
+      "type": "number",
+      "description": "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"
+     }
+    ],
+    "missingValues": [
+     ""
+    ]
+   }
+  },
+  {
+   "name": "assets_monthly",
+   "path": "assets_monthly.csv",
+   "format": "csv",
+   "mediatype": "text/csv",
+   "schema": {
+    "fields": [
+     {
+      "name": "month_end",
+      "type": "date",
+      "description": "Month-end at which the required return is set"
+     },
+     {
+      "name": "asset_id",
+      "type": "string",
+      "description": "Coin Metrics code of the asset: btc, eth, bnb, sol, trx"
+     },
+     {
+      "name": "asset_name",
+      "type": "string",
+      "description": "Name of the asset"
+     },
+     {
+      "name": "required_midpoint_pct_per_year",
+      "type": "number",
+      "description": "Required return at the midpoint of the band, percent a year. The figure to quote, with the band"
+     },
+     {
+      "name": "required_lower_pct_per_year",
+      "type": "number",
+      "description": "Lower edge of the band: risk aversion 1 and the average owner's weight counting fund and treasury investors, percent a year"
+     },
+     {
+      "name": "required_upper_pct_per_year",
+      "type": "number",
+      "description": "Upper edge of the band: risk aversion 2.8 and the surveyed owner's weight (for Bitcoin before February 2019, the early holder), percent a year"
+     },
+     {
+      "name": "risk_free_pct_per_year",
+      "type": "number",
+      "description": "Ten-year US Treasury yield at the month-end, percent a year"
+     },
+     {
+      "name": "market_term_pct_per_year",
+      "type": "number",
+      "description": "Market risk at the midpoint: beta to US equities times the 4% equity premium, percent a year"
+     },
+     {
+      "name": "concentration_term_pct_per_year",
+      "type": "number",
+      "description": "Concentration risk at the midpoint: what remains of the midpoint after the other three terms, percent a year"
+     },
+     {
+      "name": "mortality_term_pct_per_year",
+      "type": "number",
+      "description": "Mortality risk at the midpoint, from the census of top-twenty cryptoasset deaths, percent a year"
+     },
+     {
+      "name": "volatility_pct_annualised",
+      "type": "number",
+      "description": "Volatility of monthly log returns, recent months weighted more (half-life nine months), percent a year"
+     },
+     {
+      "name": "beta_to_us_equities",
+      "type": "number",
+      "description": "Beta of the asset's monthly log returns to the US equity market over the trailing 48 months, kept between 0 and 3"
+     },
+     {
+      "name": "kappa",
+      "type": "number",
+      "description": "Share of the owner's crypto holding that moves with this asset: covariance with the crypto market over the asset's variance, trailing 48 months. 1 for Bitcoin by construction"
+     },
+     {
+      "name": "holder_weight_lower_pct",
+      "type": "number",
+      "description": "Holder's weight at the lower edge, percent of wealth: kappa times the average owner's crypto weight counting fund and treasury investors"
+     },
+     {
+      "name": "holder_weight_upper_pct",
+      "type": "number",
+      "description": "Holder's weight at the upper edge, percent of wealth: kappa times the surveyed owner's 19%"
+     },
+     {
+      "name": "volatility_drag_pct_points",
+      "type": "number",
+      "description": "Half the variance, in points a year: what volatility takes from an average return to give a compound one"
+     },
+     {
+      "name": "required_compound_pct_per_year",
+      "type": "number",
+      "description": "Required return at the midpoint less the volatility drag, percent a year: the compound return a holder who receives the required return can expect"
+     },
+     {
+      "name": "sharpe_ratio",
+      "type": "number",
+      "description": "Required return at the midpoint less the risk-free rate, divided by volatility"
+     },
+     {
+      "name": "share_of_crypto_market_pct",
+      "type": "number",
+      "description": "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"
+     }
+    ],
+    "missingValues": [
+     ""
+    ]
+   }
+  },
+  {
+   "name": "latest",
+   "path": "latest.json",
+   "format": "json",
+   "mediatype": "application/json",
+   "description": "The latest month-end for every asset; field names are those of assets.csv, described there"
   },
   {
    "name": "data",

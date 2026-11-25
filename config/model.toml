@@ -20,10 +20,19 @@ volatility_halflife_months = 9
 beta_window_months   = 48
 beta_min_months      = 12          # every estimate uses returns up to its own month only (version 2.0 of the paper)
 beta_cap             = 3.0
+asset_min_months     = 36          # another asset is priced once it has this many months of returns (Section 6)
 genesis              = "2009-01-03"
 # The newest hand-entered anchor of each kind may be this old, in months, before the page says so.
 ownership_survey_max_age_months = 24
 fund_holdings_max_age_months    = 6
+
+[other_assets]   # priced with the same equation (Section 6): weight = kappa x the owner's weight in crypto.
+                 # Each needs data/coinmetrics/<code>.csv with PriceUSD and MarketCapUSD. Together with Bitcoin
+                 # they make up the crypto market against which kappa is measured.
+eth = "Ether"
+bnb = "BNB"
+sol = "Solana"
+trx = "Tron"
 
 [ownership]   # share of US adults who own crypto (Fed SHED/SCPC, Pew; Weber et al. 2026). Log-linear in between.
               # It sets the early holder's weight only: 1 while ownership is at or below few_hands_ownership, then falling.

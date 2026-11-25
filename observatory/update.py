@@ -22,6 +22,7 @@ import csv
 import io
 import json
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
@@ -98,6 +99,43 @@ def update_coinmetrics(data: Path, asset: str = "btc") -> dict:
         _write_csv(path, stored + added, ["time"] + CM_METRICS)
     return {"source": "Coin Metrics Community API", "last_observation": (added or stored)[-1]["time"], "rows_added": len(added),
             "overlap_days_checked": sum(1 for d in fresh if d in by_day), "revisions": revised}
+
+
+def update_other_asset(data: Path, asset: str) -> dict:
+    """Price and market value of one of the other priced assets, appended to data/coinmetrics/<asset>.csv.
+
+    The market value is Coin Metrics' current-supply figure where the community API serves it (Ether)
+    and its estimate otherwise. Stored days are kept; the overlapping days' prices are compared."""
+    path = data / "coinmetrics" / f"{asset}.csv"
+    stored = _read_csv(path)
+    last = stored[-1]["time"]
+    start = (date.fromisoformat(last) - timedelta(days=OVERLAP_DAYS)).isoformat()
+    fetched = []
+    for metrics in ("PriceUSD,CapMrktEstUSD,CapMrktCurUSD", "PriceUSD,CapMrktEstUSD"):      # the second where the first is not served
+        url = CM_API + "?" + urllib.parse.urlencode({"assets": asset, "metrics": metrics, "frequency": "1d", "start_time": start,
+                                                     "page_size": 10000, "paging_from": "start"})
+        try:
+            while url:
+                page = json.loads(_get(url))
+                fetched += page["data"]
+                url = page.get("next_page_url")
+            break
+        except urllib.error.HTTPError as e:
+            if e.code not in (400, 403):
+                raise
+            fetched = []
+    fresh = {r["time"][:10]: r for r in fetched if r.get("PriceUSD")}
+    if not fresh:
+        raise SystemExit(f"Coin Metrics returned no rows for {asset}")
+    by_day = {r["time"]: r for r in stored}
+    worst = max(((abs(float(by_day[d]["PriceUSD"]) - float(r["PriceUSD"])) / abs(float(by_day[d]["PriceUSD"])), d) for d, r in fresh.items() if d in by_day),
+                default=(0, ""))
+    added = [{"time": d, "PriceUSD": r["PriceUSD"], "MarketCapUSD": r.get("CapMrktCurUSD") or r.get("CapMrktEstUSD") or ""}
+             for d, r in sorted(fresh.items()) if d > last]
+    if added:
+        _write_csv(path, stored + added, ["time", "PriceUSD", "MarketCapUSD"])
+    return {"source": "Coin Metrics Community API", "last_observation": (added or stored)[-1]["time"], "rows_added": len(added),
+            "revisions": [f"PriceUSD: differs from the stored value by up to {100 * worst[0]:.4f}% ({worst[1]})"] if worst[0] > TOLERANCE else []}
 
 
 def update_treasury(data: Path) -> dict:
@@ -250,6 +288,9 @@ def main(argv):
     log = {"coinmetrics": update_coinmetrics(data), "treasury": update_treasury(data), "market": update_market(data),
            "developed_markets": update_developed(data), "us_small_caps": update_small_caps(data),
            "implied_equity_premium": update_equity_premium(data)}
+    import tomllib
+    others = list(tomllib.loads((ROOT / "config" / "model.toml").read_text(encoding="utf-8"))["other_assets"])
+    log.update({f"coinmetrics_{a}": update_other_asset(data, a) for a in others})
     changed = any(v["rows_added"] for v in log.values())
     for k, v in log.items():
         print(f"{k:18s} to {v['last_observation']}, {v['rows_added']} rows added" + (f", {len(v['revisions'])} series differ from the stored overlap" if v.get("revisions") else ""))
@@ -257,7 +298,7 @@ def main(argv):
             print("   ", r)
     # A source that has stopped must fail the run, so that the page is never rebuilt on stale data unnoticed.
     today = date.today()
-    limits = {"coinmetrics": 7, "treasury": 10, "market": 130, "developed_markets": 130, "us_small_caps": 130, "implied_equity_premium": 75}
+    limits = {**{f"coinmetrics_{a}": 7 for a in others}, "coinmetrics": 7, "treasury": 10, "market": 130, "developed_markets": 130, "us_small_caps": 130, "implied_equity_premium": 75}
     late = []
     for k, days in limits.items():
         obs = log[k]["last_observation"]

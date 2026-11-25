@@ -1,16 +1,32 @@
 # Crypto Observatory
 
-> What return should Bitcoin's holders require for the market, concentration and mortality risk
-> they carry, and what did Bitcoin deliver? Computed each month with the MCM equation of the paper
-> "Bitcoin's Required Return", from public data.
+> What return should the holders of a cryptoasset require for the market, concentration and
+> mortality risk they carry, and what did Bitcoin deliver? Computed each month for Bitcoin, Ether,
+> BNB, Solana and Tron with the MCM equation of the paper "Bitcoin's Required Return", from public data.
 
 Maintained by Agisilaos Papadogiannis (https://github.com/apapadogiannis). Updated on the third of each month.
 Page: https://apapadogiannis.github.io/crypto-observatory/  Code: https://github.com/apapadogiannis/crypto-observatory  Archive: https://doi.org/10.5281/zenodo.24403325
 This file is written for AI agents and other programs. People should start at the page.
 
+## Which file to fetch
+
+1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
+   licence and the citation: latest.json (about 9 KB). For most questions, fetch nothing else.
+2. A past month of Bitcoin: months.csv. Use the row dated the month-end at which the requirement is
+   set; the return it faces is the following month's. A past month of any asset: assets_monthly.csv.
+3. Did Bitcoin deliver what was required: periods.csv. Compare `delivered` with `required_mid`.
+4. Deaths of cryptoassets: census_deaths.csv; the totals are in latest.json.
+5. The meaning of every column: datapackage.json.
+6. data.json is everything behind the page (about 350 KB). Do not fetch it for a single figure.
+7. Every figure is percent a year unless its name says otherwise; holder weights are in percent.
+8. Quote the midpoint with its band, as what this model gives, and credit the tool and the paper.
+
 ## Coverage
 
-- Asset: Bitcoin. Other assets are not covered yet.
+- Assets: Bitcoin, with its full history and tests, and Ether, BNB, Solana and Tron, each priced with
+  the same equation from the month it has 36 months of returns. Latest midpoints, percent a year:
+  Bitcoin 18.78, Ether 24.6, BNB 17.32, Solana 24.45, Tron 9.11.
+  Only Bitcoin's requirement is tested against what it delivered.
 - 178 month-ends from 2012-01-31 to 2026-10-31; source data to 2026-11-19.
 - Latest required return, 2026-10-31: 18.78% a year at the midpoint, band 11.65% to 25.92%.
   Of the midpoint: risk-free 4.94, market 5.78, concentration 6.16, mortality 1.9.
@@ -39,7 +55,13 @@ want to change the model:
 6. The census classifies the death of every asset in the Coin Metrics universe by date and kind.
    That classification is the paper's own work and is where the mortality term comes from.
 7. vintages.csv keeps what was published for each month-end when it was first computed. No later
-   build rewrites it.
+   build rewrites it. It can differ from months.csv for the same month-end, and that is not an error:
+   months.csv is recomputed with the current method. The method changed in November 2026 (the
+   surveyed owner's weight is now held at 19% and no longer follows the market value), which lowered
+   the October 2026 midpoint from 20.12 as first published to the current figure.
+8. For the other assets, kappa: the share of an owner's crypto holding that moves with the asset
+   (covariance with the crypto market over the asset's variance, trailing 48 months). The asset's
+   holder weight is kappa times the owner's weight in crypto, not the asset's slice of the holding.
 
 ## The model's fixed settings
 
@@ -77,9 +99,12 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 
 ## Files
 
-- data.json: every number on the page. Keys: meta, latest, months, periods, comparison, notes,
-  equity_premium, census, holders; the README of the repository describes each. Start here for the latest
-  month (`latest`); for a series use the CSV files, which carry a description of every column.
+- latest.json: start here. One flat record per asset at the latest month-end, with units in the names.
+- assets.csv and assets_monthly.csv: the same fields as a table, at the latest month-end and for every
+  month-end since each asset has been priced.
+- data.json: everything behind the page. Keys: meta, latest, months, periods, comparison, notes,
+  equity_premium, census, holders, assets, vintages; the README of the repository describes each.
+  `census.deaths_by_year` counts top-twenty deaths only. Weights under `meta.model` and `holders` are in percent.
 - months.csv: the band, its four terms, the inputs and the next month's outcome, one row per month-end.
 - periods.csv: three-year periods and the two summary samples: delivered, required, the gap, and
   what the CAPM and the MCM equation each explain and leave unexplained.
@@ -110,9 +135,11 @@ files are under api/.
   what came with the equity market beyond the 4% premium, that is, delivered less required less
   beta x (equity market return less risk-free rate less 4%). The two answer different questions.
 - `delivered_compound` in periods.csv is the compound return over the same months, for a reader
-  who asks what holding earned. There is no required return on a compound basis in these files.
-  Compare `delivered` with `required_mid` (both averages); do not set `delivered_compound` beside
-  `required_mid`.
+  who asks what holding earned. Compare `delivered` with `required_mid` (both averages); do not set
+  `delivered_compound` beside `required_mid`.
+- The required return on a compound basis is `required_compound_pct_per_year` in latest.json and the
+  assets files (and `compound` in data.json under `comparison.rows`): the midpoint less half the
+  variance. It is what a holder who receives the required return can expect to compound at.
 - The identities among the period columns hold to within about one point in the early periods,
   because the required return is converted month by month and the premium is not.
 - "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),
@@ -150,12 +177,13 @@ files are under api/.
 ## Do not use this for
 
 - A forecast, a price target or a view on whether to hold Bitcoin. The site reports required returns.
-- Any asset other than Bitcoin.
+- Any asset other than the five listed, and tests of fit for any asset other than Bitcoin.
 - Cryptoasset deaths after 2026-05-24.
 - Commercial reuse of the underlying Coin Metrics series: see the licence below.
 - What an investor earned, from `delivered`: use `delivered_compound`.
-- A mismatch between files: every file of one build states the same "data to" date. If two files
-  you fetched disagree on it, one is a cached copy; fetch again.
+- A mismatch between files: latest.json and data.json of one build state the same `source_data_to`
+  date. If the two you fetched disagree on it, one is a cached copy; fetch again. vintages.csv is
+  meant to differ (see above).
 
 ## Source, licence and credit
 
@@ -175,7 +203,7 @@ Cite as: Papadogiannis, A. (2026). Crypto Observatory: required returns, risks a
 
 And the paper whose method it uses: Papadogiannis, A. (2026). Bitcoin's Required Return: Market Risk, Concentration and Mortality. Working paper. https://doi.org/10.2139/ssrn.7705239
 
-To describe the source in a sentence: Crypto Observatory, by Agisilaos Papadogiannis: Bitcoin's required return computed each month with the MCM equation of the paper "Bitcoin's Required Return".
+To describe the source in a sentence: Crypto Observatory, by Agisilaos Papadogiannis: the required return of Bitcoin and four other cryptoassets computed each month with the MCM equation of the paper "Bitcoin's Required Return".
 
 The same licence and citation are inside data.json (under meta.credit) and in datapackage.json.
 The code is under the MIT License.
