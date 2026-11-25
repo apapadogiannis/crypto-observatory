@@ -131,6 +131,7 @@ ASSET_FIELDS = [
     ("volatility_drag_pct_points", "number", "Half the variance, in points a year: what volatility takes from an average return to give a compound one"),
     ("required_compound_pct_per_year", "number", "Required return at the midpoint less the volatility drag, percent a year: the compound return a holder who receives the required return can expect"),
     ("sharpe_ratio", "number", "Required return at the midpoint less the risk-free rate, divided by volatility"),
+    ("sharpe_ratio_on_compound", "number", "The same ratio on the compound required return. Descriptive: the Sharpe ratio is defined on average returns"),
     ("share_of_crypto_market_pct", "number", "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"),
 ]
 
@@ -138,7 +139,7 @@ ASSET_FIELDS = [
 def _asset_row(r: dict) -> list:
     return [r["month_end"], r["asset"], r["name"], r["required_return"], r["required_low"], r["required_high"], r["risk_free"], r["market_term"],
             r["concentration_term"], r["mortality_term"], r["volatility"], r["beta_to_us_equities"], r["kappa"], r["holder_weight_low"],
-            r["holder_weight_high"], r["volatility_drag"], r["compound_required_return"], r["sharpe_ratio"], r["share_of_crypto_market"]]
+            r["holder_weight_high"], r["volatility_drag"], r["compound_required_return"], r["sharpe_ratio"], r["sharpe_ratio_on_compound"], r["share_of_crypto_market"]]
 
 
 def latest_file(doc: dict) -> dict:
@@ -171,9 +172,13 @@ def latest_file(doc: dict) -> dict:
                            "fund_and_treasury_investor_weight_pct": h["fund_investor_weight"],
                            "mortality_lower_pct_per_year": mo["mortality"][0], "mortality_upper_pct_per_year": mo["mortality"][1],
                            "beta_carried_forward_from_month": mo["beta_carried_forward_from"]},
-        "us_equities_for_comparison": {"priced_by": "CAPM: risk-free rate plus the 4% equity premium", "required_pct_per_year": eq["average"],
-                                       "volatility_pct_annualised": round(eq["volatility"], 1), "volatility_drag_pct_points": eq["drag"],
-                                       "required_compound_pct_per_year": eq["compound"], "sharpe_ratio": round(eq["sharpe_average"], 2)},
+        "benchmarks_for_comparison": [
+            {"name": x["name"], "priced_by": "CAPM: risk-free rate plus beta times the 4% equity premium" if x["priced_by"] == "CAPM" else "the same MCM equation (paper, Appendix E)",
+             "required_pct_per_year": x["average"], "risk_free_pct_per_year": x["terms"]["risk_free"], "market_term_pct_per_year": x["terms"]["market"],
+             "concentration_term_pct_per_year": x["terms"]["concentration"], "mortality_term_pct_per_year": x["terms"]["mortality"],
+             "beta_to_us_equities": x["beta"], "volatility_pct_annualised": round(x["volatility"], 1), "volatility_drag_pct_points": x["drag"],
+             "required_compound_pct_per_year": x["compound"], "sharpe_ratio": x["sharpe_average"], "sharpe_ratio_on_compound": x["sharpe_compound"]}
+            for x in doc["comparison"]["rows"] if x["name"] != "Bitcoin"],
         "bitcoin_delivered_against_required": None if s18 is None else {
             "period": s18["period"], "returns_from_month": s18["from"], "returns_to_month": s18["to"], "months": s18["months"],
             "delivered_average_pct_per_year": s18["delivered"], "required_midpoint_average_pct_per_year": s18["required_mid"],
@@ -304,7 +309,8 @@ This file is written for AI agents and other programs. People should start at th
 ## Which file to fetch
 
 1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
-   licence and the citation: latest.json (about 9 KB). For most questions, fetch nothing else.
+   licence and the citation: latest.json (about 11 KB). It also has the Sharpe ratios and, priced the
+   same way for scale, gold and three equity series. For most questions, fetch nothing else.
 2. A past month of Bitcoin: months.csv. Use the row dated the month-end at which the requirement is
    set; the return it faces is the following month's. A past month of any asset: assets_monthly.csv.
 3. Did Bitcoin deliver what was required: periods.csv. Compare `delivered` with `required_mid`.

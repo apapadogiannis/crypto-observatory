@@ -111,7 +111,7 @@ def update_other_asset(data: Path, asset: str) -> dict:
     last = stored[-1]["time"]
     start = (date.fromisoformat(last) - timedelta(days=OVERLAP_DAYS)).isoformat()
     fetched = []
-    for metrics in ("PriceUSD,CapMrktEstUSD,CapMrktCurUSD", "PriceUSD,CapMrktEstUSD"):      # the second where the first is not served
+    for metrics in ("PriceUSD,CapMrktEstUSD,CapMrktCurUSD", "PriceUSD,CapMrktEstUSD", "PriceUSD"):      # the second where the first is not served
         url = CM_API + "?" + urllib.parse.urlencode({"assets": asset, "metrics": metrics, "frequency": "1d", "start_time": start,
                                                      "page_size": 10000, "paging_from": "start"})
         try:
@@ -289,7 +289,8 @@ def main(argv):
            "developed_markets": update_developed(data), "us_small_caps": update_small_caps(data),
            "implied_equity_premium": update_equity_premium(data)}
     import tomllib
-    others = list(tomllib.loads((ROOT / "config" / "model.toml").read_text(encoding="utf-8"))["other_assets"])
+    _cfg = tomllib.loads((ROOT / "config" / "model.toml").read_text(encoding="utf-8"))
+    others = list(_cfg["other_assets"]) + [_cfg["gold"]["price_asset"]]          # the gold token carries the gold series forward
     log.update({f"coinmetrics_{a}": update_other_asset(data, a) for a in others})
     changed = any(v["rows_added"] for v in log.values())
     for k, v in log.items():

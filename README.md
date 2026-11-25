@@ -65,7 +65,8 @@ The site has five sections.
 
 **Compare** is the landing page: the required return of Bitcoin, Ether, BNB, Solana and Tron side by
 side, what each is made of (risk-free rate, market, concentration and mortality risk), the inputs
-behind it, and how each has moved. The US stock market is shown for scale. The other four assets are
+behind it, the Sharpe ratio and the compound return of each, and how each has moved. Gold and three
+equity series (US market, developed markets, US small caps) are priced the same way for scale. The other four assets are
 priced with the paper's equation for other cryptoassets: an asset's holder weight is the crypto
 owner's weight times the share of a crypto holding that moves with the asset (kappa).
 
@@ -80,7 +81,7 @@ owner's weight times the share of a crypto holding that moves with the asset (ka
 4. **Tests.** How much of the delivered return the CAPM and the MCM equation each explain, why
    delivered differed from required, and, folded away, the regression, the cumulative view and the
    rerun with the equity premium implied by stock prices.
-5. **Versus stocks.** Bitcoin beside the US stock market, developed markets and US small caps: average
+5. **Versus stocks and gold.** Bitcoin beside the US stock market, developed markets, US small caps and gold: average
    and compound required returns, drag and Sharpe ratios.
 
 **Data** lists the files, gives a prompt to paste into an AI assistant, and says what the site does

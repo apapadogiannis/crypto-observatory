@@ -61,7 +61,7 @@ def build(data: Path, out: Path) -> dict:
                    "implied_to": None if implied is None else (inputs.implied_equity_premium(data).index[-1] + pd.offsets.MonthBegin(1)).strftime("%Y-%m"),
                    "rows": [{**{k: (rnd(v) if isinstance(v, float) else v) for k, v in r.items() if k != "samples"},
                              "samples": {k: {a: rnd(x) for a, x in v.items()} for k, v in r["samples"].items()}} for r in premium_rows]}
-    compared = compare.comparison(band, inputs.equity_benchmarks(data), cfg)
+    compared = compare.comparison(band, inputs.equity_benchmarks(data), cfg, gold=inputs.gold_return(data, cfg))
 
     supply = btc["SplyCur"].dropna().resample("ME").last()
     issuance = btc["IssTotNtv"].resample("ME").sum() * 12 / supply
@@ -186,7 +186,7 @@ def build(data: Path, out: Path) -> dict:
         "months": months,
         "periods": [_round(p) for p in periods],
         "comparison": {**compared, "risk_free": round(compared["risk_free"], 2),
-                       "rows": [{k: (round(v, 2) if isinstance(v, float) else v) for k, v in r.items()} for r in compared["rows"]]},
+                       "rows": [{k: (round(v, 2) if isinstance(v, float) else {a: round(b, 2) for a, b in v.items()} if isinstance(v, dict) else v) for k, v in r.items()} for r in compared["rows"]]},
         "notes": page_notes,
         "equity_premium": premium_doc,
         "census": census_doc,
@@ -288,7 +288,7 @@ def _assets(data: Path, btc: pd.DataFrame, band: pd.DataFrame, mkt: pd.Series, c
                 "mortality_term": _r(100 * b.mortality_term), "volatility": _r(vol, 1), "beta_to_us_equities": _r(b.beta),
                 "kappa": _r(b.kappa), "holder_weight_low": _r(100 * b.w_lower, 1), "holder_weight_high": _r(100 * b.w_upper, 1),
                 "volatility_drag": _r(drag), "compound_required_return": _r(mid - drag),
-                "sharpe_ratio": _r((mid - rf) / vol), "share_of_crypto_market": None if pd.isna(b.market_share) else _r(100 * b.market_share, 1)}
+                "sharpe_ratio": _r((mid - rf) / vol), "sharpe_ratio_on_compound": _r((mid - drag - rf) / vol), "share_of_crypto_market": None if pd.isna(b.market_share) else _r(100 * b.market_share, 1)}
 
     monthly = [record(code, d, b) for code, f in frames.items() for d, b in f.iterrows()]
     latest = [{**record(code, f.index[-1], f.iloc[-1]), "priced_since": f.index[0].strftime("%Y-%m")} for code, f in frames.items()]

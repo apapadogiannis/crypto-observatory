@@ -65,7 +65,7 @@ for a in la.values():
     assert abs(a["holder_weight_upper_pct"] - a["kappa"] * la["btc"]["holder_weight_upper_pct"]) < 0.1
 for row in assets_now:
     assert float(row["required_midpoint_pct_per_year"]) == la[row["asset_id"]]["required_midpoint_pct_per_year"]
-assert latest_size < 12_000 and "latest.json" in guide.split("## Coverage")[0]
+assert latest_size < 14_000 and [b['name'] for b in latest_json['benchmarks_for_comparison']][-1] == 'Gold' and "latest.json" in guide.split("## Coverage")[0]
 # Ether's kappa in April 2026 is the paper's 0.70 to within 0.02, although the crypto market here is five assets.
 eth_apr = next(r for r in assets_all if r["asset_id"] == "eth" and r["month_end"] == "2026-04-30")
 assert abs(float(eth_apr["kappa"]) - 0.70) <= 0.02, eth_apr["kappa"]

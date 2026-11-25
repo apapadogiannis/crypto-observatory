@@ -143,6 +143,8 @@ th{font-weight:600;color:var(--ink2);font-size:12.5px;vertical-align:bottom}
 td{white-space:nowrap}
 table.now td:first-child{white-space:normal}
 tr.tot td{font-weight:650;border-top:1.5px solid var(--axis)}
+#t-reward tr.tot td,#t-assets tr.tot td{border-top:0;font-weight:700}
+tr.sep td{border-top:1.5px dashed var(--axis)}
 .scroll{overflow-x:auto}
 .chart svg{touch-action:pan-y}
 .swipe{display:none}
@@ -227,7 +229,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <section class="card" id="sec-a-bars">
     <h2>What each required return is made of</h2>
-    <p class="sub">Each bar adds up to the required return, in percent a year. The thin line is the band: the range the answer takes when risk aversion and the holder's weight are set low or high. The US stock market is shown for scale.</p>
+    <p class="sub">Each bar adds up to the required return, in percent a year. The thin line is the band: the range the answer takes when risk aversion and the holder's weight are set low or high. Below the dotted line, gold and three equity series are shown for scale.</p>
     <div class="legend"><span><i style="background:var(--rf)"></i>risk-free rate</span><span><i style="background:var(--violet)"></i>market risk</span><span><i style="background:var(--orange)"></i>concentration risk</span><span><i style="background:var(--aqua)"></i>mortality risk</span><span><i class="ln" style="border-color:var(--ink)"></i>band</span></div>
     <div class="chart" id="a-bars"></div>
     <div class="plain">
@@ -238,8 +240,19 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </div>
   </section>
 
+  <section class="card" id="sec-a-reward">
+    <h2>The price of the return: volatility</h2>
+    <p class="sub">A higher required return is pay for more risk. The Sharpe ratio says how much: the return over the risk-free rate for each point of volatility. Volatility also takes a share of the return itself, about half the variance each year, so a volatile asset compounds at much less than its average return. Gold and three equity series are priced the same way for scale.</p>
+    <p class="sub" id="a-reward-line" style="color:var(--ink);font-weight:600"></p>
+    <div class="scroll"><table id="t-reward"></table></div>
+    <ul class="note" style="margin-top:12px">
+      <li><b>How the others are priced.</b> The equity series by the CAPM: the risk-free rate plus beta times the 4% equity premium, with volatility measured since 2012. Gold by the same equation as the cryptoassets, as in the paper: a beta near zero, a holder with a few percent of wealth in it, and almost no risk of dying. Its Sharpe ratio is near zero.</li>
+      <li><b>Sharpe ratio, compound.</b> The same ratio on the compound return. It is descriptive: the measure is defined on average returns.</li>
+    </ul>
+  </section>
+
   <section class="card" id="sec-a-table">
-    <h2>The inputs behind each figure</h2>
+    <h2>The inputs behind each cryptoasset</h2>
     <p class="sub" id="a-table-sub"></p>
     <div class="scroll"><table id="t-assets"></table></div>
     <ul class="note" style="margin-top:12px" id="a-notes"></ul>
@@ -282,7 +295,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <button type="button" role="tab" data-tab="required-return">Required return</button>
     <button type="button" role="tab" data-tab="holders">Holders</button>
     <button type="button" role="tab" data-tab="tests">Tests</button>
-    <button type="button" role="tab" data-tab="compared">Versus stocks</button>
+    <button type="button" role="tab" data-tab="compared">Versus stocks and gold</button>
   </nav>
 
   <div class="filters"><span>Period</span>
@@ -489,8 +502,8 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <div class="pane" id="pane-compared">
   <section class="card" id="sec-cmp">
-    <h2>Bitcoin beside equities</h2>
-    <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. Bitcoin is priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
+    <h2>Bitcoin beside equities and gold</h2>
+    <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. Bitcoin and gold are priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
     <p class="sub" id="cmp-headline" style="color:var(--ink);font-weight:600"></p>
     <div class="grid2">
       <div class="mini"><h3>Required return: average and compound</h3><p>percent a year</p>
@@ -505,7 +518,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <li><b>Average and compound.</b> The required return is an average across years. A position that is bought and never rebalanced grows at the compound rate, which is lower by the drag: half the variance. For a volatile asset the drag is large.</li>
       <li><b>While it survives.</b> Bitcoin's figures are what holders require in the years the asset lives. <span id="cmp-death"></span></li>
       <li><b>How each column is measured.</b> <span id="cmp-sample"></span> Bitcoin's beta and volatility are the ones used in its required return, with recent months weighted more. The Sharpe ratio on the compound return is descriptive: the measure is defined on average returns.</li>
-      <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Ether, gold and the Nasdaq-100, which the paper also shows, are not here yet.</li>
+      <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Gold is a gold ETF to May 2026 and the month-end price of a gold token after. The other cryptoassets are under Compare. The Nasdaq-100, which the paper also shows, is not here.</li>
     </ul>
   </section>
   </div>
@@ -1235,32 +1248,42 @@ function compareView(){
   const scale=Math.max(...A.map(a=>a.required_return));
   A.forEach(a=>card(a.name,f1(a.required_return)+"%","band "+f1(a.required_low)+" to "+f1(a.required_high)+"% a year",
     [[100*a.risk_free/scale,"--rf"],[100*a.market_term/scale,"--violet"],[100*a.concentration_term/scale,"--orange"],[100*a.mortality_term/scale,"--aqua"]],
-    "compounds at "+f1(a.compound_required_return)+"%"+(a.asset==="btc"?" · full detail →":""),a.asset==="btc"?"#overview":null));
+    "Sharpe ratio "+a.sharpe_ratio.toFixed(2)+" · compounds at "+f1(a.compound_required_return)+"%"+(a.asset==="btc"?" · full detail →":""),a.asset==="btc"?"#overview":null));
   card("US stock market, for scale",f1(eq.average)+"%","risk-free rate plus the "+m.cmp.equity_risk_premium.toFixed(0)+"% equity premium",
-    [[100*m.cmp.risk_free/scale,"--rf"],[100*(eq.average-m.cmp.risk_free)/scale,"--violet"]],"compounds at "+f1(eq.compound)+"%",null);
+    [[100*m.cmp.risk_free/scale,"--rf"],[100*(eq.average-m.cmp.risk_free)/scale,"--violet"]],"Sharpe ratio "+eq.sharpe_average.toFixed(2)+" · compounds at "+f1(eq.compound)+"%",null);
   // stacked bars
-  const rows=A.map(a=>({n:a.name,t:a.required_return,lo:a.required_low,hi:a.required_high,p:[["risk-free rate",a.risk_free,"--rf"],["market risk",a.market_term,"--violet"],["concentration risk",a.concentration_term,"--orange"],["mortality risk",a.mortality_term,"--aqua"]]}))
-    .sort((a,b)=>b.t-a.t).concat([{n:"US stock market",t:eq.average,ref:1,p:[["risk-free rate",m.cmp.risk_free,"--rf"],["market risk",eq.average-m.cmp.risk_free,"--violet"]]}]);
-  const B=el("a-bars"), small=(B.clientWidth||600)<480, rh=small?46:40, f=frame(B,rows.length*rh+34,{l:small?8:120,r:54,t:6,b:26});
+  const parts=(rf,mk,cn,mo)=>[["risk-free rate",rf,"--rf"],["market risk",mk,"--violet"],["concentration risk",cn,"--orange"],["mortality risk",mo,"--aqua"]].filter(p=>p[1]>0.005);
+  const crypto=A.map(a=>({n:a.name,t:a.required_return,lo:a.required_low,hi:a.required_high,main:a.asset==="btc",p:parts(a.risk_free,a.market_term,a.concentration_term,a.mortality_term)}));
+  const bench=m.cmp.rows.filter(r=>r.name!=="Bitcoin").map(r=>({n:r.name,t:r.average,lo:r.lower,hi:r.upper,ref:1,p:parts(r.terms.risk_free,r.terms.market,r.terms.concentration,r.terms.mortality)})).sort((a,b)=>b.t-a.t);
+  const rows=[crypto[0]].concat(crypto.slice(1).sort((a,b)=>b.t-a.t)).concat(bench), nC=crypto.length;
+  const B=el("a-bars"), small=(B.clientWidth||600)<480, rh=small?46:40, gapY=18, f=frame(B,rows.length*rh+34+gapY,{l:small?8:130,r:54,t:6,b:26});
   const x=d3.scaleLinear().domain([0,Math.max(...rows.map(r=>r.hi||r.t))*1.04]).nice().range([0,f.iw]);
   const g=f.svg.append("g").attr("transform",`translate(${f.m.l},${f.m.t})`), bh=small?16:20;
   x.ticks(6).forEach(t=>{ g.append("line").attr("x1",x(t)).attr("x2",x(t)).attr("y1",0).attr("y2",f.ih).attr("stroke",css("--line"));
     g.append("text").attr("x",x(t)).attr("y",f.ih+18).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--mut")).text(t+"%"); });
-  rows.forEach((r,i)=>{ const y0=i*rh+(small?20:(rh-bh)/2); let acc=0;
-    g.append("text").attr("x",small?0:-10).attr("y",small?y0-6:y0+bh/2).attr("dy",small?0:"0.32em").attr("text-anchor",small?"start":"end").attr("font-size",13).attr("font-weight",r.ref?400:600).attr("fill",css(r.ref?"--ink2":"--ink")).text(r.n);
+  g.append("line").attr("x1",small?0:-f.m.l+4).attr("x2",f.iw).attr("y1",nC*rh+gapY/2+(small?8:0)).attr("y2",nC*rh+gapY/2+(small?8:0)).attr("stroke",css("--axis")).attr("stroke-dasharray","3 3");
+  rows.forEach((r,i)=>{ const y0=i*rh+(i>=nC?gapY:0)+(small?20:(rh-bh)/2); let acc=0;
+    g.append("text").attr("x",small?0:-10).attr("y",small?y0-6:y0+bh/2).attr("dy",small?0:"0.32em").attr("text-anchor",small?"start":"end").attr("font-size",r.main?14:13).attr("font-weight",r.main?800:r.ref?400:600).attr("fill",css(r.ref?"--ink2":"--ink")).text(r.n);
     r.p.forEach(([n,v,c],j)=>{ const w=Math.max(0,x(acc+v)-x(acc)-2);
-      g.append("rect").attr("x",x(acc)).attr("y",y0).attr("width",w).attr("height",bh).attr("rx",j===r.p.length-1?4:0).attr("fill",css(c)).attr("opacity",r.ref?.75:1).append("title").text(r.n+": "+n+" "+v.toFixed(1)+" points");
+      g.append("rect").attr("x",x(acc)).attr("y",y0).attr("width",w).attr("height",bh).attr("rx",j===r.p.length-1?4:0).attr("fill",css(c)).attr("opacity",r.ref?.7:1).append("title").text(r.n+": "+n+" "+v.toFixed(1)+" points");
       if(w>34) g.append("text").attr("x",x(acc)+w/2).attr("y",y0+bh/2).attr("dy","0.32em").attr("text-anchor","middle").attr("font-size",11).attr("fill",c==="--rf"?css("--ink"):"#fff").text(v.toFixed(1));
       acc+=v; });
     if(r.hi!=null){ const yy=y0+bh+4; g.append("line").attr("x1",x(r.lo)).attr("x2",x(r.hi)).attr("y1",yy).attr("y2",yy).attr("stroke",css("--ink")).attr("stroke-width",1.5);
       [r.lo,r.hi].forEach(v=>g.append("line").attr("x1",x(v)).attr("x2",x(v)).attr("y1",yy-3).attr("y2",yy+3).attr("stroke",css("--ink")).attr("stroke-width",1.5)); }
-    g.append("text").attr("x",x(Math.max(acc,r.hi||0))+8).attr("y",y0+bh/2).attr("dy","0.32em").attr("font-size",13).attr("font-weight",700).attr("fill",css("--ink")).text(r.t.toFixed(1)+"%"); });
+    g.append("text").attr("x",x(Math.max(acc,r.hi||0))+8).attr("y",y0+bh/2).attr("dy","0.32em").attr("font-size",r.main?14.5:13).attr("font-weight",r.main?800:700).attr("fill",css("--ink")).text(r.t.toFixed(1)+"%"); });
   // table
+  const all=A.map(a=>({n:a.name,main:a.asset==="btc",req:a.required_return,vol:a.volatility,sh:a.sharpe_ratio,drag:a.volatility_drag,comp:a.compound_required_return,shc:a.sharpe_ratio_on_compound}))
+    .concat(bench.map(b=>m.cmp.rows.find(r=>r.name===b.n)).map(r=>({n:r.name,ref:1,req:r.average,vol:r.volatility,sh:r.sharpe_average,drag:r.drag,comp:r.compound,shc:r.sharpe_compound})));
+  const fill=(id,head,body)=>{ const T=el(id); T.textContent=""; const hr=T.insertRow(); head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+    body.forEach(([cells,cls])=>{const r=T.insertRow(); if(cls) r.className=cls; cells.forEach(v=>{r.insertCell().textContent=v;});}); };
+  fill("t-reward",["Asset","Required return","Volatility","Sharpe ratio","Lost to volatility","Compounds at","Sharpe ratio, compound"],
+    all.map((r,i)=>[[r.n,f1(r.req)+"%",r.vol.toFixed(0)+"%",r.sh.toFixed(2),f1(r.drag)+" pts",f1(r.comp)+"%",r.shc.toFixed(2)],r.main?"tot":i===A.length?"sep":""]));
+  { const b=all[0], s=all.find(r=>r.n==="US stock market"), best=[...all].sort((x,y)=>y.sh-x.sh)[0];
+    el("a-reward-line").textContent="For each point of volatility, Bitcoin's holders require "+b.sh.toFixed(2)+" points of return over the risk-free rate; holders of the US stock market, "+s.sh.toFixed(2)+". "
+      +"Once volatility has taken its share, Bitcoin compounds at "+f1(b.comp)+"% against "+f1(s.comp)+"% for stocks, at "+(b.vol/s.vol).toFixed(0)+" times the volatility: a Sharpe ratio of "+b.shc.toFixed(2)+" against "+s.shc.toFixed(2)+"."; }
   el("a-table-sub").textContent="At the end of "+month+". Volatility, beta and the share of a crypto holding that moves with each asset are measured from its own prices, the same way for all five. The holder's weight and the mortality rate come from surveys, filings and the census of deaths.";
-  const T=el("t-assets"); T.textContent=""; const hr=T.insertRow();
-  ["Asset","Required return","Band","Volatility","Beta to US stocks","Moves with it","Holder's weight","Compounds at","Priced since"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
-  A.forEach(a=>{ const r=T.insertRow(); [a.name,f1(a.required_return)+"%",f1(a.required_low)+" to "+f1(a.required_high)+"%",a.volatility.toFixed(0)+"%",a.beta_to_us_equities.toFixed(2),(100*a.kappa).toFixed(0)+"%",f1(a.holder_weight_low)+" to "+f1(a.holder_weight_high)+"%",f1(a.compound_required_return)+"%",fmtM(parse(a.priced_since))].forEach(v=>{r.insertCell().textContent=v;}); });
-  { const r=T.insertRow(); r.className="tot"; [ "US stock market",f1(eq.average)+"%","",eq.volatility.toFixed(0)+"%","1.00","","",f1(eq.compound)+"%",""].forEach(v=>{r.insertCell().textContent=v;}); }
+  fill("t-assets",["Asset","Required return","Band","Beta to US stocks","Moves with it","Holder's weight","Share of the crypto market","Priced since"],
+    A.map(a=>[[a.name,f1(a.required_return)+"%",f1(a.required_low)+" to "+f1(a.required_high)+"%",a.beta_to_us_equities.toFixed(2),(100*a.kappa).toFixed(0)+"%",f1(a.holder_weight_low)+" to "+f1(a.holder_weight_high)+"%",a.share_of_crypto_market==null?"":a.share_of_crypto_market.toFixed(0)+"%",fmtM(parse(a.priced_since))],a.asset==="btc"?"tot":""]));
   const N=el("a-notes"); N.textContent=""; const hi=[...A].sort((a,b)=>b.required_return-a.required_return)[0], lo=[...A].sort((a,b)=>a.required_return-b.required_return)[0], neg=A.filter(a=>a.compound_required_return<0);
   const notes=[["Moves with it.","An owner holds a mix of coins. What matters for one of them is how much of her whole crypto holding moves when it moves, not its slice of the holding. For Bitcoin that is all of it. The holder's weight of another asset is this share times the crypto owner's weight (19% of financial assets for the surveyed owner, less once investors in funds and in companies that hold Bitcoin are counted)."],
     ["Highest and lowest.",hi.name+" has the highest requirement ("+f1(hi.required_return)+"%): volatility of "+hi.volatility.toFixed(0)+"% and a beta of "+hi.beta_to_us_equities.toFixed(2)+". "+lo.name+" has the lowest ("+f1(lo.required_return)+"%): over the last four years it has moved little with stocks (beta "+lo.beta_to_us_equities.toFixed(2)+") and its volatility is "+lo.volatility.toFixed(0)+"%. A trailing beta can change quickly."]];

@@ -34,6 +34,15 @@ bnb = "BNB"
 sol = "Solana"
 trx = "Tron"
 
+[gold]   # gold priced with the same equation, as a check (paper, Appendix E.1). Shown beside the cryptoassets.
+beta_low       = -0.1       # its beta to equities is close to zero over long samples
+beta_high      = 0.1
+weight_low     = 0.02       # the typical holder has a few percent of wealth in gold
+weight_high    = 0.10
+mortality_low  = 0.0        # no failure mode destroys the asset; the upper figure allows for sovereign restrictions
+mortality_high = 0.003
+price_asset    = "paxg"     # months after the stored gold ETF series use the month-end price of this gold token (Coin Metrics)
+
 [ownership]   # share of US adults who own crypto (Fed SHED/SCPC, Pew; Weber et al. 2026). Log-linear in between.
               # It sets the early holder's weight only: 1 while ownership is at or below few_hands_ownership, then falling.
 "2014-06-30" = 0.004

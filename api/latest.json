@@ -26,6 +26,7 @@
    "volatility_drag_pct_points": 10.17,
    "required_compound_pct_per_year": 8.61,
    "sharpe_ratio": 0.31,
+   "sharpe_ratio_on_compound": 0.08,
    "share_of_crypto_market_pct": 75.9,
    "priced_since_month": "2012-01",
    "upper_edge_set_by": "average surveyed owner",
@@ -51,6 +52,7 @@
    "volatility_drag_pct_points": 21.95,
    "required_compound_pct_per_year": 2.65,
    "sharpe_ratio": 0.3,
+   "sharpe_ratio_on_compound": -0.03,
    "share_of_crypto_market_pct": 14.8,
    "priced_since_month": "2018-08"
   },
@@ -73,6 +75,7 @@
    "volatility_drag_pct_points": 12.21,
    "required_compound_pct_per_year": 5.11,
    "sharpe_ratio": 0.25,
+   "sharpe_ratio_on_compound": 0.0,
    "share_of_crypto_market_pct": 4.6,
    "priced_since_month": "2020-07"
   },
@@ -95,6 +98,7 @@
    "volatility_drag_pct_points": 27.4,
    "required_compound_pct_per_year": -2.95,
    "sharpe_ratio": 0.26,
+   "sharpe_ratio_on_compound": -0.11,
    "share_of_crypto_market_pct": 3.1,
    "priced_since_month": "2023-04"
   },
@@ -117,6 +121,7 @@
    "volatility_drag_pct_points": 4.54,
    "required_compound_pct_per_year": 4.57,
    "sharpe_ratio": 0.14,
+   "sharpe_ratio_on_compound": -0.01,
    "share_of_crypto_market_pct": 1.4,
    "priced_since_month": "2021-06"
   }
@@ -131,14 +136,68 @@
   "mortality_upper_pct_per_year": 3.5,
   "beta_carried_forward_from_month": "2026-09"
  },
- "us_equities_for_comparison": {
-  "priced_by": "CAPM: risk-free rate plus the 4% equity premium",
-  "required_pct_per_year": 8.94,
-  "volatility_pct_annualised": 14.4,
-  "volatility_drag_pct_points": 1.04,
-  "required_compound_pct_per_year": 7.9,
-  "sharpe_ratio": 0.28
- },
+ "benchmarks_for_comparison": [
+  {
+   "name": "US stock market",
+   "priced_by": "CAPM: risk-free rate plus beta times the 4% equity premium",
+   "required_pct_per_year": 8.94,
+   "risk_free_pct_per_year": 4.94,
+   "market_term_pct_per_year": 4.0,
+   "concentration_term_pct_per_year": 0.0,
+   "mortality_term_pct_per_year": 0.0,
+   "beta_to_us_equities": 1.0,
+   "volatility_pct_annualised": 14.4,
+   "volatility_drag_pct_points": 1.04,
+   "required_compound_pct_per_year": 7.9,
+   "sharpe_ratio": 0.28,
+   "sharpe_ratio_on_compound": 0.21
+  },
+  {
+   "name": "Developed markets",
+   "priced_by": "CAPM: risk-free rate plus beta times the 4% equity premium",
+   "required_pct_per_year": 8.67,
+   "risk_free_pct_per_year": 4.94,
+   "market_term_pct_per_year": 3.73,
+   "concentration_term_pct_per_year": 0.0,
+   "mortality_term_pct_per_year": 0.0,
+   "beta_to_us_equities": 0.93,
+   "volatility_pct_annualised": 13.9,
+   "volatility_drag_pct_points": 0.97,
+   "required_compound_pct_per_year": 7.71,
+   "sharpe_ratio": 0.27,
+   "sharpe_ratio_on_compound": 0.2
+  },
+  {
+   "name": "US small caps",
+   "priced_by": "CAPM: risk-free rate plus beta times the 4% equity premium",
+   "required_pct_per_year": 9.63,
+   "risk_free_pct_per_year": 4.94,
+   "market_term_pct_per_year": 4.69,
+   "concentration_term_pct_per_year": 0.0,
+   "mortality_term_pct_per_year": 0.0,
+   "beta_to_us_equities": 1.17,
+   "volatility_pct_annualised": 20.4,
+   "volatility_drag_pct_points": 2.09,
+   "required_compound_pct_per_year": 7.55,
+   "sharpe_ratio": 0.23,
+   "sharpe_ratio_on_compound": 0.13
+  },
+  {
+   "name": "Gold",
+   "priced_by": "the same MCM equation (paper, Appendix E)",
+   "required_pct_per_year": 5.47,
+   "risk_free_pct_per_year": 4.94,
+   "market_term_pct_per_year": 0.0,
+   "concentration_term_pct_per_year": 0.38,
+   "mortality_term_pct_per_year": 0.15,
+   "beta_to_us_equities": 0.0,
+   "volatility_pct_annualised": 15.9,
+   "volatility_drag_pct_points": 1.27,
+   "required_compound_pct_per_year": 4.2,
+   "sharpe_ratio": 0.03,
+   "sharpe_ratio_on_compound": -0.05
+  }
+ ],
  "bitcoin_delivered_against_required": {
   "period": "2018–26",
   "returns_from_month": "2018-01",

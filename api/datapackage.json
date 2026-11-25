@@ -556,6 +556,11 @@
       "description": "Required return at the midpoint less the risk-free rate, divided by volatility"
      },
      {
+      "name": "sharpe_ratio_on_compound",
+      "type": "number",
+      "description": "The same ratio on the compound required return. Descriptive: the Sharpe ratio is defined on average returns"
+     },
+     {
       "name": "share_of_crypto_market_pct",
       "type": "number",
       "description": "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"
@@ -662,6 +667,11 @@
       "name": "sharpe_ratio",
       "type": "number",
       "description": "Required return at the midpoint less the risk-free rate, divided by volatility"
+     },
+     {
+      "name": "sharpe_ratio_on_compound",
+      "type": "number",
+      "description": "The same ratio on the compound required return. Descriptive: the Sharpe ratio is defined on average returns"
      },
      {
       "name": "share_of_crypto_market_pct",

@@ -11,7 +11,8 @@ This file is written for AI agents and other programs. People should start at th
 ## Which file to fetch
 
 1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
-   licence and the citation: latest.json (about 9 KB). For most questions, fetch nothing else.
+   licence and the citation: latest.json (about 11 KB). It also has the Sharpe ratios and, priced the
+   same way for scale, gold and three equity series. For most questions, fetch nothing else.
 2. A past month of Bitcoin: months.csv. Use the row dated the month-end at which the requirement is
    set; the return it faces is the following month's. A past month of any asset: assets_monthly.csv.
 3. Did Bitcoin deliver what was required: periods.csv. Compare `delivered` with `required_mid`.
