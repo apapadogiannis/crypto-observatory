@@ -16,7 +16,7 @@ repository-code: "https://github.com/apapadogiannis/crypto-observatory"
 url: "https://apapadogiannis.github.io/crypto-observatory/"
 references:
   - type: article
-    title: "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold"
+    title: "Bitcoin's Required Return: Market Risk, Concentration and Mortality"
     authors:
       - family-names: Papadogiannis
         given-names: Agisilaos

@@ -209,7 +209,7 @@ Cite the tool and the paper whose method it uses:
 > Papadogiannis, A. (2026). "Crypto Observatory: required returns, risks and survival." Zenodo.
 > https://doi.org/10.5281/zenodo.24403325
 
-> Papadogiannis, A. (2026). "Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold."
+> Papadogiannis, A. (2026). "Bitcoin's Required Return: Market Risk, Concentration and Mortality."
 > Working paper. https://doi.org/10.2139/ssrn.7705239
 
 The Zenodo DOI above is the concept DOI: it always resolves to the latest archived version. Each

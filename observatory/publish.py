@@ -18,7 +18,7 @@ from pathlib import Path
 SITE = "https://apapadogiannis.github.io/crypto-observatory/"
 REPO = "https://github.com/apapadogiannis/crypto-observatory"
 DOI = "10.5281/zenodo.24403325"            # all versions; always resolves to the latest release
-PAPER = {"citation": "Papadogiannis, A. (2026). Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold. "
+PAPER = {"citation": "Papadogiannis, A. (2026). Bitcoin's Required Return: Market Risk, Concentration and Mortality. "
                      "Working paper.",
          "doi": "https://doi.org/10.2139/ssrn.7705239",
          "replication_package": "https://github.com/apapadogiannis/bitcoin-required-return",

@@ -173,7 +173,7 @@ whose terms allow it.
 
 Cite as: Papadogiannis, A. (2026). Crypto Observatory: required returns, risks and survival, data to 2026-10-31. Zenodo. https://doi.org/10.5281/zenodo.24403325
 
-And the paper whose method it uses: Papadogiannis, A. (2026). Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold. Working paper. https://doi.org/10.2139/ssrn.7705239
+And the paper whose method it uses: Papadogiannis, A. (2026). Bitcoin's Required Return: Market Risk, Concentration and Mortality. Working paper. https://doi.org/10.2139/ssrn.7705239
 
 To describe the source in a sentence: Crypto Observatory, by Agisilaos Papadogiannis: Bitcoin's required return computed each month with the MCM equation of the paper "Bitcoin's Required Return".
 

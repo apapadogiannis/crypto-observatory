@@ -23,7 +23,7 @@
  ],
  "citation": "Papadogiannis, A. (2026). Crypto Observatory: required returns, risks and survival, data to 2026-10-31. Zenodo. https://doi.org/10.5281/zenodo.24403325",
  "paper": {
-  "citation": "Papadogiannis, A. (2026). Bitcoin's Required Return: Pricing a New Asset Beside Equities and Gold. Working paper.",
+  "citation": "Papadogiannis, A. (2026). Bitcoin's Required Return: Market Risk, Concentration and Mortality. Working paper.",
   "doi": "https://doi.org/10.2139/ssrn.7705239",
   "replication_package": "https://github.com/apapadogiannis/bitcoin-required-return",
   "relation": "The method. Every required return here is computed with the paper's MCM equation and constants."
