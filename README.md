@@ -58,19 +58,23 @@ required return = risk-free rate + market risk + concentration risk + mortality 
                 = r_f + beta x ERP + gamma x sigma^2 x w + lambda x (1 - delta)
 ```
 
-The site has three sections: Bitcoin, the equation and the census of deaths. **Bitcoin** has five tabs:
+The site has three sections: Bitcoin, the equation and the census of deaths. **Bitcoin** has six tabs:
 
 1. **Overview.** The required return and what was delivered, by three-year period, and why the two
    differed: the premium holders required, what came with the equity market, and what the equation
    leaves unexplained.
 2. **Required return.** How the band is built, which holder sets each edge, and the three risks
    (market, concentration, mortality), each with its formula and the inputs that move it.
-3. **Tests.** How much of the delivered return the CAPM explains, how much the MCM equation explains,
+3. **Holders.** Where the holder's weight in the concentration term comes from: the surveyed owner at
+   19%, the surveys in the United Kingdom and Canada that show holdings per owner not following the
+   price, the lower weight once fund and treasury investors are counted (worked out for the latest
+   month), the early holder, and what is uncertain.
+4. **Tests.** How much of the delivered return the CAPM explains, how much the MCM equation explains,
    and the alpha each leaves, by period and through time. A last section reruns everything with the
    equity premium implied by stock prices month by month, in place of the paper's fixed 4%.
-4. **Compared.** Bitcoin beside the US stock market, developed markets and US small caps: average and
+5. **Compared.** Bitcoin beside the US stock market, developed markets and US small caps: average and
    compound required returns, drag and Sharpe ratios.
-5. **Data and notes.** Supply and holders for context, and what the page does not claim.
+6. **Data and notes.** Supply and holders for context, and what the page does not claim.
 
 **The equation** explains the MCM equation term by term, with sliders: start from one of five cases
 taken from the site's own data (two Bitcoin holders, Bitcoin at a negligible weight, an early holder in
@@ -148,6 +152,7 @@ can read it without scraping the page.
 | `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
 | `equity_premium` | the tests of fit recomputed with other equity risk premia: the paper's fixed 4%, and the premium implied by stock prices each month |
+| `holders` | what the holder's weight rests on: the owners' weight, the weight of fund and treasury investors, the ownership surveys behind the early holder's weight, and the British and Canadian survey waves shown under Holders |
 | `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, the list of top-twenty deaths with the rule behind each, the counts by rule, and what is left out |
 | `vintages` | what was published for each month-end when it was first computed |
 | `meta.model` | the model's fixed settings (equity premium, risk aversion, scales, windows, caps) and `meta.anchors_age_months`, the age of the hand-entered inputs |

@@ -78,7 +78,7 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 ## Files
 
 - data.json: every number on the page. Keys: meta, latest, months, periods, comparison, notes,
-  equity_premium, census; the README of the repository describes each. Start here for the latest
+  equity_premium, census, holders; the README of the repository describes each. Start here for the latest
   month (`latest`); for a series use the CSV files, which carry a description of every column.
 - months.csv: the band, its four terms, the inputs and the next month's outcome, one row per month-end.
 - periods.csv: three-year periods and the two summary samples: delivered, required, the gap, and

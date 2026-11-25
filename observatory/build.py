@@ -190,6 +190,7 @@ def build(data: Path, out: Path) -> dict:
         "notes": page_notes,
         "equity_premium": premium_doc,
         "census": census_doc,
+        "holders": _holders(data, cfg),
     }
     out.mkdir(parents=True, exist_ok=True)
     doc["vintages"] = _vintages(data, doc)
@@ -266,6 +267,21 @@ def _static(doc: dict) -> dict:
     return {"<!--STATIC-->": summary, "/*LD*/": json.dumps(ld, separators=(",", ":"), ensure_ascii=False)}
 
 
+def _holders(data: Path, cfg: dict) -> dict:
+    """What the holder's weight rests on: the three hand-entered settings, the ownership surveys behind the
+    early holder's weight, and the survey waves shown as evidence that holdings per owner do not follow the price."""
+    import csv
+    num = lambda v: None if v == "" else float(v)
+    waves = [{**{k: r[k] for k in ("country", "survey", "fieldwork", "month", "currency")},
+              **{k: num(r[k]) for k in ("ownership_pct", "owners_million", "median_holding", "mean_holding", "bitcoin_price_usd")}}
+             for r in csv.DictReader((data / "surveys" / "holder_surveys.csv").open(encoding="utf-8"))]
+    c = cfg["constants"]
+    return {"owner_weight": round(100 * c["owner_weight"], 1), "fund_investor_weight": round(100 * c["fund_investor_weight"], 1),
+            "early_holder_all_in_below_ownership": round(100 * c["few_hands_ownership"], 1),
+            "us_ownership_surveys": [{"date": d, "ownership_pct": round(100 * v, 1)} for d, v in cfg["ownership"].items()],
+            "survey_waves": waves}
+
+
 def _page_payload(doc: dict) -> dict:
     """The same numbers under the short keys the page's script reads."""
     ym = lambda s: s[:7]
@@ -292,7 +308,7 @@ def _page_payload(doc: dict) -> dict:
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],
-            "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
+            "holders": doc["holders"], "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
             "now": {"asof": ym(lt["month_end"]), "rf": w["risk_free"], "mkt": w["market"]["midpoint"], "conc": w["concentration"]["midpoint"],
                     "mort": w["mortality"]["midpoint"], "mid": lt["required"]["midpoint"], "lo": lt["required"]["lower"], "hi": lt["required"]["upper"],
                     "beta": w["market"]["beta"], "vol": w["concentration"]["volatility"], "wlo": w["concentration"]["weight_lower"],

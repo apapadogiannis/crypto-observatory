@@ -210,6 +210,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button type="button" role="tab" data-tab="overview">Overview</button>
     <button type="button" role="tab" data-tab="required-return">Required return</button>
+    <button type="button" role="tab" data-tab="holders">Holders</button>
     <button type="button" role="tab" data-tab="tests">Tests</button>
     <button type="button" role="tab" data-tab="compared">Compared</button>
     <button type="button" role="tab" data-tab="notes">Data and notes</button>
@@ -291,15 +292,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <div class="mini" style="margin-top:12px"><h3>Input: holder's weight in Bitcoin</h3><p>percent of the holder's wealth held in Bitcoin, for the three holders the band prices</p>
         <div class="legend"><span><i class="ln" style="border-color:var(--magenta)"></i>average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>early holder</span></div>
         <div class="chart" id="m-w"></div></div>
-      <h3 style="margin-top:16px">How the holder's weight is measured</h3>
-      <ul class="note">
-        <li><b>The surveyed owner: 19% at every date.</b> US households that owned crypto in 2021 kept 19% of their financial assets in it on average, and the 2025 wave of the same survey reports similar shares (Weber, Candia, Coibion and Gorodnichenko 2026). The page uses that weight in every month and does not move it with the price.</li>
-        <li><b>Why it is not moved with the price.</b> Surveys that ask owners what their holdings are worth show holdings per owner moving little. In the United Kingdom the mean holding per owner was £1,575 in December 2019 and £1,845 in August 2024, while Bitcoin's price rose eightfold and the number of owners went from 1.9 to 7 million (Financial Conduct Authority). In Canada the median Bitcoin holding was about Can$500 in four of five surveys from 2018 to 2023, over which the price varied fifteenfold (Bank of Canada). A higher market value shows up as more owners, not as more per owner.</li>
-        <li><b>Counting fund and treasury investors: a lower weight.</b> Investors in spot ETFs and in public companies that hold Bitcoin are not "crypto owners" in a household survey. They are taken to keep 1.5% of their wealth in Bitcoin, so their wealth is the value of their Bitcoin divided by 1.5%. Added to the surveyed owners' wealth (market value divided by 19%), it gives the weight of the lower edge. That weight falls only as funds and companies hold more of the supply.</li>
-        <li><b>The early holder.</b> While ownership was no higher than in the 2018 survey (1.2% of adults), the coins sat with holders for whom Bitcoin was nearly everything they owned: a weight of 1. The weight falls in proportion as ownership grows.</li>
-        <li><b>What is uncertain.</b> The 19% is an average in which every owner counts once; the median owner held about 8%. What prices the asset is the share of owners' combined wealth, which no survey reports and which is lower if wealthier owners hold smaller shares. With the weight at 12% or at 8% the paper's required return for 2026 is one to two points lower. No survey of portfolio shares exists before 2021, so earlier months use the same 19%; the surveys of holdings begin in 2018, and report values, not shares of wealth.</li>
-        <li><b>What changed.</b> Earlier versions of this page let the surveyed owner's weight follow Bitcoin's market value, so it rose at every peak (80% at the end of 2017, 34% in mid-2025). That is not what the surveys show. With the weight held at 19% the required return of recent months is about one point lower.</li>
-      </ul>
+      <p style="margin-top:12px">The surveyed owner is held at 19% at every date; the lower weight adds the investors in funds and in companies that hold Bitcoin; the early holder starts at 100% and falls as ownership grows. <a href="#holders">How each weight is measured, with the surveys behind it, is under Holders.</a></p>
     </div>
 
     <div class="risk">
@@ -315,6 +308,69 @@ window.goatcounter = {path: function () { return location.pathname; }};
         <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
         <div class="chart" id="m-deaths"></div></div>
     </div>
+  </section>
+  </div>
+
+  <div class="pane" id="pane-holders">
+  <section class="card" id="sec-h-who">
+    <h2>Whose risk the concentration term prices</h2>
+    <p class="sub">The concentration term is risk aversion × variance × the share of the holder's wealth that moves with Bitcoin. Variance comes from prices. The share cannot be read from prices: it depends on who holds Bitcoin, and it is measured from household surveys and company filings. The band prices three holders, and this tab shows where each weight comes from.</p>
+    <div class="tiles" id="h-tiles"></div>
+    <div class="mini"><h3>The three weights through time</h3><p>percent of the holder's wealth held in Bitcoin</p>
+      <div class="legend"><span><i class="ln" style="border-color:var(--yellow)"></i>early holder</span><span><i class="ln" style="border-color:var(--blue)"></i>average surveyed owner</span><span><i class="ln" style="border-color:var(--magenta)"></i>average owner, counting fund and treasury investors</span></div>
+      <div class="chart" id="h-w"></div></div>
+    <p class="sub" id="h-edge" style="margin-top:10px"></p>
+  </section>
+
+  <section class="card" id="sec-h-owner">
+    <h2>The surveyed owner: <span id="h-ow"></span>% at every date</h2>
+    <p class="sub">US households that owned crypto in 2021 kept 19% of their financial assets in it on average, and the 2025 wave of the same survey reports similar shares (Weber, Candia, Coibion and Gorodnichenko 2026). Between the two waves Bitcoin's price rose 2.3 times. An owner who had simply held would have gone from 19% to about 35%. The surveys do not show that, so the page uses 19% in every month and does not move it with the price.</p>
+    <p class="sub">Two national surveys ask owners what their holdings are worth, wave after wave. Each line below is a multiple of its value in the first wave. The price multiplies; the holding per owner stays close to ×1. A higher market value shows up as more owners, not as more per owner.</p>
+    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>Bitcoin's price</span><span><i class="ln" style="border-color:var(--orange)"></i>owners (UK: number; Canada: share of adults)</span><span><i class="ln" style="border-color:var(--blue)"></i>mean holding per owner</span><span><i class="ln" style="border-color:var(--aqua)"></i>median holding per owner</span></div>
+    <div class="grid2">
+      <div class="mini"><h3>United Kingdom, four waves</h3><p>multiple of the first wave, log scale</p><div class="chart" id="h-uk"></div>
+        <div class="scroll"><table id="t-h-uk"></table></div></div>
+      <div class="mini"><h3>Canada, five waves</h3><p>multiple of the first wave, log scale</p><div class="chart" id="h-ca"></div>
+        <div class="scroll"><table id="t-h-ca"></table></div></div>
+    </div>
+    <p class="sub" style="margin-top:10px">Holdings are in pounds and Canadian dollars as the surveys report them. Bitcoin's price is its average in US dollars over the months of each survey's fieldwork. The Canadian survey reports the median holding only.</p>
+  </section>
+
+  <section class="card" id="sec-h-funds">
+    <h2>The lower edge: adding fund and treasury investors</h2>
+    <p class="sub">Someone who owns a spot ETF, or shares of a company that holds Bitcoin, is not a "crypto owner" in a household survey, yet carries Bitcoin's risk. These investors are diversified: they are taken to keep <span id="h-fw"></span>% of their wealth in Bitcoin. Counting their wealth beside the surveyed owners' gives a lower average weight, the one behind the lower edge of the band.</p>
+    <div class="mini" style="margin:4px 0 12px"><h3 id="h-work-title"></h3><p>for every $100 of Bitcoin outstanding</p>
+      <div class="scroll"><table id="t-h-work" class="now"></table></div></div>
+    <div class="grid2">
+      <div class="mini"><h3>Held through funds and by public companies</h3><p>percent of supply</p><div class="chart" id="h-inst"></div></div>
+      <div class="mini"><h3>The resulting weight</h3><p>percent of wealth, average owner counting fund and treasury investors</p><div class="chart" id="h-wlo"></div></div>
+    </div>
+    <p class="sub" style="margin-top:10px">This weight does not move with the price. It falls only as funds and companies hold more of the supply, which is how the required return falls as more diversified investors hold Bitcoin. The holdings are from the Grayscale trust's filings to 2023, US spot ETFs from 2024, and public companies' reported holdings.</p>
+  </section>
+
+  <section class="card" id="sec-h-early">
+    <h2>The early holder</h2>
+    <p class="sub">While few people owned Bitcoin, the coins sat with holders for whom it was nearly everything they owned. The band gives that holder a weight of 100% as long as ownership is no higher than in the 2018 survey (<span id="h-few"></span>% of US adults), and lets the weight fall in proportion as ownership grows: weight = <span id="h-few2"></span>% ÷ ownership. With log utility (γ = 1), that holder's required return is the risk-free rate plus the weight times variance. It sets the upper edge of the band whenever it is the higher of the two. <span id="h-early-until"></span></p>
+    <div class="scroll"><table id="t-h-own"></table></div>
+    <p class="sub" style="margin-top:10px">Between surveys ownership grows at a constant rate. Before the first survey it follows the number of funded Bitcoin addresses.</p>
+  </section>
+
+  <section class="card" id="sec-h-unc">
+    <h2>What is uncertain, and what changed</h2>
+    <ul class="note">
+      <li><b>19% is an average in which every owner counts once.</b> The median owner held about 8%. What prices the asset is the share of owners' combined wealth, which no survey reports and which is lower if wealthier owners hold smaller shares. With the weight at 12% or at 8% the paper's required return for 2026 is one to two points lower (16.9% and 16.1% against 18.1%).</li>
+      <li><b>The portfolio share is observed in one survey.</b> The 19% is from US households in 2021, reported as similar in 2025. The British and Canadian surveys report the value of holdings, not shares of wealth. No survey of shares exists before 2021, so earlier months use the same 19%.</li>
+      <li><b>Household surveys miss some holders.</b> The largest holders, funds, and holders outside the surveyed countries are not in them. Funds and public companies are added as described above; the others are not.</li>
+      <li><b>Risk aversion is bounded, not measured.</b> 1 at the lower edge and for the early holder, 2.8 at the upper edge. The weight and risk aversion together set most of the band's width.</li>
+      <li><b>What changed in November 2026.</b> Earlier versions of this page let the surveyed owner's weight follow Bitcoin's market value, so it rose at every peak (80% at the end of 2017, 34% in mid-2025). That is not what the surveys show. With the weight held at 19% the required return of recent months is about one point lower.</li>
+    </ul>
+    <h3 style="font-size:14.5px;margin:14px 0 4px">Sources</h3>
+    <ul class="note">
+      <li>Weber, Candia, Coibion and Gorodnichenko (2026), "Do You Even Crypto, Bro? Cryptocurrencies in Household Finance", Federal Reserve Bank of Cleveland working paper 26-16: the 19%.</li>
+      <li>Financial Conduct Authority, cryptoasset consumer research, waves 2 to 5, and its <a href="https://www.fca.org.uk/freedom-information/information-average-value-uk-crypto-holdings-september-2025" target="_blank" rel="noopener">September 2025 response on average holdings</a>.</li>
+      <li>Bank of Canada, Bitcoin Omnibus Survey, staff discussion papers <a href="https://www.bankofcanada.ca/wp-content/uploads/2022/04/sdp2022-10.pdf" target="_blank" rel="noopener">2022-10</a>, <a href="https://www.bankofcanada.ca/wp-content/uploads/2023/07/sdp2023-14.pdf" target="_blank" rel="noopener">2023-14</a> and <a href="https://bankofcanada.ca/wp-content/uploads/2025/03/sdp2025-4.pdf" target="_blank" rel="noopener">2025-4</a>.</li>
+      <li>The full derivation is in Sections 4 and 5 and Appendix B of the paper, and the survey figures are in <code>data/surveys/holder_surveys.csv</code> of this tool's repository.</li>
+    </ul>
   </section>
   </div>
 
@@ -528,7 +584,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </div>
 
   <footer>
-    <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Market Risk, Concentration and Mortality", working paper, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">doi.org/10.2139/ssrn.7705239</a>. Replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>, archived at <a href="https://doi.org/10.5281/zenodo.24003938" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24003938</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. On data to May 2026 the paper reports an MCM alpha of 37 points a year over the whole sample and 1 since 2018.</p>
+    <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Market Risk, Concentration and Mortality", working paper, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">doi.org/10.2139/ssrn.7705239</a>. Replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>, archived at <a href="https://doi.org/10.5281/zenodo.24003938" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24003938</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. On data to May 2026 the paper reports an MCM alpha of 34 points a year over the whole sample and 2 since 2018.</p>
     <p id="asof"></p>
     <p>To cite this page: A. Papadogiannis (2026), "Crypto Observatory: required returns, risks and survival", Zenodo, <a href="https://doi.org/10.5281/zenodo.24403325" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24403325</a>, together with the paper above.</p>
     <p>Data: Coin Metrics community data (CC BY-NC 4.0); the US equity market return from the Kenneth R. French data library; the implied equity premium by month from Aswath Damodaran (NYU Stern); the ten-year yield from the US Treasury's daily par yield curve rates; survey and filing anchors as cited in the paper. The paper itself used an S&amp;P 500 ETF and the CBOE ten-year yield index, so figures here can differ slightly from the paper's. The numbers on this page are also published as <a href="data.json" target="_blank" rel="noopener">data.json</a>. For programs and AI agents there are also <a href="months.csv" target="_blank" rel="noopener">months.csv</a>, <a href="periods.csv" target="_blank" rel="noopener">periods.csv</a> and <a href="census_deaths.csv" target="_blank" rel="noopener">census_deaths.csv</a>, and a guide to all of them, <a href="llms.txt" target="_blank" rel="noopener">llms.txt</a>. To use the Observatory from your own AI assistant, add <a href="https://github.com/apapadogiannis/apapadogiannis/blob/main/skill/SKILL.md" target="_blank" rel="noopener">the one skill</a> that covers this tool and the rest of the research.</p>
@@ -1030,6 +1086,58 @@ function tiles(){
     stale.textContent="Some inputs of the holder's weight are entered by hand and are due for renewal: "+DATA.meta.anchors_overdue.map(k=>what[k]).join(", and ")+". The concentration term rests on them."; stale.style.display="block"; }
   document.getElementById("asof").textContent="Dates of the data: prices and the Treasury yield to "+longDate(monthEnd)+"; equity market returns, and so the tests, to "+fmtM(parse(m.market_to))+" (the beta is carried forward from that month); ownership survey to "+fmtM(parse(m.anchors.ownership_survey))+"; fund and treasury holdings to "+fmtM(parse(m.anchors.fund_and_treasury_holdings))+", held flat after.";
 }
+function plainTable(id,head,body){
+  const T=document.getElementById(id); T.textContent="";
+  const tr=T.insertRow(); head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; tr.appendChild(th);});
+  body.forEach(r=>{const row=T.insertRow(); r.forEach(v=>{row.insertCell().textContent=v;});});
+}
+function surveyChart(id,W,S){
+  const el=document.getElementById(id), f=frame(el,230,{l:40,r:46,t:10,b:26}), mon=d3.timeParse("%Y-%m");
+  const d=W.map(w=>({...w,t:mon(w.month)})), first=d[0];
+  S=S.filter(s=>first[s.k]!=null); d.forEach(r=>S.forEach(s=>{r["x_"+s.k]=r[s.k]/first[s.k];}));
+  const pad=45*864e5, x=d3.scaleTime().domain([new Date(+d[0].t-pad),new Date(+d[d.length-1].t+pad)]).range([0,f.iw]);
+  const top=d3.max(d.flatMap(r=>S.map(s=>r["x_"+s.k]))), ticks=[0.5,1,2,4,8,16].filter(v=>v<=top*1.3);
+  const y=d3.scaleLog().domain([0.4,top*1.3]).range([f.ih,0]);
+  const g=axes(f,x,y,{yticks:ticks,yfmt:v=>"×"+v});
+  const L=d[d.length-1], ends=[];
+  S.forEach(s=>{
+    g.append("path").datum(d).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",2).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r["x_"+s.k])));
+    g.selectAll(null).data(d).join("circle").attr("cx",r=>x(r.t)).attr("cy",r=>y(r["x_"+s.k])).attr("r",4.5).attr("fill",css(s.c)).attr("stroke",css("--surface")).attr("stroke-width",2)
+      .append("title").text(r=>r.fieldwork+": "+s.n+" "+s.fmt(r[s.k])+" (×"+r["x_"+s.k].toFixed(1)+")");
+    ends.push({y:y(L["x_"+s.k]),s:"×"+L["x_"+s.k].toFixed(1)});});
+  ends.sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<13) ends[i].y=ends[i-1].y+13;
+  ends.forEach(e=>g.append("text").attr("x",x(L.t)+9).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
+}
+function holdersTab(){
+  const H=DATA.meta.holders, n=DATA.meta.now, all=DATA.rows, last=all[all.length-1], month=fmtM(parse(n.asof));
+  const num=v=>v.toLocaleString("en-US"), set=(id,t)=>{document.getElementById(id).textContent=t;};
+  set("h-ow",H.owner_weight.toFixed(0)); set("h-fw",H.fund_investor_weight); set("h-few",H.early_holder_all_in_below_ownership); set("h-few2",H.early_holder_all_in_below_ownership);
+  const T=[["Average surveyed owner",last.whi.toFixed(0)+"%","of financial assets in crypto · risk aversion 2.8 · the upper edge of the band"+(n.early?"":" now")],
+           ["Counting fund and treasury investors",last.wlo.toFixed(1)+"%","average weight, "+month+" · risk aversion 1 · the lower edge of the band"],
+           ["Early holder",last.we.toFixed(0)+"%","100% while few owned Bitcoin, falling as ownership grew · risk aversion 1 · the upper edge in the early years"]];
+  const el=document.getElementById("h-tiles"); el.textContent="";
+  T.forEach(([k,v,t])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",t]].forEach(([c,s])=>{const e=document.createElement("div"); e.className=c; e.textContent=s; d.appendChild(e);}); el.appendChild(d);});
+  mini("h-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",240);
+  const lastEarly=all.filter(r=>r.eb).pop(), nEarly=all.filter(r=>r.eb).length;
+  const until=lastEarly?"The early holder sets the upper edge in "+nEarly+" of the "+all.length+" months since 2012, the last of them "+fmtM(parse(lastEarly.asof))+". Since then the surveyed owner sets it.":"";
+  set("h-edge",until+" The lower edge is the average owner counting fund and treasury investors, at every date."); set("h-early-until",until);
+  const uk=H.survey_waves.filter(w=>w.country==="UK"), ca=H.survey_waves.filter(w=>w.country==="Canada");
+  const price={k:"bitcoin_price_usd",n:"Bitcoin's price",c:"--ink",fmt:v=>"$"+num(Math.round(v))};
+  surveyChart("h-uk",uk,[price,{k:"owners_million",n:"owners",c:"--orange",fmt:v=>v+" million"},{k:"mean_holding",n:"mean holding",c:"--blue",fmt:v=>"£"+num(v)},{k:"median_holding",n:"median holding",c:"--aqua",fmt:v=>"£"+num(v)}]);
+  surveyChart("h-ca",ca,[price,{k:"ownership_pct",n:"share of adults owning Bitcoin",c:"--orange",fmt:v=>v+"%"},{k:"median_holding",n:"median holding",c:"--aqua",fmt:v=>"Can$"+num(v)}]);
+  plainTable("t-h-uk",["Survey","Owners","Mean holding","Median holding","Bitcoin's price"],uk.map(w=>[w.fieldwork,w.owners_million+" million","£"+num(w.mean_holding),"£"+num(w.median_holding),"$"+num(w.bitcoin_price_usd)]));
+  plainTable("t-h-ca",["Survey","Adults owning Bitcoin","Median holding","Bitcoin's price"],ca.map(w=>[w.fieldwork,w.ownership_pct+"%","Can$"+num(w.median_holding),"$"+num(w.bitcoin_price_usd)]));
+  const s=last.inst, ow=H.owner_weight, fw=H.fund_investor_weight, a=100/(ow/100), b=s/(fw/100), usd=v=>"$"+num(Math.round(v));
+  set("h-work-title","The lower-edge weight worked out, "+month);
+  plainTable("t-h-work",["","Bitcoin held","Share of wealth in Bitcoin","Wealth behind it"],[
+    ["All Bitcoin, as if held by surveyed owners","$100",ow.toFixed(0)+"%","$100 ÷ "+ow.toFixed(0)+"% = "+usd(a)],
+    ["Fund and treasury investors, added",usd(s)+" ("+s.toFixed(1)+"% of supply)",fw+"%",usd(s)+" ÷ "+fw+"% = "+usd(b)],
+    ["Weight at the lower edge","","","$100 ÷ ("+usd(a)+" + "+usd(b)+") = "+(100*100/(a+b)).toFixed(1)+"%"]]);
+  mini("h-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
+  mini("h-wlo",[{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(1)+"%");
+  const few=H.early_holder_all_in_below_ownership, dfmt=d3.timeFormat("%B %Y"), dp=d3.timeParse("%Y-%m-%d");
+  plainTable("t-h-own",["US survey","Adults owning crypto","Early holder's weight"],H.us_ownership_surveys.map(o=>[dfmt(dp(o.date)),o.ownership_pct+"%",Math.min(100,100*few/o.ownership_pct).toFixed(0)+"%"]));
+}
 function draw(){
   bandChart(); whyChart(); termsChart(); perChart(); trailChart(); cumChart();
   mini("m-mkt",[{k:"mkt",n:"market term",c:"--violet"}],v=>v.toFixed(1));
@@ -1038,12 +1146,12 @@ function draw(){
   mini("m-conc",[{k:"conc",n:"concentration term",c:"--orange"}],v=>v.toFixed(v<10?1:0));
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
-  edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard(); markScroll();
+  holdersTab(); edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard(); markScroll();
   mini("m-iss",[{k:"iss",n:"issuance",c:"--blue"}],v=>v.toFixed(1)+"%");
   mini("m-inst",[{k:"inst",n:"funds and public companies",c:"--blue"}],v=>v.toFixed(1)+"%");
 }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
-const TABS=["overview","required-return","tests","compared","notes"];
+const TABS=["overview","required-return","holders","tests","compared","notes"];
 function showTab(){
   const h=location.hash.slice(1), view=h==="census"||h==="equation"?h:"bitcoin";
   ["bitcoin","census","equation"].forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));
