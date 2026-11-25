@@ -229,8 +229,8 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <section class="card" id="sec-a-bars">
     <h2>What each required return is made of</h2>
-    <p class="sub">Each bar adds up to the required return, in percent a year. The thin line is the band: the range the answer takes when risk aversion and the holder's weight are set low or high. Below the dotted line, gold and three equity series are shown for scale.</p>
-    <div class="legend"><span><i style="background:var(--rf)"></i>risk-free rate</span><span><i style="background:var(--violet)"></i>market risk</span><span><i style="background:var(--orange)"></i>concentration risk</span><span><i style="background:var(--aqua)"></i>mortality risk</span><span><i class="ln" style="border-color:var(--ink)"></i>band</span></div>
+    <p class="sub">Each bar adds up to the required return, in percent a year. The band beside it is the range the answer takes when risk aversion and the holder's weight are set low or high. Below the dotted line, gold and three equity series are shown for scale.</p>
+    <div class="legend"><span><i style="background:var(--rf)"></i>risk-free rate</span><span><i style="background:var(--violet)"></i>market risk</span><span><i style="background:var(--orange)"></i>concentration risk</span><span><i style="background:var(--aqua)"></i>mortality risk</span></div>
     <div class="chart" id="a-bars"></div>
     <div class="plain">
       <div><b><i style="background:var(--rf)"></i>Risk-free rate</b><span>What a ten-year US Treasury pays. Every investment has to beat it.</span></div>
@@ -238,6 +238,12 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <div><b><i style="background:var(--orange)"></i>Concentration risk</b><span>Crypto owners keep a large share of their wealth in a volatile asset, and cannot diversify that away. Stocks have none of it.</span></div>
       <div><b><i style="background:var(--aqua)"></i>Mortality risk</b><span>Cryptoassets die. The pay for that is measured from how often top-twenty assets have died.</span></div>
     </div>
+  </section>
+
+  <section class="card" id="sec-a-hist">
+    <h2>How the required returns have moved through time</h2>
+    <p class="sub">The midpoint of each asset's band at every month-end since it has been priced, percent a year. A required return falls when the asset becomes less volatile, moves less with stocks, or when more diversified investors hold it.</p>
+    <div class="chart" id="a-hist"></div>
   </section>
 
   <section class="card" id="sec-a-reward">
@@ -256,12 +262,6 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub" id="a-table-sub"></p>
     <div class="scroll"><table id="t-assets"></table></div>
     <ul class="note" style="margin-top:12px" id="a-notes"></ul>
-  </section>
-
-  <section class="card" id="sec-a-hist">
-    <h2>How the required returns have moved</h2>
-    <p class="sub">The midpoint of each asset's band at every month-end since it has been priced, percent a year. A required return falls when the asset becomes less volatile, moves less with stocks, or when more diversified investors hold it.</p>
-    <div class="chart" id="a-hist"></div>
   </section>
 
   <section class="card" id="sec-a-read">
@@ -1256,8 +1256,8 @@ function compareView(){
   const crypto=A.map(a=>({n:a.name,t:a.required_return,lo:a.required_low,hi:a.required_high,main:a.asset==="btc",p:parts(a.risk_free,a.market_term,a.concentration_term,a.mortality_term)}));
   const bench=m.cmp.rows.filter(r=>r.name!=="Bitcoin").map(r=>({n:r.name,t:r.average,lo:r.lower,hi:r.upper,ref:1,p:parts(r.terms.risk_free,r.terms.market,r.terms.concentration,r.terms.mortality)})).sort((a,b)=>b.t-a.t);
   const rows=[crypto[0]].concat(crypto.slice(1).sort((a,b)=>b.t-a.t)).concat(bench), nC=crypto.length;
-  const B=el("a-bars"), small=(B.clientWidth||600)<480, rh=small?46:40, gapY=18, f=frame(B,rows.length*rh+34+gapY,{l:small?8:130,r:54,t:6,b:26});
-  const x=d3.scaleLinear().domain([0,Math.max(...rows.map(r=>r.hi||r.t))*1.04]).nice().range([0,f.iw]);
+  const B=el("a-bars"), small=(B.clientWidth||600)<480, rh=small?46:40, gapY=18, f=frame(B,rows.length*rh+34+gapY,{l:small?8:130,r:small?54:170,t:6,b:26});
+  const x=d3.scaleLinear().domain([0,Math.max(...rows.map(r=>r.t))]).nice().range([0,f.iw]);
   const g=f.svg.append("g").attr("transform",`translate(${f.m.l},${f.m.t})`), bh=small?16:20;
   x.ticks(6).forEach(t=>{ g.append("line").attr("x1",x(t)).attr("x2",x(t)).attr("y1",0).attr("y2",f.ih).attr("stroke",css("--line"));
     g.append("text").attr("x",x(t)).attr("y",f.ih+18).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--mut")).text(t+"%"); });
@@ -1268,9 +1268,9 @@ function compareView(){
       g.append("rect").attr("x",x(acc)).attr("y",y0).attr("width",w).attr("height",bh).attr("rx",j===r.p.length-1?4:0).attr("fill",css(c)).attr("opacity",r.ref?.7:1).append("title").text(r.n+": "+n+" "+v.toFixed(1)+" points");
       if(w>34) g.append("text").attr("x",x(acc)+w/2).attr("y",y0+bh/2).attr("dy","0.32em").attr("text-anchor","middle").attr("font-size",11).attr("fill",c==="--rf"?css("--ink"):"#fff").text(v.toFixed(1));
       acc+=v; });
-    if(r.hi!=null){ const yy=y0+bh+4; g.append("line").attr("x1",x(r.lo)).attr("x2",x(r.hi)).attr("y1",yy).attr("y2",yy).attr("stroke",css("--ink")).attr("stroke-width",1.5);
-      [r.lo,r.hi].forEach(v=>g.append("line").attr("x1",x(v)).attr("x2",x(v)).attr("y1",yy-3).attr("y2",yy+3).attr("stroke",css("--ink")).attr("stroke-width",1.5)); }
-    g.append("text").attr("x",x(Math.max(acc,r.hi||0))+8).attr("y",y0+bh/2).attr("dy","0.32em").attr("font-size",r.main?14.5:13).attr("font-weight",r.main?800:700).attr("fill",css("--ink")).text(r.t.toFixed(1)+"%"); });
+    const lab=g.append("text").attr("x",x(acc)+8).attr("y",y0+bh/2).attr("dy","0.32em").attr("font-size",r.main?14.5:13).attr("fill",css("--ink"));
+    lab.append("tspan").attr("font-weight",r.main?800:700).text(r.t.toFixed(1)+"%");
+    if(r.hi!=null&&!small) lab.append("tspan").attr("dx",8).attr("font-size",12).attr("fill",css("--mut")).text("band "+r.lo.toFixed(1)+" to "+r.hi.toFixed(1)+"%"); });
   // table
   const all=A.map(a=>({n:a.name,main:a.asset==="btc",req:a.required_return,vol:a.volatility,sh:a.sharpe_ratio,drag:a.volatility_drag,comp:a.compound_required_return,shc:a.sharpe_ratio_on_compound}))
     .concat(bench.map(b=>m.cmp.rows.find(r=>r.name===b.n)).map(r=>({n:r.name,ref:1,req:r.average,vol:r.volatility,sh:r.sharpe_average,drag:r.drag,comp:r.compound,shc:r.sharpe_compound})));
