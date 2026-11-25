@@ -181,7 +181,7 @@ paper's for the equity market and the Treasury yield. `data/README.md` states th
 ## Configuration
 
 `config/model.toml` holds every constant of the equation and every anchor that is entered by hand:
-survey ownership, wealth per owner, and Bitcoin held through funds and by public companies. Each
+the surveyed owners' portfolio weight, survey ownership, and Bitcoin held through funds and by public companies. Each
 carries its date and its place in the paper. Changing a value there changes the page; nothing is
 hard-coded in the model.
 

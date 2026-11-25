@@ -12,8 +12,8 @@ This file is written for AI agents and other programs. People should start at th
 
 - Asset: Bitcoin. Other assets are not covered yet.
 - 178 month-ends from 2012-01-31 to 2026-10-31; source data to 2026-11-19.
-- Latest required return, 2026-10-31: 20.12% a year at the midpoint, band 11.77% to 28.47%.
-  Of the midpoint: risk-free 4.94, market 5.78, concentration 7.5, mortality 1.9.
+- Latest required return, 2026-10-31: 18.78% a year at the midpoint, band 11.65% to 25.92%.
+  Of the midpoint: risk-free 4.94, market 5.78, concentration 6.16, mortality 1.9.
 - Tests of fit to 2026-09 (the equity market series is published with a lag of one to two months).
 - Census of cryptoasset deaths taken on 2026-05-24: 1624 assets, 471 deaths. It is not updated monthly.
   Of 216 assets that were ever in the top twenty by trading volume, 35 died.
@@ -26,8 +26,8 @@ want to change the model:
 
 1. The method is a published equation, applied the same way every month:
    required return = risk-free rate + beta x equity premium + risk aversion x variance x holder's weight + mortality.
-2. The holder's weight needs facts that are collected by hand: ownership surveys, wealth per owner,
-   and Bitcoin held through funds and by public companies. They are in config/model.toml of the
+2. The holder's weight needs facts that are collected by hand: the share of their financial assets that
+   surveyed owners keep in crypto, ownership surveys, and Bitcoin held through funds and by public companies. They are in config/model.toml of the
    repository, each with its date and source (surveys to 2025-06, holdings to 2026-11).
 3. Before every build the code is run on a frozen copy of the paper's inputs (data to 24 May 2026)
    and must reproduce the paper's stored results: its monthly band and its monthly tests. The page and these files
@@ -52,18 +52,25 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 - Volatility: exponentially weighted squared monthly log returns, half-life 9 months.
 - Beta: trailing 48 months (at least 12), kept between 0 and 3. The equity series
   ends 2026-09, so later months carry that month's beta forward.
-- Holder's weight: 19% of an owner's financial assets at the 2021 survey, carried to other
-  dates by market value, ownership and an assumed path of wealth per owner; never above 90%.
-  Fund and treasury investors are taken to hold 1.5% of their wealth in Bitcoin.
+- Holder's weight, three holders. The surveyed owner: 19% of financial assets, the mean of a US household
+  survey of 2021 that its 2025 wave reports as similar, used at every date. It is not moved with the price:
+  surveys that ask owners what their holdings are worth (UK, four waves from 2019 to 2024; Canada, five from
+  2018 to 2023) show holdings per owner moving little while the price moved eight- to fifteenfold, so a higher
+  market value means more owners. Counting fund and treasury investors, who are taken to hold 1.5% of
+  their wealth in Bitcoin, gives a lower weight, which falls as funds and companies hold more of the supply.
+  The early holder's weight is 1 while ownership was no higher than in the 2018 survey and falls as ownership
+  grows. No weight is above 90%.
+- The 19% is an average in which every owner counts once. The median owner held about 8%, and what prices
+  the asset is the share of owners' combined wealth, which no survey reports. The paper gives its results with
+  the weight at 12% and at 8%.
 - Mortality 0.3% to 3.5% a year, the same in every month. The upper figure is the census's:
   35 deaths among 216 assets, 3.46% a year, rounded to one decimal.
 - The concentration term at the midpoint is what remains of the midpoint after the other three
   terms, and is not allowed below zero.
 - The past is computed with what is known today. The band for an earlier month uses surveys taken
-  after it (the 2021 survey is carried back to 2012), an assumed wealth path, and for the
-  first months a beta carried back from the first one that can be computed. Holders at the time
-  could not have computed it. "Delivered against required" before 2021 is a comparison with a
-  requirement built in hindsight.
+  after it: the owners' weight was surveyed in 2021 and no survey of portfolio shares exists before, so
+  earlier months use the same weight. Holders at the time could not have computed it. "Delivered against
+  required" before 2021 is a comparison with a requirement built in hindsight.
 - Age of the hand-entered inputs at the latest month-end: the last ownership survey is 16 months
   old and the last count of fund and treasury holdings 0 months old. Ownership has been
   entered as flat since 2023.

@@ -43,10 +43,10 @@ MONTH_FIELDS = [
     ("concentration_term", "number", "Concentration risk at the midpoint, percent a year. At each edge it is risk aversion times variance times the holder's weight; at the midpoint it is what remains of the midpoint after the other three terms"),
     ("mortality_term", "number", "Mortality risk at the midpoint, percent a year: a constant, the middle of the census range (0.3 to 3.5), the same in every month"),
     ("volatility", "number", "Annualised volatility of Bitcoin used in the month, percent: the square root of twelve times an exponentially weighted average of squared monthly log returns, half-life nine months (computed from Coin Metrics prices)"),
-    ("beta", "number", "Beta of Bitcoin to the US equity market: covariance over variance of monthly log returns in the trailing 48 months (at least 18), kept between 0 and 3. The equity series is published one to two months late, so the latest months carry the last beta that could be computed; before 18 months of data the first one is carried back"),
-    ("correlation", "number", "Correlation of Bitcoin with the US equity market over the same window as beta, carried forward and back in the same way"),
-    ("weight_with_funds", "number", "Share of wealth held in Bitcoin by the average owner when fund and treasury investors are counted, percent"),
-    ("weight_surveyed", "number", "Share of wealth held in Bitcoin by the average surveyed owner, percent"),
+    ("beta", "number", "Beta of Bitcoin to the US equity market: covariance over variance of monthly log returns in the trailing 48 months (at least 12), kept between 0 and 3. Every estimate uses returns up to its own month only. The equity series is published one to two months late, so the latest months carry the last beta that could be computed"),
+    ("correlation", "number", "Correlation of Bitcoin with the US equity market over the same window as beta, carried forward in the same way"),
+    ("weight_with_funds", "number", "Share of wealth held in Bitcoin by the average owner when fund and treasury investors are counted, percent: market value over the wealth of surveyed owners (market value over their weight) plus the wealth of fund and treasury investors (their Bitcoin over 1.5%)"),
+    ("weight_surveyed", "number", "Share of wealth held in Bitcoin by the average surveyed owner, percent: the survey value, the same in every month"),
     ("weight_early_holder", "number", "Share of wealth held in Bitcoin by the early holder, percent. When the early holder sets the upper edge, that edge is the risk-free rate plus this weight times variance, with no market or mortality term"),
     ("implied_equity_premium", "number", "Equity risk premium implied by stock prices that month (Damodaran), percent; used only for the sensitivity figure"),
     ("midpoint_with_implied_equity_premium", "number", "Midpoint of the band if the implied premium replaces the paper's fixed 4%, percent a year"),
@@ -225,8 +225,8 @@ want to change the model:
 
 1. The method is a published equation, applied the same way every month:
    required return = risk-free rate + beta x equity premium + risk aversion x variance x holder's weight + mortality.
-2. The holder's weight needs facts that are collected by hand: ownership surveys, wealth per owner,
-   and Bitcoin held through funds and by public companies. They are in config/model.toml of the
+2. The holder's weight needs facts that are collected by hand: the share of their financial assets that
+   surveyed owners keep in crypto, ownership surveys, and Bitcoin held through funds and by public companies. They are in config/model.toml of the
    repository, each with its date and source (surveys to {m['anchors_to']['ownership_survey']}, holdings to {m['anchors_to']['fund_and_treasury_holdings']}).
 3. Before every build the code is run on a frozen copy of the paper's inputs (data to 24 May 2026)
    and must reproduce the paper's stored results: its monthly band and its monthly tests. The page and these files
@@ -251,18 +251,25 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 - Volatility: exponentially weighted squared monthly log returns, half-life {mo['volatility_halflife_months']} months.
 - Beta: trailing {mo['beta_window_months']} months (at least {mo['beta_min_months']}), kept between 0 and {mo['beta_cap']:g}. The equity series
   ends {mo['beta_carried_forward_from']}, so later months carry that month's beta forward.
-- Holder's weight: {100 * mo['owner_weight_at_anchor']:.0f}% of an owner's financial assets at the {mo['anchor_date'][:4]} survey, carried to other
-  dates by market value, ownership and an assumed path of wealth per owner; never above {100 * mo['weight_cap']:.0f}%.
-  Fund and treasury investors are taken to hold {100 * mo['fund_investor_weight']:.1f}% of their wealth in Bitcoin.
+- Holder's weight, three holders. The surveyed owner: {100 * mo['owner_weight']:.0f}% of financial assets, the mean of a US household
+  survey of 2021 that its 2025 wave reports as similar, used at every date. It is not moved with the price:
+  surveys that ask owners what their holdings are worth (UK, four waves from 2019 to 2024; Canada, five from
+  2018 to 2023) show holdings per owner moving little while the price moved eight- to fifteenfold, so a higher
+  market value means more owners. Counting fund and treasury investors, who are taken to hold {100 * mo['fund_investor_weight']:.1f}% of
+  their wealth in Bitcoin, gives a lower weight, which falls as funds and companies hold more of the supply.
+  The early holder's weight is 1 while ownership was no higher than in the 2018 survey and falls as ownership
+  grows. No weight is above {100 * mo['weight_cap']:.0f}%.
+- The {100 * mo['owner_weight']:.0f}% is an average in which every owner counts once. The median owner held about 8%, and what prices
+  the asset is the share of owners' combined wealth, which no survey reports. The paper gives its results with
+  the weight at 12% and at 8%.
 - Mortality {mo['mortality'][0]}% to {mo['mortality'][1]}% a year, the same in every month. The upper figure is the census's:
   {c['ever_top_twenty_deaths']} deaths among {c['ever_top_twenty']} assets, {c['ever_top_twenty_death_rate']}% a year, rounded to one decimal.
 - The concentration term at the midpoint is what remains of the midpoint after the other three
   terms, and is not allowed below zero.
 - The past is computed with what is known today. The band for an earlier month uses surveys taken
-  after it (the {mo['anchor_date'][:4]} survey is carried back to 2012), an assumed wealth path, and for the
-  first months a beta carried back from the first one that can be computed. Holders at the time
-  could not have computed it. "Delivered against required" before {mo['anchor_date'][:4]} is a comparison with a
-  requirement built in hindsight.
+  after it: the owners' weight was surveyed in 2021 and no survey of portfolio shares exists before, so
+  earlier months use the same weight. Holders at the time could not have computed it. "Delivered against
+  required" before 2021 is a comparison with a requirement built in hindsight.
 - Age of the hand-entered inputs at the latest month-end: the last ownership survey is {age['ownership_survey']} months
   old and the last count of fund and treasury holdings {age['fund_and_treasury_holdings']} months old. Ownership has been
   entered as flat since 2023.

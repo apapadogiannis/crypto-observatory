@@ -157,7 +157,7 @@ def build(data: Path, out: Path) -> dict:
                 "mortality": [pct(c["mortality_low"]), pct(c["mortality_high"])],
                 "volatility_halflife_months": c["volatility_halflife_months"],
                 "beta_window_months": c["beta_window_months"], "beta_min_months": c["beta_min_months"], "beta_cap": c["beta_cap"],
-                "weight_cap": c["weight_cap"], "owner_weight_at_anchor": c["owner_weight_2021"], "anchor_date": c["anchor_date"],
+                "weight_cap": c["weight_cap"], "owner_weight": c["owner_weight"],
                 "fund_investor_weight": c["fund_investor_weight"],
                 "beta_carried_forward_from": mkt.dropna().index[-1].strftime("%Y-%m"),
                 "history_uses_later_anchors": True,

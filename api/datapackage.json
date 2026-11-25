@@ -116,22 +116,22 @@
      {
       "name": "beta",
       "type": "number",
-      "description": "Beta of Bitcoin to the US equity market: covariance over variance of monthly log returns in the trailing 48 months (at least 18), kept between 0 and 3. The equity series is published one to two months late, so the latest months carry the last beta that could be computed; before 18 months of data the first one is carried back"
+      "description": "Beta of Bitcoin to the US equity market: covariance over variance of monthly log returns in the trailing 48 months (at least 12), kept between 0 and 3. Every estimate uses returns up to its own month only. The equity series is published one to two months late, so the latest months carry the last beta that could be computed"
      },
      {
       "name": "correlation",
       "type": "number",
-      "description": "Correlation of Bitcoin with the US equity market over the same window as beta, carried forward and back in the same way"
+      "description": "Correlation of Bitcoin with the US equity market over the same window as beta, carried forward in the same way"
      },
      {
       "name": "weight_with_funds",
       "type": "number",
-      "description": "Share of wealth held in Bitcoin by the average owner when fund and treasury investors are counted, percent"
+      "description": "Share of wealth held in Bitcoin by the average owner when fund and treasury investors are counted, percent: market value over the wealth of surveyed owners (market value over their weight) plus the wealth of fund and treasury investors (their Bitcoin over 1.5%)"
      },
      {
       "name": "weight_surveyed",
       "type": "number",
-      "description": "Share of wealth held in Bitcoin by the average surveyed owner, percent"
+      "description": "Share of wealth held in Bitcoin by the average surveyed owner, percent: the survey value, the same in every month"
      },
      {
       "name": "weight_early_holder",

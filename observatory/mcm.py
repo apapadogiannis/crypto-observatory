@@ -6,6 +6,7 @@
 Follows "Bitcoin's Required Return" (Papadogiannis 2026), Sections 2 to 5 and Appendices B and D.
 The band prices three holders: the average owner counting fund and treasury investors (lower edge),
 the average surveyed owner and the early holder (the larger of the two is the upper edge). The
+surveyed owner's weight is held at its survey value at every date. The
 midpoint is the simple average of the two edges.
 
 This module reads no files and makes no network calls: it takes series and a configuration and
@@ -61,10 +62,10 @@ def required_return_band(btc: pd.DataFrame, market_return: pd.Series, risk_free:
     before = age < (pd.Timestamp(first_date) - genesis).days / YEAR
     q[before] = first_value * adr[before] / adr.iloc[i_first]
 
-    # --- wealth of surveyed owners, carried back and forward from the anchor survey
-    i_anchor = idx.get_indexer([pd.Timestamp(c["anchor_date"])], method="nearest")[0]
-    wealth_path = pd.Series(_interp(cfg["wealth_per_owner"], age, genesis), index=idx)
-    owners_wealth = cap.iloc[i_anchor] / c["owner_weight_2021"] * (q / q.iloc[i_anchor]) * wealth_path
+    # --- surveyed owners: their weight is the survey's, the same at every date. Surveys that ask owners what
+    #     their holdings are worth show holdings per owner moving little with the price, so a higher market
+    #     value means more owners, not more per owner. Their wealth is then the market value over the weight.
+    owners_wealth = cap / c["owner_weight"]
 
     # --- Bitcoin held through funds and by public companies, and the wealth of those investors
     fund_btc = pd.Series(1e6 * _interp(cfg["fund_and_treasury_btc"], age, genesis), index=idx)

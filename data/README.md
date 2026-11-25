@@ -17,7 +17,7 @@ every published number can be recomputed from what is stored.
 | `vintages.csv` | The required return of each month-end as first published: the band and its four terms, with the last day of data of the build that recorded it. One row per month-end, added by the build the first time that month is the latest, and never rewritten | written by `build.py`; starts with October 2026 |
 | `sources.json` | What the last update retrieved from each source, and to which date | written by `update.py` |
 
-Survey and filing anchors (ownership, wealth per owner, fund and treasury holdings) are not data
+Survey and filing anchors (the owners' portfolio weight, ownership, fund and treasury holdings) are not data
 files: they are entered by hand in `config/model.toml`, each with its date.
 
 A value in the implied-premium file is dated at the start of a month. The build files it at the

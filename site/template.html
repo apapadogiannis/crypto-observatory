@@ -282,7 +282,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
     <div class="risk">
       <h3><i style="background:var(--orange)"></i>Concentration risk <span>risk aversion (γ) × variance (σ²) × holder's weight (w)</span></h3>
-      <p>Bitcoin's holders keep a large share of their wealth in one volatile asset and must be paid for it. Three inputs set the term. Variance and the holder's weight move through time and are charted below. Risk aversion is held constant and is bounded, not measured: 1 at the lower edge and 2.8 at the upper edge.</p>
+      <p>Bitcoin's holders keep a large share of their wealth in one volatile asset and must be paid for it. Three inputs set the term. Variance moves through time. The holder's weight is taken for three holders, described below. Risk aversion is held constant and is bounded, not measured: 1 at the lower edge and 2.8 at the upper edge.</p>
       <div class="facts"><div><b>γ = 1.0</b><span>lower edge: log utility. Crypto owners tolerate more risk than other households.</span></div><div><b>γ = 2.8</b><span>upper edge: the upper part of the 2 to 3 range common in household finance.</span></div><div><b>γ = 1.0</b><span>early holder, whose weight is what makes the term large.</span></div></div>
       <div class="grid2">
         <div class="mini"><h3>Concentration term</h3><p>points a year added to the required return</p><div class="chart" id="m-conc"></div></div>
@@ -291,6 +291,15 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <div class="mini" style="margin-top:12px"><h3>Input: holder's weight in Bitcoin</h3><p>percent of the holder's wealth held in Bitcoin, for the three holders the band prices</p>
         <div class="legend"><span><i class="ln" style="border-color:var(--magenta)"></i>average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>early holder</span></div>
         <div class="chart" id="m-w"></div></div>
+      <h3 style="margin-top:16px">How the holder's weight is measured</h3>
+      <ul class="note">
+        <li><b>The surveyed owner: 19% at every date.</b> US households that owned crypto in 2021 kept 19% of their financial assets in it on average, and the 2025 wave of the same survey reports similar shares (Weber, Candia, Coibion and Gorodnichenko 2026). The page uses that weight in every month and does not move it with the price.</li>
+        <li><b>Why it is not moved with the price.</b> Surveys that ask owners what their holdings are worth show holdings per owner moving little. In the United Kingdom the mean holding per owner was £1,575 in December 2019 and £1,845 in August 2024, while Bitcoin's price rose eightfold and the number of owners went from 1.9 to 7 million (Financial Conduct Authority). In Canada the median Bitcoin holding was about Can$500 in four of five surveys from 2018 to 2023, over which the price varied fifteenfold (Bank of Canada). A higher market value shows up as more owners, not as more per owner.</li>
+        <li><b>Counting fund and treasury investors: a lower weight.</b> Investors in spot ETFs and in public companies that hold Bitcoin are not "crypto owners" in a household survey. They are taken to keep 1.5% of their wealth in Bitcoin, so their wealth is the value of their Bitcoin divided by 1.5%. Added to the surveyed owners' wealth (market value divided by 19%), it gives the weight of the lower edge. That weight falls only as funds and companies hold more of the supply.</li>
+        <li><b>The early holder.</b> While ownership was no higher than in the 2018 survey (1.2% of adults), the coins sat with holders for whom Bitcoin was nearly everything they owned: a weight of 1. The weight falls in proportion as ownership grows.</li>
+        <li><b>What is uncertain.</b> The 19% is an average in which every owner counts once; the median owner held about 8%. What prices the asset is the share of owners' combined wealth, which no survey reports and which is lower if wealthier owners hold smaller shares. With the weight at 12% or at 8% the paper's required return for 2026 is one to two points lower. No survey of portfolio shares exists before 2021, so earlier months use the same 19%; the surveys of holdings begin in 2018, and report values, not shares of wealth.</li>
+        <li><b>What changed.</b> Earlier versions of this page let the surveyed owner's weight follow Bitcoin's market value, so it rose at every peak (80% at the end of 2017, 34% in mid-2025). That is not what the surveys show. With the weight held at 19% the required return of recent months is about one point lower.</li>
+      </ul>
     </div>
 
     <div class="risk">
@@ -456,7 +465,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <section class="card">
     <h2>From one holder to the band</h2>
     <ul class="note">
-      <li><b>One holder here, a range on the Bitcoin page.</b> Risk aversion and the holder's weight are not measured exactly, so the Bitcoin page shows a band. Its lower edge is the holder through a fund and its upper edge the surveyed owner, the two Bitcoin cases above, with the market term taken 15% lower and 15% higher. Before 2017 the early holder usually set the upper edge. The <a href="#required-return">Required return</a> tab shows this month by month.</li>
+      <li><b>One holder here, a range on the Bitcoin page.</b> Risk aversion and the holder's weight are not measured exactly, so the Bitcoin page shows a band. Its lower edge is the holder through a fund and its upper edge the surveyed owner, the two Bitcoin cases above, with the market term taken 15% lower and 15% higher. Through 2018 the early holder set the upper edge. The <a href="#required-return">Required return</a> tab shows this month by month.</li>
       <li><b>Each term rests on an established result.</b> The market term is the CAPM. The concentration term is the standard portfolio-choice condition (Merton 1969), read as a price when only some investors hold the asset (Merton 1987). The mortality term is the usual compensation for a jump: probability times loss (Merton 1976).</li>
       <li><b>It reduces to the CAPM.</b> When the asset cannot die and holders are diversified, the last two terms vanish. That is the stock index fund case above.</li>
       <li><b>It is tested.</b> The <a href="#tests">Tests</a> tab sets the equation against what Bitcoin delivered, month by month since 2012.</li>
@@ -998,7 +1007,7 @@ function premiumCard(){
 function notesText(){
   const n=DATA.meta.notes, to=fmtM(parse(n.to)), set=(id,s)=>{document.getElementById(id).textContent=s;};
   set("n-flows","In the "+n.months+" months to "+to+", against monthly issuance, net exchange flows and changes in fund holdings together, it shows no reliable link (R² "+n.flows_r2.toFixed(2)+", no coefficient with a t-statistic above "+n.flows_largest_t.toFixed(1)+").");
-  set("n-repricing","The month-to-month change in the required return moves with the return itself (correlation "+n.repricing_correlation.toFixed(2)+"), because volatility and the holder's weight are computed from the price. Using only inputs that do not depend on the price, the fit is "+(100*n.repricing_r2_price_free_inputs).toFixed(0)+"%.");
+  set("n-repricing","The month-to-month change in the required return moves with the return itself (correlation "+n.repricing_correlation.toFixed(2)+"), because volatility is computed from the price. Using only inputs that do not depend on the price, the fit is "+(100*n.repricing_r2_price_free_inputs).toFixed(0)+"%.");
   set("n-short","Month by month, the correlation between the required return and the next month's return is "+n.monthly_correlation_required_delivered.toFixed(2)+".");
 }
 function tiles(){
