@@ -1,7 +1,7 @@
 {
   "title": "Crypto Observatory: required returns, risks and survival",
   "upload_type": "software",
-  "description": "A page and a data file that answer one question for Bitcoin: what return should its holders require for the risks they carry, and what did it deliver? The required return is computed with the MCM equation (market, concentration and mortality risk) and rebuilt every month from public data. The page shows the required return as a band since 2012 against delivered returns, how the band is built, the tests of fit against the CAPM, Bitcoin beside equities, the equation term by term, a sensitivity to the equity premium, and a census of cryptoasset deaths. Before every build the model is run on a frozen copy of the paper's inputs and must reproduce the paper's stored results. Beside the page there are data files for programs and AI agents (api/) with a guide (api/llms.txt). Live page: https://apapadogiannis.github.io/crypto-observatory/. The stored Bitcoin series are from the Coin Metrics community data (Coin Metrics, Inc., CC BY-NC 4.0); the code is MIT-licensed. Independent research, for informational and academic purposes only; not investment advice.",
+  "description": "A site and a set of data files that answer one question for Bitcoin, Ether, BNB, Solana and Tron: what return should the holders of each require for the risks they carry? The required return is computed with the MCM equation (market, concentration and mortality risk) and rebuilt every month from public data. The landing page compares the five assets, with gold and three equity series for scale: what each required return is made of, its Sharpe ratio and compound return, and how it has moved. For Bitcoin the site shows the required return as a band since 2012 against delivered returns, how the band is built, where the holder's weight comes from, the tests of fit against the CAPM, the equation term by term, and a census of cryptoasset deaths. Before every build the model is run on a frozen copy of the paper's inputs and must reproduce the paper's stored results. Beside the page there are data files for programs and AI agents (api/): a small latest.json with every asset's latest figures, tables by asset and month, and a guide (api/llms.txt). Live page: https://apapadogiannis.github.io/crypto-observatory/. The stored Bitcoin series are from the Coin Metrics community data (Coin Metrics, Inc., CC BY-NC 4.0); the code is MIT-licensed. Independent research, for informational and academic purposes only; not investment advice.",
   "creators": [
     {
       "name": "Papadogiannis, Agisilaos",
@@ -18,7 +18,9 @@
     "mortality",
     "survival analysis",
     "CAPM",
-    "dashboard"
+    "dashboard",
+    "Ether",
+    "Sharpe ratio"
   ],
   "license": "MIT",
   "related_identifiers": [
@@ -38,6 +40,6 @@
       "scheme": "url"
     }
   ],
-  "version": "1.5.0",
-  "publication_date": "2026-11-23"
+  "version": "1.6.0",
+  "publication_date": "2026-11-25"
 }

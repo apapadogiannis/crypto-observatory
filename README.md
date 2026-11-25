@@ -109,9 +109,9 @@ each month-end when it was first computed, from November 2026 on. No build rewri
 
 ## Status
 
-First version: Bitcoin. The data are updated on the third of each month by a scheduled job, which
-downloads the new days, stores them in `data/`, reruns the check and rebuilds the page. Other assets
-and a live census of deaths are to follow.
+Five cryptoassets: Bitcoin in full, and Ether, BNB, Solana and Tron priced with the same equation. The
+data are updated on the third of each month by a scheduled job, which downloads the new days, stores
+them in `data/`, reruns the check and rebuilds the page. A live census of deaths is to follow.
 
 ## Quickstart
 
