@@ -482,6 +482,11 @@ files are under api/.
   states over the next {st['horizon_months']} months, by sample. It is a record, not a forecast. Windows that start in
   neighbouring months overlap, so quote a row with its `spells`: the number of separate spells behind it.
   A drawdown is not an input of the equation; it moves the requirement only through volatility.
+- `assets.tests` in data.json runs Bitcoin's monthly test on Ether, BNB, Solana and Tron. Read it with
+  two limits. These four are listed because they are large today: they are survivors, and a survivor
+  delivers more than any requirement whether or not the model is right. And their records are short:
+  no figure there is more than about two standard errors from zero, for either model. Do not report
+  it as evidence that the equation is confirmed for these assets.
 - `path` in data.json sets a straight trend line (least squares through the log of the month-end
   closes, with the standard deviation of the distances from it) beside the path the required return
   implies: the price if holders earn exactly the required compound return from the latest month-end

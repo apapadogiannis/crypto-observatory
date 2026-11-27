@@ -139,6 +139,21 @@ for tr in pa["trend"].values():
     assert tr["path_from_its_level"]["level"] == tr["value_now"]
 assert "Neither is a forecast" in page and "`path` in data.json" in guide
 
+# The test of the other assets: one row each, the MCM equation leaving no more unexplained than the CAPM
+# (it adds two terms that are never negative), and the limits stated wherever the figures are.
+at = {r["asset"]: r for r in doc["assets"]["tests"]}
+assert list(at) == ["eth", "bnb", "sol", "trx"]
+for r in at.values():
+    assert r["mcm_unexplained"] <= r["capm_unexplained"] and r["months"] >= 36 and r["mcm_unexplained_se"] > 0
+    assert abs(r["gap"] - (r["delivered"] - r["required_mid"])) < 0.2
+assert "survivors" in guide and "These four are survivors" in page
+# The sections: five, and every address the site has used opens one of them.
+for view in ("compare", "bitcoin", "altcoins", "method", "data"):
+    assert f'id="view-{view}"' in page
+for pane in ("overview", "tests", "volatility", "path", "equation", "band", "holders", "census"):
+    assert page.count(f'id="pane-{pane}"') == 1 and f'data-tab="{pane}"' in page
+assert '"required-return":["method","band"]' in page and 'compared:["compare"]' in page
+
 # The record of what was first published: one row per month-end, the latest month in it, and stored
 # rows unchanged by a build.
 stored = list(csv.DictReader((ROOT / "data" / "vintages.csv").open(encoding="utf-8")))

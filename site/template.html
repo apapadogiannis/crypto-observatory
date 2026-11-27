@@ -245,7 +245,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
 <div class="wrap">
   <header class="site">
     <div class="brand"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="var(--blue)"/><polygon points="13,32 54,9 54,55" fill="#fff" opacity=".38"/><line x1="13" y1="32" x2="54" y2="32" stroke="#fff" stroke-width="6" stroke-linecap="round"/><circle cx="14" cy="32" r="8" fill="#fff"/></svg><span>Crypto Observatory<small>the return holders should require</small></span></div>
-    <nav aria-label="Sections"><button type="button" data-view="compare">Compare</button><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="equation">How it works</button><button type="button" data-view="census">Deaths</button><button type="button" data-view="data">Data</button></nav>
+    <nav aria-label="Sections"><button type="button" data-view="compare">Compare</button><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="altcoins">Altcoins</button><button type="button" data-view="method">Method</button><button type="button" data-view="data">Data</button></nav>
   </header>
   <div class="view" id="view-compare">
   <h1>What return should a cryptoasset's holders require?</h1>
@@ -256,8 +256,8 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <div class="acards" id="a-cards"></div>
   <nav class="ways" aria-label="What else is here">
     <a href="#overview"><b>Bitcoin in depth</b><span>The required return since 2012, tested against what Bitcoin delivered, with compounding, drawdowns and trend.</span></a>
-    <a href="#equation"><b>How it works</b><span>The equation term by term, with sliders to move each input and see the answer change.</span></a>
-    <a href="#census"><b>Deaths</b><span>A census of cryptoassets that died, and what that risk adds to the required return.</span></a>
+    <a href="#altcoins"><b>Altcoins</b><span>Ether, BNB, Solana and Tron one by one: their terms through time, and the test their short records allow.</span></a>
+    <a href="#equation"><b>Method</b><span>The equation with sliders, how the band is built, who the holders are, and the census of deaths.</span></a>
     <a href="#data"><b>Data</b><span>Every figure as files, with a guide written for AI assistants and the terms of reuse.</span></a>
   </nav>
 
@@ -272,6 +272,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <div><b><i style="background:var(--orange)"></i>Concentration risk</b><span>Crypto owners keep a large share of their wealth in a volatile asset, and cannot diversify that away. Stocks have none of it.</span></div>
       <div><b><i style="background:var(--aqua)"></i>Mortality risk</b><span>Cryptoassets die. The pay for that is measured from how often top-twenty assets have died.</span></div>
     </div>
+    <p class="sub" id="gold-note" style="margin-top:12px"></p>
   </section>
 
   <section class="card" id="sec-a-hist">
@@ -291,6 +292,26 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </ul>
   </section>
 
+  <section class="card" id="sec-cmp">
+    <h2>Bitcoin beside stocks and gold</h2>
+    <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. Bitcoin and gold are priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
+    <p class="sub" id="cmp-headline" style="color:var(--ink);font-weight:600"></p>
+    <div class="grid2">
+      <div class="mini"><h3>Required return: average and compound</h3><p>percent a year</p>
+        <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>average</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>compound</span><span><i class="ln" style="border-color:var(--axis)"></i>drag: the distance between them</span><span><i class="ln" style="border-color:var(--ink2);border-top-style:dashed"></i>risk-free rate</span></div>
+        <div class="chart" id="c-cmp-ret"></div></div>
+      <div class="mini"><h3>Sharpe ratio: on the average and on the compound return</h3><p>return over the risk-free rate, divided by volatility</p>
+        <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>on the average</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>on the compound</span></div>
+        <div class="chart" id="c-cmp-sh"></div></div>
+    </div>
+    <ul class="note" style="margin-top:14px">
+      <li><b>Average and compound.</b> The required return is an average across years. A position that is bought and never rebalanced grows at the compound rate, which is lower by the drag: half the variance. For a volatile asset the drag is large.</li>
+      <li><b>While it survives.</b> Bitcoin's figures are what holders require in the years the asset lives. <span id="cmp-death"></span></li>
+      <li><b>How each column is measured.</b> <span id="cmp-sample"></span> Bitcoin's beta and volatility are the ones used in its required return, with recent months weighted more. The Sharpe ratio on the compound return is descriptive: the measure is defined on average returns.</li>
+      <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Gold is a gold ETF to May 2026 and the month-end price of a gold token after. The other cryptoassets are under Compare. The Nasdaq-100, which the paper also shows, is not here.</li>
+    </ul>
+  </section>
+
   <section class="card" id="sec-a-table">
     <h2>The inputs behind each cryptoasset</h2>
     <p class="sub" id="a-table-sub"></p>
@@ -304,7 +325,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <li><b>A hurdle, not a forecast.</b> A required return is what holders should ask for given the risk. An asset can deliver more or less for years.</li>
       <li><b>Quote the figure with its band.</b> Risk aversion and the holder's weight are not known exactly, so the answer is a range. The band is a range of inputs, not a statistical confidence interval.</li>
       <li><b>Average and compound are different things.</b> The required return is an average yearly return. A volatile asset compounds at much less: about half its variance is lost each year. The table gives both.</li>
-      <li><b>Only Bitcoin is tested.</b> Bitcoin's requirement is set against what it delivered since 2012, under <a href="#overview">Bitcoin</a>. The other assets are priced with the same equation and have too short a record to test.</li>
+      <li><b>Only Bitcoin is tested.</b> Bitcoin's requirement is set against what it delivered since 2012, under <a href="#overview">Bitcoin</a>. The other assets are priced with the same equation; what their short records allow is under <a href="#altcoins">Altcoins</a>.</li>
       <li><b>A low figure is not a safety rating.</b> An asset that has moved little with stocks gets a small market term. That says nothing about who controls it or how it is run.</li>
     </ul>
   </section>
@@ -326,12 +347,9 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </noscript>
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button type="button" role="tab" data-tab="overview">Overview</button>
-    <button type="button" role="tab" data-tab="required-return">Required return</button>
+    <button type="button" role="tab" data-tab="tests">Tests</button>
     <button type="button" role="tab" data-tab="volatility">Volatility and drawdown</button>
     <button type="button" role="tab" data-tab="path">Trend and path</button>
-    <button type="button" role="tab" data-tab="holders">Holders</button>
-    <button type="button" role="tab" data-tab="tests">Tests</button>
-    <button type="button" role="tab" data-tab="compared">Versus stocks and gold</button>
   </nav>
 
   <div class="filters"><span>Period</span>
@@ -358,68 +376,18 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </ul>
   </section>
 
-  </div>
-
-  <div class="pane" id="pane-required-return">
-  <section class="card" id="sec-edges">
-    <h2>How the band is built</h2>
-    <p class="sub">The band prices three holders. The <b>lower edge</b> is the average owner when fund and treasury investors are counted, with the low inputs. The <b>upper edge</b> is the larger of two candidates: the average surveyed owner with the high inputs, or the early holder, who was all-in while few people owned Bitcoin. Each candidate is solid while it sets the upper edge and dashed while it does not, and the strip along the top names the holder who sets it. The <b>midpoint</b> is the simple average of the two edges; it is the required return used in the tests. Percent a year, log scale.</p>
-    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint</span><span><i class="ln" style="border-color:var(--magenta)"></i>lower edge: average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>upper candidate: average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>upper candidate: early holder</span></div>
-    <div class="chart" id="m-edges"></div>
+  <section class="card" id="sec-per">
+    <h2>How much of the delivered return each model explains</h2>
+    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the US equity market's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is the unexplained return, in the lower panel: the circle less the top of the bar.</p>
+    <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--ink2)"></i>left unexplained by the MCM equation, with ± one standard error</span></div>
+    <div class="chart" id="c-per"></div>
+    <div class="scroll"><table id="t-per"></table></div>
+    <details class="more"><summary>The same test as a regression</summary><div class="mini"><p>percent a year</p>
+      <p class="sub">The standard test of a pricing model regresses the asset's return over the risk-free rate on the equity market's and asks whether the intercept, alpha, is zero. For the MCM equation the concentration and mortality terms are subtracted from Bitcoin's return first. Here the slope is fitted by the regression; in the table above the beta is the rolling one known at each month-end, which is why the two differ slightly.</p>
+      <div class="scroll"><table id="t-reg"></table></div></div></details>
   </section>
 
-  <section class="card" id="sec-terms">
-    <h2>What the required return is made of</h2>
-    <p class="sub">The four terms of the equation at the midpoint of the band, and their sum, at each month-end. Percent a year, log scale. A term below 1% is drawn at 1%.</p>
-    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>required return (sum)</span><span><i class="ln" style="border-color:var(--orange)"></i>concentration risk</span><span><i class="ln" style="border-color:var(--violet)"></i>market risk</span><span><i class="ln" style="border-color:var(--rf)"></i>risk-free rate</span><span><i class="ln" style="border-color:var(--aqua)"></i>mortality risk</span></div>
-    <div class="chart" id="c-terms"></div>
-  </section>
 
-  <section class="card" id="sec-risk">
-    <h2>The three risks</h2>
-    <p class="sub">The required return is the risk-free rate plus one term for each risk. Each block below shows one risk: its formula, what it adds at the midpoint of the band, and the inputs that move it.</p>
-    <div class="eq" id="eq"></div>
-    <div class="mini" style="margin-top:16px"><h3 id="now-title">The band worked out</h3><p>each term at the lower edge, the upper edge and the midpoint, in points a year, with the inputs used</p>
-      <div class="scroll"><table id="t-now" class="now"></table></div></div>
-
-    <div class="risk">
-      <h3><i style="background:var(--violet)"></i>Market risk <span>beta × equity risk premium (4% a year)</span></h3>
-      <p>The risk Bitcoin shares with the stock market, the one risk the CAPM prices. It rises when Bitcoin moves more closely with equities.</p>
-      <div class="grid2">
-        <div class="mini"><h3>Market term</h3><p>points a year added to the required return</p><div class="chart" id="m-mkt"></div></div>
-        <div class="mini"><h3>Input: beta to the US equity market</h3><p>rolling four years</p><div class="chart" id="m-beta"></div></div>
-        <div class="mini"><h3>Behind beta: correlation with the US equity market</h3><p>rolling four years</p><div class="chart" id="m-corr"></div></div>
-      </div>
-    </div>
-
-    <div class="risk">
-      <h3><i style="background:var(--orange)"></i>Concentration risk <span>risk aversion (γ) × variance (σ²) × holder's weight (w)</span></h3>
-      <p>Bitcoin's holders keep a large share of their wealth in one volatile asset and must be paid for it. Three inputs set the term. Variance moves through time. The holder's weight is taken for three holders, described below. Risk aversion is held constant and is bounded, not measured: 1 at the lower edge and 2.8 at the upper edge.</p>
-      <div class="facts"><div><b>γ = 1.0</b><span>lower edge: log utility. Crypto owners tolerate more risk than other households.</span></div><div><b>γ = 2.8</b><span>upper edge: the upper part of the 2 to 3 range common in household finance.</span></div><div><b>γ = 1.0</b><span>early holder, whose weight is what makes the term large.</span></div></div>
-      <div class="grid2">
-        <div class="mini"><h3>Concentration term</h3><p>points a year added to the required return</p><div class="chart" id="m-conc"></div></div>
-        <div class="mini"><h3>Input: volatility</h3><p>percent a year</p><div class="chart" id="m-vol"></div></div>
-      </div>
-      <div class="mini" style="margin-top:12px"><h3>Input: holder's weight in Bitcoin</h3><p>percent of the holder's wealth held in Bitcoin, for the three holders the band prices</p>
-        <div class="legend"><span><i class="ln" style="border-color:var(--magenta)"></i>average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>early holder</span></div>
-        <div class="chart" id="m-w"></div></div>
-      <p style="margin-top:12px">The surveyed owner is held at 19% at every date; the lower weight adds the investors in funds and in companies that hold Bitcoin; the early holder starts at 100% and falls as ownership grows. <a href="#holders">How each weight is measured, with the surveys behind it, is under Holders.</a></p>
-    </div>
-
-    <div class="risk">
-      <h3><i style="background:var(--aqua)"></i>Mortality risk <span>probability of death a year (λ) × share lost on death (1 − δ)</span></h3>
-      <p>A holder must be paid the loss she can expect from the asset dying: the chance it dies in a year, times the share of her money she loses if it does. Both come from the census of cryptoasset deaths, read two ways. The term is the same at every date, because the census shows no fall in the death rate with age.</p>
-      <div class="facts">
-        <div><b>0.30% × 95% ≈ 0.3 pts</b><span>low reading: sudden collapses only (LUNA, UST, FTT), with 95% lost.</span></div>
-        <div><b>3.5% × 100% = 3.5 pts</b><span>high reading: every death of a top-twenty asset, slow fades included, counted as a total loss.</span></div>
-        <div><b>(0.3 + 3.5) ÷ 2 = 1.9 pts</b><span>midpoint, the figure in the required return.</span></div>
-      </div>
-      <p>The death rates are measured on assets that were ever in the top twenty: <span id="facts"></span>. The census is the paper's, taken on 24 May 2026.</p>
-      <div class="mini"><h3>Deaths among assets that were ever in the top twenty</h3><p>number per year</p>
-        <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
-        <div class="chart" id="m-deaths"></div></div>
-    </div>
-  </section>
   </div>
 
   <div class="pane" id="pane-volatility">
@@ -502,81 +470,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </section>
   </div>
 
-  <div class="pane" id="pane-holders">
-  <section class="card" id="sec-h-who">
-    <h2>Whose risk the concentration term prices</h2>
-    <p class="sub">The concentration term is risk aversion × variance × the share of the holder's wealth that moves with Bitcoin. Variance comes from prices. The share cannot be read from prices: it depends on who holds Bitcoin, and it is measured from household surveys and company filings. The band prices three holders, and this tab shows where each weight comes from.</p>
-    <div class="tiles" id="h-tiles"></div>
-    <div class="mini"><h3>The three weights through time</h3><p>percent of the holder's wealth held in Bitcoin</p>
-      <div class="legend"><span><i class="ln" style="border-color:var(--yellow)"></i>early holder</span><span><i class="ln" style="border-color:var(--blue)"></i>average surveyed owner</span><span><i class="ln" style="border-color:var(--magenta)"></i>average owner, counting fund and treasury investors</span></div>
-      <div class="chart" id="h-w"></div></div>
-    <p class="sub" id="h-edge" style="margin-top:10px"></p>
-  </section>
-
-  <section class="card" id="sec-h-owner">
-    <h2>The surveyed owner: <span id="h-ow"></span>% at every date</h2>
-    <p class="sub">US households that owned crypto in 2021 kept 19% of their financial assets in it on average, and the 2025 wave of the same survey reports similar shares (Weber, Candia, Coibion and Gorodnichenko 2026). Between the two waves Bitcoin's price rose 2.3 times. An owner who had simply held would have gone from 19% to about 35%. The surveys do not show that, so the page uses 19% in every month and does not move it with the price.</p>
-    <p class="sub">Two national surveys ask owners what their holdings are worth, wave after wave. Each line below is a multiple of its value in the first wave. The price multiplies; the holding per owner stays close to ×1. A higher market value shows up as more owners, not as more per owner.</p>
-    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>Bitcoin's price</span><span><i class="ln" style="border-color:var(--orange)"></i>owners (UK: number; Canada: share of adults)</span><span><i class="ln" style="border-color:var(--blue)"></i>mean holding per owner</span><span><i class="ln" style="border-color:var(--aqua)"></i>median holding per owner</span></div>
-    <div class="grid2">
-      <div class="mini"><h3>United Kingdom, four waves</h3><p>multiple of the first wave, log scale</p><div class="chart" id="h-uk"></div>
-        <div class="scroll"><table id="t-h-uk"></table></div></div>
-      <div class="mini"><h3>Canada, five waves</h3><p>multiple of the first wave, log scale</p><div class="chart" id="h-ca"></div>
-        <div class="scroll"><table id="t-h-ca"></table></div></div>
-    </div>
-    <p class="sub" style="margin-top:10px">Holdings are in pounds and Canadian dollars as the surveys report them. Bitcoin's price is its average in US dollars over the months of each survey's fieldwork. The Canadian survey reports the median holding only.</p>
-  </section>
-
-  <section class="card" id="sec-h-funds">
-    <h2>The lower edge: adding fund and treasury investors</h2>
-    <p class="sub">Someone who owns a spot ETF, or shares of a company that holds Bitcoin, is not a "crypto owner" in a household survey, yet carries Bitcoin's risk. These investors are diversified: they are taken to keep <span id="h-fw"></span>% of their wealth in Bitcoin. Counting their wealth beside the surveyed owners' gives a lower average weight, the one behind the lower edge of the band.</p>
-    <div class="mini" style="margin:4px 0 12px"><h3 id="h-work-title"></h3><p>for every $100 of Bitcoin outstanding</p>
-      <div class="scroll"><table id="t-h-work" class="now"></table></div></div>
-    <div class="grid2">
-      <div class="mini"><h3>Held through funds and by public companies</h3><p>percent of supply</p><div class="chart" id="h-inst"></div></div>
-      <div class="mini"><h3>The resulting weight</h3><p>percent of wealth, average owner counting fund and treasury investors</p><div class="chart" id="h-wlo"></div></div>
-    </div>
-    <p class="sub" style="margin-top:10px">This weight does not move with the price. It falls only as funds and companies hold more of the supply, which is how the required return falls as more diversified investors hold Bitcoin. The holdings are from the Grayscale trust's filings to 2023, US spot ETFs from 2024, and public companies' reported holdings.</p>
-  </section>
-
-  <section class="card" id="sec-h-early">
-    <h2>The early holder</h2>
-    <p class="sub">While few people owned Bitcoin, the coins sat with holders for whom it was nearly everything they owned. The band gives that holder a weight of 100% as long as ownership is no higher than in the 2018 survey (<span id="h-few"></span>% of US adults), and lets the weight fall in proportion as ownership grows: weight = <span id="h-few2"></span>% ÷ ownership. With log utility (γ = 1), that holder's required return is the risk-free rate plus the weight times variance. It sets the upper edge of the band whenever it is the higher of the two. <span id="h-early-until"></span></p>
-    <div class="scroll"><table id="t-h-own"></table></div>
-    <p class="sub" style="margin-top:10px">Between surveys ownership grows at a constant rate. Before the first survey it follows the number of funded Bitcoin addresses.</p>
-  </section>
-
-  <section class="card" id="sec-h-unc">
-    <h2>What is uncertain, and what changed</h2>
-    <ul class="note">
-      <li><b>19% is an average in which every owner counts once.</b> The median owner held about 8%. What prices the asset is the share of owners' combined wealth, which no survey reports and which is lower if wealthier owners hold smaller shares. With the weight at 12% or at 8% the paper's required return for 2026 is one to two points lower (16.9% and 16.1% against 18.1%).</li>
-      <li><b>The portfolio share is observed in one survey.</b> The 19% is from US households in 2021, reported as similar in 2025. The British and Canadian surveys report the value of holdings, not shares of wealth. No survey of shares exists before 2021, so earlier months use the same 19%.</li>
-      <li><b>Household surveys miss some holders.</b> The largest holders, funds, and holders outside the surveyed countries are not in them. Funds and public companies are added as described above; the others are not.</li>
-      <li><b>Risk aversion is bounded, not measured.</b> 1 at the lower edge and for the early holder, 2.8 at the upper edge. The weight and risk aversion together set most of the band's width.</li>
-      <li><b>What changed in November 2026.</b> Earlier versions of this page let the surveyed owner's weight follow Bitcoin's market value, so it rose at every peak (80% at the end of 2017, 34% in mid-2025). That is not what the surveys show. With the weight held at 19% the required return of recent months is about one point lower.</li>
-    </ul>
-    <h3 style="font-size:14.5px;margin:14px 0 4px">Sources</h3>
-    <ul class="note">
-      <li>Weber, Candia, Coibion and Gorodnichenko (2026), "Do You Even Crypto, Bro? Cryptocurrencies in Household Finance", Federal Reserve Bank of Cleveland working paper 26-16: the 19%.</li>
-      <li>Financial Conduct Authority, cryptoasset consumer research, waves 2 to 5, and its <a href="https://www.fca.org.uk/freedom-information/information-average-value-uk-crypto-holdings-september-2025" target="_blank" rel="noopener">September 2025 response on average holdings</a>.</li>
-      <li>Bank of Canada, Bitcoin Omnibus Survey, staff discussion papers <a href="https://www.bankofcanada.ca/wp-content/uploads/2022/04/sdp2022-10.pdf" target="_blank" rel="noopener">2022-10</a>, <a href="https://www.bankofcanada.ca/wp-content/uploads/2023/07/sdp2023-14.pdf" target="_blank" rel="noopener">2023-14</a> and <a href="https://bankofcanada.ca/wp-content/uploads/2025/03/sdp2025-4.pdf" target="_blank" rel="noopener">2025-4</a>.</li>
-      <li>The full derivation is in Sections 4 and 5 and Appendix B of the paper, and the survey figures are in <code>data/surveys/holder_surveys.csv</code> of this tool's repository.</li>
-    </ul>
-  </section>
-  </div>
-
   <div class="pane" id="pane-tests">
-  <section class="card" id="sec-per">
-    <h2>How much of the delivered return each model explains</h2>
-    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the US equity market's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is the unexplained return, in the lower panel: the circle less the top of the bar.</p>
-    <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--ink2)"></i>left unexplained by the MCM equation, with ± one standard error</span></div>
-    <div class="chart" id="c-per"></div>
-    <div class="scroll"><table id="t-per"></table></div>
-    <details class="more"><summary>The same test as a regression</summary><div class="mini"><p>percent a year</p>
-      <p class="sub">The standard test of a pricing model regresses the asset's return over the risk-free rate on the equity market's and asks whether the intercept, alpha, is zero. For the MCM equation the concentration and mortality terms are subtracted from Bitcoin's return first. Here the slope is fitted by the regression; in the table above the beta is the rolling one known at each month-end, which is why the two differ slightly.</p>
-      <div class="scroll"><table id="t-reg"></table></div></div></details>
-  </section>
-
   <section class="card" id="sec-why">
     <h2>Why delivered differed from required</h2>
     <p class="sub">Read each period in two moves. <b>First, the gap.</b> The blue bar is the premium holders required over the risk-free rate, and the circle is what Bitcoin delivered. The black line between them is the gap: delivered minus required. <b>Then, where the gap came from.</b> Part of it came with the equity market: equities paid more, or less, than the 4% a year the equation assumes, and Bitcoin moves with them in proportion to its beta. The rest is left unexplained by the equation: it is the part specific to Bitcoin. Percent a year.</p>
@@ -621,35 +515,61 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </section>
   </div>
 
-  <div class="pane" id="pane-compared">
-  <section class="card" id="sec-cmp">
-    <h2>Bitcoin beside equities and gold</h2>
-    <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. Bitcoin and gold are priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
-    <p class="sub" id="cmp-headline" style="color:var(--ink);font-weight:600"></p>
+  </div>
+
+  <div class="view" id="view-altcoins">
+  <h1>What return should the holders of other cryptoassets require?</h1>
+  <p class="lede">Ether, BNB, Solana and Tron, priced with the same equation as Bitcoin. Their records are short and they are here because they survived, so the test at the foot of this page is shown with its limits. It is a hurdle rate, <b>not a forecast</b>.</p>
+  <div class="stamp" id="alt-stamp"></div>
+  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="#data">data</a></p>
+  <div class="filters"><span>Asset</span><div class="seg" role="group" aria-label="Asset" id="alt-pick"></div></div>
+  <div class="tiles" id="alt-tiles"></div>
+
+  <section class="card" id="sec-alt-band">
+    <h2 id="alt-band-title">The required return through time</h2>
+    <p class="sub" id="alt-band-sub"></p>
+    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i class="ln" style="border-color:var(--ink)"></i>compound, midpoint</span><span><i class="ln" style="border-color:var(--mut);border-top-style:dashed"></i>Bitcoin, midpoint</span></div>
+    <div class="chart" id="c-alt-band"></div>
+  </section>
+
+  <section class="card" id="sec-alt-terms">
+    <h2>What moves it</h2>
+    <p class="sub">The two terms that differ from asset to asset, and the three inputs behind them, each measured from the asset's own prices. The risk-free rate and the mortality term are the same for every asset.</p>
     <div class="grid2">
-      <div class="mini"><h3>Required return: average and compound</h3><p>percent a year</p>
-        <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>average</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>compound</span><span><i class="ln" style="border-color:var(--axis)"></i>drag: the distance between them</span><span><i class="ln" style="border-color:var(--ink2);border-top-style:dashed"></i>risk-free rate</span></div>
-        <div class="chart" id="c-cmp-ret"></div></div>
-      <div class="mini"><h3>Sharpe ratio: on the average and on the compound return</h3><p>return over the risk-free rate, divided by volatility</p>
-        <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>on the average</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>on the compound</span></div>
-        <div class="chart" id="c-cmp-sh"></div></div>
+      <div class="mini"><h3>Market and concentration terms</h3><p>points a year added to the required return</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--violet)"></i>market risk</span><span><i class="ln" style="border-color:var(--orange)"></i>concentration risk</span></div><div class="chart" id="m-alt-terms"></div></div>
+      <div class="mini"><h3>Volatility</h3><p>percent a year, recent months weighted more</p><div class="chart" id="m-alt-vol"></div></div>
+      <div class="mini"><h3>Beta to the US stock market</h3><p>rolling four years, kept between 0 and 3</p><div class="chart" id="m-alt-beta"></div></div>
+      <div class="mini"><h3>Moves with it</h3><p>share of an owner's whole crypto holding that moves with this asset, percent</p><div class="chart" id="m-alt-kappa"></div></div>
     </div>
-    <div class="scroll" style="margin-top:8px"><table id="t-cmp"></table></div>
-    <ul class="note" style="margin-top:14px">
-      <li><b>Average and compound.</b> The required return is an average across years. A position that is bought and never rebalanced grows at the compound rate, which is lower by the drag: half the variance. For a volatile asset the drag is large.</li>
-      <li><b>While it survives.</b> Bitcoin's figures are what holders require in the years the asset lives. <span id="cmp-death"></span></li>
-      <li><b>How each column is measured.</b> <span id="cmp-sample"></span> Bitcoin's beta and volatility are the ones used in its required return, with recent months weighted more. The Sharpe ratio on the compound return is descriptive: the measure is defined on average returns.</li>
-      <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Gold is a gold ETF to May 2026 and the month-end price of a gold token after. The other cryptoassets are under Compare. The Nasdaq-100, which the paper also shows, is not here.</li>
+    <ul class="note" style="margin-top:12px" id="alt-notes"></ul>
+  </section>
+
+  <section class="card" id="sec-alt-test">
+    <h2>Set against what they delivered</h2>
+    <p class="sub">Bitcoin's monthly test, run on each asset over the months it has been priced. Percent a year. "Unexplained" is what the asset delivered beyond what each model allows; the figure in brackets is its standard error.</p>
+    <div class="scroll"><table id="t-alt-test"></table></div>
+    <ul class="note" style="margin-top:12px">
+      <li><b>These four are survivors.</b> They are on this page because they are large today. An asset chosen for having succeeded delivers more than any requirement, whether or not the model is right, and all four did. The mortality term pays for the assets that died, and those are not in the table. A positive gap here is what selection produces. It is not evidence for or against the equation.</li>
+      <li><b>The records are short.</b> <span id="alt-short"></span> Neither model is rejected for any of the four, and neither could be on this much data.</li>
+      <li><b>Explaining more is partly built in.</b> The MCM equation adds two terms to the CAPM, so whenever an asset has paid more than the risk-free rate its explained share is the higher of the two by construction. What matters is the unexplained return and its standard error.</li>
+      <li><b>Bitcoin is the tested case.</b> Its record runs from 2012 and is set out, period by period, under <a href="#tests">Bitcoin → Tests</a>.</li>
     </ul>
   </section>
   </div>
 
-  </div>
+  <div class="view" id="view-method">
+  <h1>How the required return is computed</h1>
+  <p class="lede">Every required return on this site comes from one equation. It is the CAPM plus the two risks the CAPM assumes away: that the holder has a lot of her wealth in one asset, and that the asset can die. This section shows the equation, how the band is built from it, who the holders are, and the census of deaths behind the mortality term.</p>
+  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="#data">data</a></p>
+  <nav class="tabs" role="tablist" aria-label="Method">
+    <button type="button" role="tab" data-tab="equation">The equation</button>
+    <button type="button" role="tab" data-tab="band">The band and the three risks</button>
+    <button type="button" role="tab" data-tab="holders">Holders</button>
+    <button type="button" role="tab" data-tab="census">Deaths</button>
+  </nav>
 
-  <div class="view" id="view-equation">
-  <h1>The MCM equation</h1>
-  <p class="lede">Every required return on this site comes from one equation. It is the CAPM plus the two risks the CAPM assumes away: that the holder has a lot of her wealth in one asset, and that the asset can die.</p>
-  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
+  <div class="pane" id="pane-equation">
 
   <section class="card">
     <h2>The equation</h2>
@@ -713,11 +633,141 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </section>
   </div>
 
-  <div class="view" id="view-census">
-  <h1>The census of cryptoasset deaths</h1>
-  <p class="lede">How often cryptoassets die, whether surviving makes them safer, and what protects them. The census is where the mortality term of the required return comes from.</p>
+  <div class="pane" id="pane-band">
+  <div class="filters"><span>Period</span>
+    <div class="seg" role="group" aria-label="Period">
+      <button type="button" data-from="2012" aria-pressed="true">Since 2012</button>
+      <button type="button" data-from="2018" aria-pressed="false">Since 2018</button>
+    </div>
+    <span class="hint">applies to the charts of this tab</span>
+  </div>
+  <section class="card" id="sec-edges">
+    <h2>How the band is built</h2>
+    <p class="sub">The band prices three holders. The <b>lower edge</b> is the average owner when fund and treasury investors are counted, with the low inputs. The <b>upper edge</b> is the larger of two candidates: the average surveyed owner with the high inputs, or the early holder, who was all-in while few people owned Bitcoin. Each candidate is solid while it sets the upper edge and dashed while it does not, and the strip along the top names the holder who sets it. The <b>midpoint</b> is the simple average of the two edges; it is the required return used in the tests. Percent a year, log scale.</p>
+    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint</span><span><i class="ln" style="border-color:var(--magenta)"></i>lower edge: average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>upper candidate: average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>upper candidate: early holder</span></div>
+    <div class="chart" id="m-edges"></div>
+  </section>
+
+  <section class="card" id="sec-terms">
+    <h2>What the required return is made of</h2>
+    <p class="sub">The four terms of the equation at the midpoint of the band, and their sum, at each month-end. Percent a year, log scale. A term below 1% is drawn at 1%.</p>
+    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>required return (sum)</span><span><i class="ln" style="border-color:var(--orange)"></i>concentration risk</span><span><i class="ln" style="border-color:var(--violet)"></i>market risk</span><span><i class="ln" style="border-color:var(--rf)"></i>risk-free rate</span><span><i class="ln" style="border-color:var(--aqua)"></i>mortality risk</span></div>
+    <div class="chart" id="c-terms"></div>
+  </section>
+
+  <section class="card" id="sec-risk">
+    <h2>The three risks</h2>
+    <p class="sub">The required return is the risk-free rate plus one term for each risk. Each block below shows one risk: its formula, what it adds at the midpoint of the band, and the inputs that move it.</p>
+    <div class="eq" id="eq"></div>
+    <div class="mini" style="margin-top:16px"><h3 id="now-title">The band worked out</h3><p>each term at the lower edge, the upper edge and the midpoint, in points a year, with the inputs used</p>
+      <div class="scroll"><table id="t-now" class="now"></table></div></div>
+
+    <div class="risk">
+      <h3><i style="background:var(--violet)"></i>Market risk <span>beta × equity risk premium (4% a year)</span></h3>
+      <p>The risk Bitcoin shares with the stock market, the one risk the CAPM prices. It rises when Bitcoin moves more closely with equities.</p>
+      <div class="grid2">
+        <div class="mini"><h3>Market term</h3><p>points a year added to the required return</p><div class="chart" id="m-mkt"></div></div>
+        <div class="mini"><h3>Input: beta to the US equity market</h3><p>rolling four years</p><div class="chart" id="m-beta"></div></div>
+        <div class="mini"><h3>Behind beta: correlation with the US equity market</h3><p>rolling four years</p><div class="chart" id="m-corr"></div></div>
+      </div>
+    </div>
+
+    <div class="risk">
+      <h3><i style="background:var(--orange)"></i>Concentration risk <span>risk aversion (γ) × variance (σ²) × holder's weight (w)</span></h3>
+      <p>Bitcoin's holders keep a large share of their wealth in one volatile asset and must be paid for it. Three inputs set the term. Variance moves through time. The holder's weight is taken for three holders, described below. Risk aversion is held constant and is bounded, not measured: 1 at the lower edge and 2.8 at the upper edge.</p>
+      <div class="facts"><div><b>γ = 1.0</b><span>lower edge: log utility. Crypto owners tolerate more risk than other households.</span></div><div><b>γ = 2.8</b><span>upper edge: the upper part of the 2 to 3 range common in household finance.</span></div><div><b>γ = 1.0</b><span>early holder, whose weight is what makes the term large.</span></div></div>
+      <div class="grid2">
+        <div class="mini"><h3>Concentration term</h3><p>points a year added to the required return</p><div class="chart" id="m-conc"></div></div>
+        <div class="mini"><h3>Input: volatility</h3><p>percent a year</p><div class="chart" id="m-vol"></div></div>
+      </div>
+      <div class="mini" style="margin-top:12px"><h3>Input: holder's weight in Bitcoin</h3><p>percent of the holder's wealth held in Bitcoin, for the three holders the band prices</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--magenta)"></i>average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>early holder</span></div>
+        <div class="chart" id="m-w"></div></div>
+      <p style="margin-top:12px">The surveyed owner is held at 19% at every date; the lower weight adds the investors in funds and in companies that hold Bitcoin; the early holder starts at 100% and falls as ownership grows. <a href="#holders">How each weight is measured, with the surveys behind it, is under Holders.</a></p>
+    </div>
+
+    <div class="risk">
+      <h3><i style="background:var(--aqua)"></i>Mortality risk <span>probability of death a year (λ) × share lost on death (1 − δ)</span></h3>
+      <p>A holder must be paid the loss she can expect from the asset dying: the chance it dies in a year, times the share of her money she loses if it does. Both come from the census of cryptoasset deaths, read two ways. The term is the same at every date, because the census shows no fall in the death rate with age.</p>
+      <div class="facts">
+        <div><b>0.30% × 95% ≈ 0.3 pts</b><span>low reading: sudden collapses only (LUNA, UST, FTT), with 95% lost.</span></div>
+        <div><b>3.5% × 100% = 3.5 pts</b><span>high reading: every death of a top-twenty asset, slow fades included, counted as a total loss.</span></div>
+        <div><b>(0.3 + 3.5) ÷ 2 = 1.9 pts</b><span>midpoint, the figure in the required return.</span></div>
+      </div>
+      <p>The death rates are measured on assets that were ever in the top twenty: <span id="facts"></span>. The census is the paper's, taken on 24 May 2026.</p>
+      <div class="mini"><h3>Deaths among assets that were ever in the top twenty</h3><p>number per year</p>
+        <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
+        <div class="chart" id="m-deaths"></div></div>
+    </div>
+  </section>
+  </div>
+
+  <div class="pane" id="pane-holders">
+  <section class="card" id="sec-h-who">
+    <h2>Whose risk the concentration term prices</h2>
+    <p class="sub">The concentration term is risk aversion × variance × the share of the holder's wealth that moves with Bitcoin. Variance comes from prices. The share cannot be read from prices: it depends on who holds Bitcoin, and it is measured from household surveys and company filings. The band prices three holders, and this tab shows where each weight comes from.</p>
+    <div class="tiles" id="h-tiles"></div>
+    <div class="mini"><h3>The three weights through time</h3><p>percent of the holder's wealth held in Bitcoin</p>
+      <div class="legend"><span><i class="ln" style="border-color:var(--yellow)"></i>early holder</span><span><i class="ln" style="border-color:var(--blue)"></i>average surveyed owner</span><span><i class="ln" style="border-color:var(--magenta)"></i>average owner, counting fund and treasury investors</span></div>
+      <div class="chart" id="h-w"></div></div>
+    <p class="sub" id="h-edge" style="margin-top:10px"></p>
+  </section>
+
+  <section class="card" id="sec-h-owner">
+    <h2>The surveyed owner: <span id="h-ow"></span>% at every date</h2>
+    <p class="sub">US households that owned crypto in 2021 kept 19% of their financial assets in it on average, and the 2025 wave of the same survey reports similar shares (Weber, Candia, Coibion and Gorodnichenko 2026). Between the two waves Bitcoin's price rose 2.3 times. An owner who had simply held would have gone from 19% to about 35%. The surveys do not show that, so the page uses 19% in every month and does not move it with the price.</p>
+    <p class="sub">Two national surveys ask owners what their holdings are worth, wave after wave. Each line below is a multiple of its value in the first wave. The price multiplies; the holding per owner stays close to ×1. A higher market value shows up as more owners, not as more per owner.</p>
+    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>Bitcoin's price</span><span><i class="ln" style="border-color:var(--orange)"></i>owners (UK: number; Canada: share of adults)</span><span><i class="ln" style="border-color:var(--blue)"></i>mean holding per owner</span><span><i class="ln" style="border-color:var(--aqua)"></i>median holding per owner</span></div>
+    <div class="grid2">
+      <div class="mini"><h3>United Kingdom, four waves</h3><p>multiple of the first wave, log scale</p><div class="chart" id="h-uk"></div>
+        <div class="scroll"><table id="t-h-uk"></table></div></div>
+      <div class="mini"><h3>Canada, five waves</h3><p>multiple of the first wave, log scale</p><div class="chart" id="h-ca"></div>
+        <div class="scroll"><table id="t-h-ca"></table></div></div>
+    </div>
+    <p class="sub" style="margin-top:10px">Holdings are in pounds and Canadian dollars as the surveys report them. Bitcoin's price is its average in US dollars over the months of each survey's fieldwork. The Canadian survey reports the median holding only.</p>
+  </section>
+
+  <section class="card" id="sec-h-funds">
+    <h2>The lower edge: adding fund and treasury investors</h2>
+    <p class="sub">Someone who owns a spot ETF, or shares of a company that holds Bitcoin, is not a "crypto owner" in a household survey, yet carries Bitcoin's risk. These investors are diversified: they are taken to keep <span id="h-fw"></span>% of their wealth in Bitcoin. Counting their wealth beside the surveyed owners' gives a lower average weight, the one behind the lower edge of the band.</p>
+    <div class="mini" style="margin:4px 0 12px"><h3 id="h-work-title"></h3><p>for every $100 of Bitcoin outstanding</p>
+      <div class="scroll"><table id="t-h-work" class="now"></table></div></div>
+    <div class="grid2">
+      <div class="mini"><h3>Held through funds and by public companies</h3><p>percent of supply</p><div class="chart" id="h-inst"></div></div>
+      <div class="mini"><h3>The resulting weight</h3><p>percent of wealth, average owner counting fund and treasury investors</p><div class="chart" id="h-wlo"></div></div>
+    </div>
+    <p class="sub" style="margin-top:10px">This weight does not move with the price. It falls only as funds and companies hold more of the supply, which is how the required return falls as more diversified investors hold Bitcoin. The holdings are from the Grayscale trust's filings to 2023, US spot ETFs from 2024, and public companies' reported holdings.</p>
+  </section>
+
+  <section class="card" id="sec-h-early">
+    <h2>The early holder</h2>
+    <p class="sub">While few people owned Bitcoin, the coins sat with holders for whom it was nearly everything they owned. The band gives that holder a weight of 100% as long as ownership is no higher than in the 2018 survey (<span id="h-few"></span>% of US adults), and lets the weight fall in proportion as ownership grows: weight = <span id="h-few2"></span>% ÷ ownership. With log utility (γ = 1), that holder's required return is the risk-free rate plus the weight times variance. It sets the upper edge of the band whenever it is the higher of the two. <span id="h-early-until"></span></p>
+    <div class="scroll"><table id="t-h-own"></table></div>
+    <p class="sub" style="margin-top:10px">Between surveys ownership grows at a constant rate. Before the first survey it follows the number of funded Bitcoin addresses.</p>
+  </section>
+
+  <section class="card" id="sec-h-unc">
+    <h2>What is uncertain, and what changed</h2>
+    <ul class="note">
+      <li><b>19% is an average in which every owner counts once.</b> The median owner held about 8%. What prices the asset is the share of owners' combined wealth, which no survey reports and which is lower if wealthier owners hold smaller shares. With the weight at 12% or at 8% the paper's required return for 2026 is one to two points lower (16.9% and 16.1% against 18.1%).</li>
+      <li><b>The portfolio share is observed in one survey.</b> The 19% is from US households in 2021, reported as similar in 2025. The British and Canadian surveys report the value of holdings, not shares of wealth. No survey of shares exists before 2021, so earlier months use the same 19%.</li>
+      <li><b>Household surveys miss some holders.</b> The largest holders, funds, and holders outside the surveyed countries are not in them. Funds and public companies are added as described above; the others are not.</li>
+      <li><b>Risk aversion is bounded, not measured.</b> 1 at the lower edge and for the early holder, 2.8 at the upper edge. The weight and risk aversion together set most of the band's width.</li>
+      <li><b>What changed in November 2026.</b> Earlier versions of this page let the surveyed owner's weight follow Bitcoin's market value, so it rose at every peak (80% at the end of 2017, 34% in mid-2025). That is not what the surveys show. With the weight held at 19% the required return of recent months is about one point lower.</li>
+    </ul>
+    <h3 style="font-size:14.5px;margin:14px 0 4px">Sources</h3>
+    <ul class="note">
+      <li>Weber, Candia, Coibion and Gorodnichenko (2026), "Do You Even Crypto, Bro? Cryptocurrencies in Household Finance", Federal Reserve Bank of Cleveland working paper 26-16: the 19%.</li>
+      <li>Financial Conduct Authority, cryptoasset consumer research, waves 2 to 5, and its <a href="https://www.fca.org.uk/freedom-information/information-average-value-uk-crypto-holdings-september-2025" target="_blank" rel="noopener">September 2025 response on average holdings</a>.</li>
+      <li>Bank of Canada, Bitcoin Omnibus Survey, staff discussion papers <a href="https://www.bankofcanada.ca/wp-content/uploads/2022/04/sdp2022-10.pdf" target="_blank" rel="noopener">2022-10</a>, <a href="https://www.bankofcanada.ca/wp-content/uploads/2023/07/sdp2023-14.pdf" target="_blank" rel="noopener">2023-14</a> and <a href="https://bankofcanada.ca/wp-content/uploads/2025/03/sdp2025-4.pdf" target="_blank" rel="noopener">2025-4</a>.</li>
+      <li>The full derivation is in Sections 4 and 5 and Appendix B of the paper, and the survey figures are in <code>data/surveys/holder_surveys.csv</code> of this tool's repository.</li>
+    </ul>
+  </section>
+  </div>
+
+  <div class="pane" id="pane-census">
+  <p class="lede" style="font-size:16px">How often cryptoassets die, whether surviving makes them safer, and what protects them. The census is where the mortality term of the required return comes from.</p>
   <div class="stamp" id="census-stamp"></div>
-  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
   <div class="tiles" id="census-tiles"></div>
 
   <section class="card" id="sec-c-age">
@@ -765,6 +815,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <li><b>One census, not yet a monthly one.</b> <span id="census-note"></span></li>
     </ul>
   </section>
+  </div>
   </div>
 
   <div class="view" id="view-data">
@@ -1138,10 +1189,6 @@ function comparedTab(){
   const c=DATA.meta.cmp, R=c.rows, b=R.find(r=>r.name==="Bitcoin"), e=R[0], when=longDateOf(c.month_end);
   dumbbell("c-cmp-ret",R,"average","compound",v=>v.toFixed(v%1?1:0)+"%",c.risk_free,"risk-free "+c.risk_free.toFixed(1)+"%");
   dumbbell("c-cmp-sh",R,"sharpe_average","sharpe_compound",v=>v.toFixed(2),null);
-  const T=document.getElementById("t-cmp"); T.textContent="";
-  const hr=T.insertRow(); ["Asset","Priced by","Beta","Required, average","Volatility","Drag","Required, compound","Sharpe, average","Sharpe, compound"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
-  R.forEach(r=>{const tr=T.insertRow(); if(r.name==="Bitcoin") tr.className="tot";
-    [r.name,r.priced_by,r.beta.toFixed(2),r.average.toFixed(1),r.volatility.toFixed(1),r.drag.toFixed(1),r.compound.toFixed(1),r.sharpe_average.toFixed(2),r.sharpe_compound.toFixed(2)].forEach(v=>{tr.insertCell().textContent=v;});});
   const set=(id,s)=>{document.getElementById(id).textContent=s;};
   set("cmp-headline","At "+when+": Bitcoin requires "+b.average.toFixed(1)+"% a year on average, against "+e.average.toFixed(1)+"% for the "+e.name+". After drag the compound figures are "+b.compound.toFixed(1)+"% and "+e.compound.toFixed(1)+"%, and the Sharpe ratio on the compound return is "+b.sharpe_compound.toFixed(2)+" for Bitcoin against "+e.sharpe_compound.toFixed(2)+".");
   set("cmp-death","Averaged over the chance of death as well, which costs "+(b.average-b.average_net_of_death).toFixed(1)+" points a year, they are "+b.average_net_of_death.toFixed(1)+"% on average and "+b.compound_net_of_death.toFixed(1)+"% compounded.");
@@ -1215,6 +1262,59 @@ function pathCard(){
   fill("t-path",["","Level today","Today's price ("+usd(now.px)+") is","In "+mon(dateOf(E)),"±2 range then"],rowsT);
   el("t-path").querySelectorAll("td:first-child").forEach(c=>{c.style.whiteSpace="normal";c.style.maxWidth="230px";});
   el("path-ahead").textContent="The path holds the latest required compound return ("+P.growth_ahead.midpoint.toFixed(1)+"% a year at the midpoint, "+P.growth_ahead.lower.toFixed(1)+"% and "+P.growth_ahead.upper.toFixed(1)+"% at the edges) and the latest volatility ("+P.volatility.toFixed(0)+"%) for the whole of the three years.";
+}
+let ALT="eth";                                // the asset shown under Altcoins
+function altView(){
+  const m=DATA.meta, A=m.assets, el=id=>document.getElementById(id), list=A.latest.filter(a=>a.asset!=="btc");
+  if(!list.some(a=>a.asset===ALT)) ALT=list[0].asset;
+  const a=list.find(x=>x.asset===ALT), D=A.detail[ALT].map(r=>({...r,t:parse(r.m)})), f1=v=>v.toFixed(1), p1=v=>(v<0?"−":"")+Math.abs(v).toFixed(1)+"%";
+  const btc=new Map(DATA.rows.map(r=>[r.asof,r.mid])); D.forEach(r=>{r.btc=btc.get(r.m)??null; r.kp=100*r.kappa;});
+  el("alt-stamp").textContent="Set at the close of "+longDateOf(m.month_end)+" · "+list.length+" assets · "+nextUpdate();
+  const B=el("alt-pick"); B.textContent="";
+  list.forEach(x=>{ const b=document.createElement("button"); b.type="button"; b.textContent=x.name; b.setAttribute("aria-pressed",x.asset===ALT); b.addEventListener("click",()=>{ALT=x.asset; altView();}); B.appendChild(b); });
+  const T=[["Required return, "+a.name,f1(a.required_return)+"%","a year · band "+f1(a.required_low)+"% to "+f1(a.required_high)+"% · a hurdle rate, not a forecast"],
+           ["Left invested, it compounds at",p1(a.compound_required_return),"a year · band "+p1(a.compound_required_low)+" to "+p1(a.compound_required_high)+" · after "+f1(a.volatility_drag)+" points lost to volatility"],
+           ["What it is made of",f1(a.risk_free)+" + "+f1(a.market_term)+" + "+f1(a.concentration_term)+" + "+f1(a.mortality_term),"risk-free rate + market risk + concentration risk + mortality risk, in points a year"]];
+  const TE=el("alt-tiles"); TE.textContent="";
+  T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const e=document.createElement("div"); e.className=c+(c==="v"&&v.length>10?" long":""); e.textContent=t; d.appendChild(e);}); TE.appendChild(d);});
+  el("alt-band-title").textContent=a.name+": the required return through time";
+  el("alt-band-sub").textContent="Priced since "+fmtM(parse(a.priced_since))+", the month it had three years of returns. The band is the range the answer takes when risk aversion and the holder's weight are set low or high; the compound line is the midpoint less what volatility takes. Bitcoin's midpoint is drawn for reference. Percent a year.";
+  { const f=frame(el("c-alt-band"),300,{l:44,r:52,t:10,b:26});
+    const x=d3.scaleTime().domain(d3.extent(D,r=>r.t)).range([0,f.iw]);
+    const y=d3.scaleLinear().domain([Math.min(0,d3.min(D,r=>r.cmid)),d3.max(D,r=>r.hi)]).nice(4).range([f.ih,0]);
+    const g=axes(f,x,y,{yticks:y.ticks(5),yfmt:v=>(v<0?"−":"")+Math.abs(v)+"%"});
+    g.append("path").datum(D).attr("fill",css("--band")).attr("opacity",.6).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.lo)).y1(r=>y(r.hi)));
+    g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(0)).attr("y2",y(0)).attr("stroke",css("--axis"));
+    const S=[{k:"mid",n:"required, midpoint",c:"--blue",y,w:2.4},{k:"cmid",n:"compound, midpoint",c:"--ink",y,w:1.8},{k:"btc",n:"Bitcoin, midpoint",c:"--mut",y,w:1.4,dash:"5 4"},{k:"hi",n:"band, upper edge",c:"--band"},{k:"lo",n:"band, lower edge",c:"--band"}];
+    S.filter(s=>s.w).forEach(s=>g.append("path").datum(D.filter(r=>r[s.k]!=null)).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",s.w).attr("stroke-dasharray",s.dash||null).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k]))));
+    const L=D[D.length-1], ends=[{y:y(L.mid),s:f1(L.mid)+"%"},{y:y(L.cmid),s:p1(L.cmid)}].sort((p,q)=>p.y-q.y); if(ends[1].y-ends[0].y<13) ends[1].y=ends[0].y+13;
+    ends.forEach(e=>g.append("text").attr("x",x(L.t)+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
+    hover(f,g,x,D,S,p1); }
+  const small=(id,S,fmt,zero)=>{ const f=frame(el(id),170,{l:40,r:40,t:8,b:24});
+    const x=d3.scaleTime().domain(d3.extent(D,r=>r.t)).range([0,f.iw]), all=D.flatMap(r=>S.map(s=>r[s.k])).filter(v=>v!=null);
+    const y=d3.scaleLinear().domain([zero?0:Math.min(0,d3.min(all)),d3.max(all)]).nice(3).range([f.ih,0]), g=axes(f,x,y,{yticks:y.ticks(3),yfmt:fmt}), L=D[D.length-1], ends=[];
+    S.forEach(s=>{ s.y=y; g.append("path").datum(D.filter(r=>r[s.k]!=null)).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",2).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k]))); ends.push({y:y(L[s.k]),s:fmt(L[s.k])}); });
+    ends.sort((p,q)=>p.y-q.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<13) ends[i].y=ends[i-1].y+13;
+    ends.forEach(e=>g.append("text").attr("x",x(L.t)+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
+    hover(f,g,x,D,S,fmt); };
+  small("m-alt-terms",[{k:"mkt",n:"market risk",c:"--violet"},{k:"conc",n:"concentration risk",c:"--orange"}],v=>v.toFixed(1),true);
+  small("m-alt-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%",true);
+  small("m-alt-beta",[{k:"beta",n:"beta",c:"--violet"}],v=>v.toFixed(2),true);
+  small("m-alt-kappa",[{k:"kp",n:"moves with it",c:"--orange"}],v=>v.toFixed(0)+"%",true);
+  const b0=A.latest.find(x=>x.asset==="btc"), N=el("alt-notes"); N.textContent="";
+  [["Beside Bitcoin.",a.name+" requires "+f1(a.required_return)+"% a year against Bitcoin's "+f1(b0.required_return)+"%. Its volatility is "+a.volatility.toFixed(0)+"% against "+b0.volatility.toFixed(0)+"%, its beta to US stocks "+a.beta_to_us_equities.toFixed(2)+" against "+b0.beta_to_us_equities.toFixed(2)+"."],
+   ["Moves with it.","An owner holds a mix of coins. What matters for one of them is how much of her whole crypto holding moves when it moves: for "+a.name+", "+(100*a.kappa).toFixed(0)+"%. Its holder's weight is that share of the crypto owner's weight, "+f1(a.holder_weight_low)+"% to "+f1(a.holder_weight_high)+"% of wealth."],
+   ["Trailing figures.","Volatility, beta and the share that moves with the asset are measured on past returns and can change quickly. A low beta gives a low requirement and says nothing about who controls the asset or how it is run."]]
+    .forEach(([h,t])=>{const li=document.createElement("li"), sb=document.createElement("b"); sb.textContent=h+" "; li.appendChild(sb); li.appendChild(document.createTextNode(t)); N.appendChild(li);});
+  // the test, with Bitcoin's own row for scale
+  const sg=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(0), nxt=s=>fmtM(d3.timeMonth.offset(parse(s),1)), TT=el("t-alt-test"); TT.textContent="";
+  const hr=TT.insertRow(); ["Asset","Returns","Months","Delivered","Required, midpoint","Gap","Unexplained by the CAPM","Unexplained by the MCM equation"].forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+  const line=(cells,cls)=>{const r=TT.insertRow(); if(cls) r.className=cls; cells.forEach(v=>{r.insertCell().textContent=v;});};
+  A.tests.forEach(t=>line([t.name,nxt(t.from)+" to "+nxt(t.to),t.months,t.delivered.toFixed(0),t.required_mid.toFixed(0),sg(t.gap)+" (±"+t.gap_se.toFixed(0)+")",sg(t.capm_unexplained)+" (±"+t.capm_unexplained_se.toFixed(0)+")",sg(t.mcm_unexplained)+" (±"+t.mcm_unexplained_se.toFixed(0)+")"],t.asset===ALT?"here":""));
+  const p=DATA.per.find(q=>q.sum&&q.p.startsWith("2018"));
+  if(p) line(["Bitcoin, for scale",nxt(p.a)+" to "+nxt(p.b),p.n,p.real.toFixed(0),p.mid.toFixed(0),sg(p.gap)+" (±"+p.gse.toFixed(0)+")",sg(p.calpha),sg(p.alpha)+" (±"+p.se.toFixed(0)+")"],"sep");
+  const fewest=[...A.tests].sort((u,v)=>u.months-v.months)[0], ses=A.tests.map(t=>t.mcm_unexplained_se);
+  el("alt-short").textContent=fewest.name+" has "+fewest.months+" months of returns. The standard errors of what the equation leaves unexplained run from ±"+d3.min(ses).toFixed(0)+" to ±"+d3.max(ses).toFixed(0)+" points a year, so a model wrong by that much would pass unnoticed.";
 }
 function volatilityTab(){
   const m=DATA.meta, V=m.vsens, S=m.state, sm=S.samples[FROM], el=id=>document.getElementById(id), d=rows(), L=DATA.rows[DATA.rows.length-1];
@@ -1582,22 +1682,26 @@ function draw(){
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
   holdersTab(); edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard(); markScroll();
-  compareView(); dataView(); volatilityTab(); pathCard();
+  compareView(); dataView(); volatilityTab(); pathCard(); altView();
+  { const G=DATA.meta.cmp.gold_inputs; document.getElementById("gold-note").textContent="Gold's inputs are set by judgment, not surveyed as Bitcoin's holders are: a holder with "+G.weight_pct[0].toFixed(0)+"% to "+G.weight_pct[1].toFixed(0)+"% of wealth in gold, a beta between "+G.beta[0]+" and "+G.beta[1]+", and up to "+G.mortality_pct[1]+"% a year for the risk of sovereign restrictions. Its two small terms are an illustration of scale."; }
 }
-document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
-const TABS=["overview","required-return","volatility","path","holders","tests","compared"], VIEWS=["compare","bitcoin","equation","census","data"];
+document.querySelectorAll(".seg button[data-from]").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; document.querySelectorAll(".seg button[data-from]").forEach(o=>o.setAttribute("aria-pressed",o.dataset.from===FROM)); draw();}));
+const VIEWS=["compare","bitcoin","altcoins","method","data"], PANES=["overview","tests","volatility","path","equation","band","holders","census"];
+// address → section and tab. The last two keep addresses the site used before its sections were regrouped.
+const ROUTES={compare:["compare"],bitcoin:["bitcoin","overview"],overview:["bitcoin","overview"],tests:["bitcoin","tests"],volatility:["bitcoin","volatility"],path:["bitcoin","path"],
+  altcoins:["altcoins"],method:["method","equation"],equation:["method","equation"],band:["method","band"],holders:["method","holders"],census:["method","census"],data:["data"],
+  "required-return":["method","band"],compared:["compare"]};
 function showTab(){
-  const h=location.hash.slice(1), view=TABS.includes(h)||h==="bitcoin"?"bitcoin":VIEWS.includes(h)?h:"compare";
+  const h=location.hash.slice(1), [view,pane]=ROUTES[h]||["compare"];
   VIEWS.forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));
   document.querySelectorAll(".site nav button").forEach(b=>{ if(b.dataset.view===view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
-  const name=TABS.includes(h)?h:"overview";
-  TABS.forEach(n=>document.getElementById("pane-"+n).classList.toggle("on",n===name));
-  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));
-  document.querySelector(".filters").style.display=name==="compared"||name==="holders"?"none":"";      // this tab is a snapshot of one month-end
+  PANES.forEach(n=>document.getElementById("pane-"+n).classList.toggle("on",n===pane));
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===pane));
   draw();                                   // charts size themselves from their container, so draw once the pane is visible
+  if(h==="compared") document.getElementById("sec-cmp").scrollIntoView();
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ if(location.hash.slice(1)===b.dataset.tab) return; location.hash=b.dataset.tab; }));
-document.querySelectorAll(".site nav button").forEach(b=>b.addEventListener("click",()=>{ const to=b.dataset.view==="bitcoin"?"overview":b.dataset.view; if(location.hash.slice(1)!==to) location.hash=to; }));
+document.querySelectorAll(".site nav button").forEach(b=>b.addEventListener("click",()=>{ const to=({bitcoin:"overview",method:"equation"})[b.dataset.view]||b.dataset.view; if(location.hash.slice(1)!==to) location.hash=to; }));
 window.addEventListener("hashchange",()=>{showTab(); window.scrollTo(0,0);});
 tiles(); showTab();
 document.querySelectorAll("details.more").forEach(d=>d.addEventListener("toggle",()=>{ if(d.open) draw(); }));

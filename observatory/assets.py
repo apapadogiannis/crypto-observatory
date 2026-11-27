@@ -75,3 +75,27 @@ def required_returns(data: Path, btc: pd.DataFrame, band: pd.DataFrame, market_r
                           "market_share": W[a].reindex(band.index)}).dropna(subset=["midpoint"])
         out[a] = f
     return {"market_weights": W.reindex(band.index), "assets": out}
+
+
+def tests(data: Path, band: pd.DataFrame, market_return: pd.Series, other: dict) -> list[dict]:
+    """Bitcoin's monthly test (tests_of_fit) run on each of the other assets, over the months it has been priced.
+
+    It is shown, not relied on. These assets are listed because they are large today, so they are survivors:
+    a delivered return above the required one is what selection produces, with or without a correct model.
+    Their records are short, and the standard errors say how little the test can tell apart."""
+    from . import tests_of_fit as tf
+    rows = []
+    for code, f in other["assets"].items():
+        b = f.assign(price=read(data, code)["PriceUSD"].dropna().resample("ME").last().reindex(f.index), correlation=0.0)
+        t = tf.monthly_test(b, market_return, str(f.index[0].date()))
+        n = len(t)
+        year = lambda s: float(1200 * s.mean())
+        se = lambda s: float(1200 * s.std() / np.sqrt(n))
+        excess, market, extra = year(t.excess), year(t.market_part), year(t.concentration_mortality_part)
+        rows.append({"asset": code, "from": t.index[0].strftime("%Y-%m"), "to": t.index[-1].strftime("%Y-%m"), "months": n,
+                     "delivered": round(year(t.ret), 1), "required_mid": round(year(t.required_mid), 1),
+                     "gap": round(year(t.ret - t.required_mid), 1), "gap_se": round(se(t.ret - t.required_mid), 1),
+                     "capm_unexplained": round(year(t.capm_unexplained), 1), "capm_unexplained_se": round(se(t.capm_unexplained), 1),
+                     "mcm_unexplained": round(year(t.mcm_unexplained), 1), "mcm_unexplained_se": round(se(t.mcm_unexplained), 1),
+                     "explained_capm": round(100 * market / excess, 1), "explained_mcm": round(100 * (market + extra) / excess, 1)})
+    return rows

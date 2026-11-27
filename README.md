@@ -66,15 +66,16 @@ The site has five sections.
 **Compare** is the landing page: the required return of Bitcoin, Ether, BNB, Solana and Tron side by
 side, what each is made of (risk-free rate, market, concentration and mortality risk), the inputs
 behind it, the Sharpe ratio and the compound return of each, and how each has moved. Gold and three
-equity series (US market, developed markets, US small caps) are priced the same way for scale. The other four assets are
-priced with the paper's equation for other cryptoassets: an asset's holder weight is the crypto
-owner's weight times the share of a crypto holding that moves with the asset (kappa).
+equity series (US market, developed markets, US small caps) are priced the same way for scale, and
+Bitcoin is set beside them on an average and a compound basis.
 
-**Bitcoin** has the full history and the tests, in seven tabs:
+**Bitcoin** has the full history and the tests, in four tabs:
 
-1. **Overview.** The required return and what was delivered, by three-year period.
-2. **Required return.** How the band is built, which holder sets each edge, and the three risks
-   (market, concentration, mortality), each with its formula and the inputs that move it.
+1. **Overview.** The required return and what was delivered, by three-year period, with one standard
+   error around each delivered average, and how much of the delivered return the CAPM and the MCM
+   equation each explain.
+2. **Tests.** Why delivered differed from required, what each model leaves unexplained through time,
+   and, folded away, the cumulative view and the rerun with the equity premium implied by stock prices.
 3. **Volatility and drawdown.** What the required return compounds at, with its band; how much each
    holder is paid for variance against the half that compounding takes, and the latest band at other
    volatilities; and where Bitcoin stands (distance from its highest month-end close, volatility
@@ -84,37 +85,22 @@ owner's weight times the share of a crypto holding that moves with the asset (ka
    the path the required return implies from the latest month-end, started at a price level the
    reader chooses (the latest close, a past peak, the level of the trend line): where each leads in
    three years. Neither is a forecast.
-5. **Holders.** Where the holder's weight in the concentration term comes from: the surveyed owner at
-   19%, the surveys in the United Kingdom and Canada that show holdings per owner not following the
-   price, the lower weight once fund and treasury investors are counted, and the early holder.
-6. **Tests.** How much of the delivered return the CAPM and the MCM equation each explain, why
-   delivered differed from required, and, folded away, the regression, the cumulative view and the
-   rerun with the equity premium implied by stock prices.
-7. **Versus stocks and gold.** Bitcoin beside the US stock market, developed markets, US small caps and gold: average
-   and compound required returns, drag and Sharpe ratios.
+
+**Altcoins** takes Ether, BNB, Solana and Tron one at a time: the required return and its compound
+figure through time, the two terms and three inputs that differ from asset to asset, and Bitcoin's
+monthly test run on each. The test is shown with its limits: the four are survivors, their records are
+short, and neither model is rejected for any of them.
+
+**Method** explains how every figure is computed, in four tabs: the MCM equation term by term, with
+sliders; how the band is built, which holder sets each edge, and the three risks with their inputs;
+where the holder's weight comes from (the surveyed owner at 19%, the surveys in the United Kingdom and
+Canada, fund and treasury investors, the early holder); and the census of cryptoasset deaths behind
+the mortality term.
 
 **Data** lists the files, gives a prompt to paste into an AI assistant, and says what the site does
 not claim, with the method, sources and dates.
 
-**How it works** explains the MCM equation term by term, with sliders: start from one of five cases
-taken from the site's own data (two Bitcoin holders, Bitcoin at a negligible weight, an early holder in
-2013, a stock index fund) and see the required return rebuild as the inputs move.
-
-**Deaths** shows how often cryptoassets die, by age and by size, how long they last, and
-every death among the assets that were ever in the top twenty. It is where the mortality term of the
-required return comes from. The census is the paper's, taken on 24 May 2026, and is not yet updated
-monthly. Each death carries the rule that classified it (trading dried up, price below 1% of its
-peak, the data feed ended, or a sudden collapse) and how much the asset still traded at the census
-date. The census is that of version 2.0 of the paper: 1,624 assets and 471 deaths, of which 35
-among the 216 assets that were ever in the top twenty (3.46% a year, the upper mortality figure of
-3.5%). The deaths came in a wave in 2025 and 2026, so the page gives each rate with its period.
-
-It reports required returns. It forecasts nothing.
-
-**What was said at the time.** The monthly series is recomputed at every update with the data and
-the hand-entered anchors of that day, so the figure for a past month can change, and the band for
-the years before 2021 uses a survey taken in 2021. `data/vintages.csv` keeps what was published for
-each month-end when it was first computed, from November 2026 on. No build rewrites a stored row.
+Addresses the site used before its sections were regrouped still open the right place.
 
 ## Status
 
@@ -175,7 +161,7 @@ can read it without scraping the page.
 | `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
 | `equity_premium` | the tests of fit recomputed with other equity risk premia: the paper's fixed 4%, and the premium implied by stock prices each month |
-| `assets` | Bitcoin, Ether, BNB, Solana and Tron side by side: the latest month-end and every month each has been priced |
+| `assets` | Bitcoin, Ether, BNB, Solana and Tron side by side: the latest month-end and every month each has been priced; under `tests`, Bitcoin's monthly test run on the other four, to be read with the limits the guide states |
 | `holders` | what the holder's weight rests on: the owners' weight, the weight of fund and treasury investors, the ownership surveys behind the early holder's weight, and the British and Canadian survey waves shown under Holders |
 | `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, the list of top-twenty deaths with the rule behind each, the counts by rule, and what is left out |
 | `volatility_sensitivity` | the latest band, average and compound, recomputed at other volatilities with the other inputs held, and the pay for variance at each edge against the one half that compounding takes |

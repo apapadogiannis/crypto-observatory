@@ -193,6 +193,9 @@ def build(data: Path, out: Path) -> dict:
         "months": months,
         "periods": [_round(p) for p in periods],
         "comparison": {**compared, "risk_free": round(compared["risk_free"], 2),
+                       "gold_inputs": {"weight_pct": [round(100 * cfg["gold"]["weight_low"], 1), round(100 * cfg["gold"]["weight_high"], 1)],
+                                       "mortality_pct": [round(100 * cfg["gold"]["mortality_low"], 2), round(100 * cfg["gold"]["mortality_high"], 2)],
+                                       "beta": [cfg["gold"]["beta_low"], cfg["gold"]["beta_high"]], "basis": "set by judgment, not surveyed (paper, Appendix E.1)"},
                        "rows": [{k: (round(v, 2) if isinstance(v, float) else {a: round(b, 2) for a, b in v.items()} if isinstance(v, dict) else v) for k, v in r.items()} for r in compared["rows"]]},
         "notes": page_notes,
         "equity_premium": premium_doc,
@@ -306,6 +309,7 @@ def _assets(data: Path, btc: pd.DataFrame, band: pd.DataFrame, mkt: pd.Series, c
     monthly = [record(code, d, b) for code, f in frames.items() for d, b in f.iterrows()]
     latest = [{**record(code, f.index[-1], f.iloc[-1]), "priced_since": f.index[0].strftime("%Y-%m")} for code, f in frames.items()]
     return {"month_end": band.index[-1].strftime("%Y-%m-%d"), "latest": latest, "monthly": monthly,
+            "tests": [{**r, "name": names[r["asset"]]} for r in assets.tests(data, band, mkt, other)],
             "crypto_market": "value-weighted return of " + ", ".join(names.values()) + ", weights from the previous month-end's market values",
             "min_months": cfg["constants"]["asset_min_months"]}
 
@@ -356,7 +360,13 @@ def _page_payload(doc: dict) -> dict:
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
             "deaths": [{"y": d["year"], "fade": d["abandoned_or_delisted"], "jump": d["sudden_collapse"]} for d in doc["census"]["deaths_by_year"]],
-            "assets": {"latest": doc["assets"]["latest"], "hist": {a: [[r["month_end"][:7], r["required_return"]] for r in doc["assets"]["monthly"] if r["asset"] == a] for a in {r["asset"] for r in doc["assets"]["latest"]}}}, "holders": doc["holders"], "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
+            "assets": {"latest": doc["assets"]["latest"], "tests": doc["assets"]["tests"],
+                       "detail": {a: [{"m": r["month_end"][:7], "mid": r["required_return"], "lo": r["required_low"], "hi": r["required_high"], "rf": r["risk_free"],
+                                       "mkt": r["market_term"], "conc": r["concentration_term"], "mort": r["mortality_term"], "vol": r["volatility"],
+                                       "beta": r["beta_to_us_equities"], "kappa": r["kappa"], "whi": r["holder_weight_high"], "wlo": r["holder_weight_low"],
+                                       "cmid": r["compound_required_return"], "clo": r["compound_required_low"], "chi": r["compound_required_high"]}
+                                      for r in doc["assets"]["monthly"] if r["asset"] == a] for a in {r["asset"] for r in doc["assets"]["latest"]} - {"btc"}},
+                       "hist": {a: [[r["month_end"][:7], r["required_return"]] for r in doc["assets"]["monthly"] if r["asset"] == a] for a in {r["asset"] for r in doc["assets"]["latest"]}}}, "holders": doc["holders"], "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
             "now": {"asof": ym(lt["month_end"]), "rf": w["risk_free"], "mkt": w["market"]["midpoint"], "conc": w["concentration"]["midpoint"],
                     "mort": w["mortality"]["midpoint"], "mid": lt["required"]["midpoint"], "lo": lt["required"]["lower"], "hi": lt["required"]["upper"],
                     "beta": w["market"]["beta"], "vol": w["concentration"]["volatility"], "wlo": w["concentration"]["weight_lower"],
