@@ -158,11 +158,12 @@ files are under api/.
   A drawdown is not an input of the equation; it moves the requirement only through volatility.
 - `path` in data.json sets a straight trend line (least squares through the log of the month-end
   closes, with the standard deviation of the distances from it) beside the path the required return
-  implies: the price if holders earn exactly the required compound return from a starting month. The
-  equation gives a growth rate and no level, so the starting month is a choice; `anchors` works out
-  3 of them, and `price_against_it` is today's price in standard deviations of the path. The path's
-  range widens with time; the trend line's bands do not. Neither is a forecast, and `range_at_horizon`
-  is a spread at the latest volatility, not a prediction interval.
+  implies: the price if holders earn exactly the required compound return from the latest month-end
+  on. The equation gives a growth rate and no level, so the price the path starts from is a choice;
+  `levels` works out 3 of them (the latest close and past peaks), and each trend has the path from the
+  trend line's own level. `price_against_it` under a level is the latest close against that level, in
+  percent. The path's range widens with time; the trend line's bands do not. Neither is a forecast,
+  and `range_at_horizon` is a spread at the latest volatility, not a prediction interval.
 - The identities among the period columns hold to within about one point in the early periods,
   because the required return is converted month by month and the premium is not.
 - "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),

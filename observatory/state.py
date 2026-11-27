@@ -145,12 +145,13 @@ def paths(btc: pd.DataFrame, band: pd.DataFrame) -> dict:
 
     The trend line is the kind drawn on price dashboards: a least-squares line through the log of the
     month-end closes, with the standard deviation of the distances from it. It assumes one growth rate
-    for ever. The MCM path starts at a chosen month-end and grows each month at that month's required
-    compound return; past the latest month-end it holds the latest requirement and volatility. Its
-    spread is the standard deviation of the log price of a random walk, which widens with time, because
-    the equation says nothing that would pull the price back. The equation gives a growth rate and no
-    level, so the starting month is a choice: three are worked out here, and the page lets the reader
-    pick any other. None of this is a forecast.
+    for ever. The MCM path always starts at the latest month-end and grows at the latest required
+    compound return, with the latest volatility. Its spread is the standard deviation of the log price
+    of a random walk, which widens with time, because the equation says nothing that would pull the
+    price back. The equation gives a growth rate and no level, so the price the path starts from is a
+    choice: the latest close is the buyer's own case, and a past peak or the level of the trend line
+    answer "what if the price were there today". The page lets the reader pick any level. None of this
+    is a forecast.
     """
     t = _table(btc, band)
     lp, n, H = np.log(t.price), len(t) - 1, HORIZON_AHEAD
@@ -158,6 +159,14 @@ def paths(btc: pd.DataFrame, band: pd.DataFrame) -> dict:
     usd = lambda v: round(float(np.exp(v)))
     month = lambda i: t.index[i].strftime("%Y-%m")
     horizon_month = (t.index[-1] + pd.offsets.MonthEnd(H)).strftime("%Y-%m")
+    growth = {e: float(comp[e].iloc[n]) * H / 12 for e in ("lower", "midpoint", "upper")}
+    spread = float(np.sqrt(band.variance.iloc[n] * H / 12))
+
+    def from_level(level: float) -> dict:
+        return {"level": usd(level), "price_against_it": round(100 * float(np.exp(lp.iloc[n] - level) - 1), 1),
+                "path_at_horizon": usd(level + growth["midpoint"]),
+                "range_at_horizon": [usd(level + growth["midpoint"] - 2 * spread), usd(level + growth["midpoint"] + 2 * spread)],
+                "edges_at_horizon": [usd(level + growth["lower"]), usd(level + growth["upper"])]}
 
     trend = {}
     for start in SAMPLES:
@@ -168,32 +177,18 @@ def paths(btc: pd.DataFrame, band: pd.DataFrame) -> dict:
         now, ahead = c + k * x[-1], c + k * (x[-1] + H / 12)
         trend[start] = {"fitted_from": month(i0), "growth": round(100 * (np.exp(k) - 1), 1), "sd_factor": round(float(np.exp(sd)), 2),
                         "value_now": usd(now), "price_against_it": round(float((y[-1] - now) / sd), 2),
-                        "value_at_horizon": usd(ahead), "range_at_horizon": [usd(ahead - 2 * sd), usd(ahead + 2 * sd)]}
-
-    def path(a: int) -> dict:
-        past = slice(a, n)                                                     # the months from the start to the latest month-end
-        var_now = float(band.variance.iloc[n])
-        var_past = float(band.variance.iloc[past].sum() / 12)
-        out = {}
-        for edge in ("lower", "midpoint", "upper"):
-            today = lp.iloc[a] + comp[edge].iloc[past].sum() / 12
-            out[edge] = (today, today + comp[edge].iloc[n] * H / 12)
-        today, ahead = out["midpoint"]
-        sd_ahead = np.sqrt(var_past + var_now * H / 12)
-        return {"month": month(a), "price_then": usd(lp.iloc[a]), "path_today": usd(today),
-                "price_against_it": None if a == n else round(float((lp.iloc[n] - today) / np.sqrt(var_past)), 2),
-                "path_at_horizon": usd(ahead), "range_at_horizon": [usd(ahead - 2 * sd_ahead), usd(ahead + 2 * sd_ahead)],
-                "edges_at_horizon": [usd(out["lower"][1]), usd(out["upper"][1])]}
+                        "value_at_horizon": usd(ahead), "range_at_horizon": [usd(ahead - 2 * sd), usd(ahead + 2 * sd)],
+                        "path_from_its_level": from_level(now)}
 
     peak = int(np.argmax(t.price.to_numpy() == t.peak.iloc[n]))                # the highest month-end close so far
     deep = np.flatnonzero(t.drawdown.to_numpy() <= -50)                        # the peak before the last fall of more than half
     before = int(np.argmax(t.price.to_numpy() == t.peak.iloc[deep[-1]])) if len(deep) else None
-    anchors = [{"key": "latest", "what": "the latest month-end", **path(n)}]
+    levels = [{"key": "latest", "what": "the latest month-end close", "month": month(n), **from_level(lp.iloc[n])}]
     if peak != n:
-        anchors.append({"key": "peak", "what": "the highest month-end close", **path(peak)})
+        levels.append({"key": "peak", "what": "the highest month-end close", "month": month(peak), **from_level(lp.iloc[peak])})
     if before is not None and before not in (n, peak):
-        anchors.append({"key": "previous_peak", "what": "the peak before the last fall of more than half", **path(before)})
+        levels.append({"key": "previous_peak", "what": "the peak before the last fall of more than half", "month": month(before), **from_level(lp.iloc[before])})
     return {"month_end": t.index[-1].strftime("%Y-%m-%d"), "horizon_months": H, "horizon_month": horizon_month,
             "growth_ahead": {e: round(100 * float(comp[e].iloc[n]), 2) for e in ("lower", "midpoint", "upper")},        # the page's own compound figures
-            "volatility": round(100 * float(band.volatility.iloc[n]), 1), "trend": trend, "anchors": anchors,
+            "volatility": round(100 * float(band.volatility.iloc[n]), 1), "trend": trend, "levels": levels,
             "prices": [[d.strftime("%Y-%m"), round(float(p), 2)] for d, p in t.price.items()]}
