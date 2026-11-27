@@ -11,7 +11,7 @@ This file is written for AI agents and other programs. People should start at th
 ## Which file to fetch
 
 1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
-   licence and the citation: latest.json (about 13 KB). It also has the Sharpe ratios and, priced the
+   licence and the citation: latest.json (about 14 KB). It also has the Sharpe ratios and, priced the
    same way for scale, gold and three equity series. For most questions, fetch nothing else.
 2. A past month of Bitcoin: months.csv. Use the row dated the month-end at which the requirement is
    set; the return it faces is the following month's. A past month of any asset: assets_monthly.csv.
@@ -165,6 +165,10 @@ files are under api/.
   too small in the first period and too large since. `placebos`: within one sample the share explained
   measures the average size of what is added to the CAPM, not its timing. Say that the CAPM is
   rejected over the whole record and the MCM equation is not, and that failing to reject is not proof.
+- `change` in data.json, and `change_since_previous_month_end` in latest.json, say what moved between the
+  last two month-ends: Bitcoin's midpoint, each term's part of the move and the inputs behind it, and
+  the midpoint of each other asset. Both months are computed with today's method, so it is the move of
+  the inputs, not a revision. Use it for "what changed this month".
 - `assets.tests` in data.json runs Bitcoin's monthly test on Ether, BNB, Solana and Tron. Read it with
   two limits. These four are listed because they are large today: they are survivors, and a survivor
   delivers more than any requirement whether or not the model is right. And their records are short:

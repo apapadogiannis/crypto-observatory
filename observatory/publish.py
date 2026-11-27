@@ -73,7 +73,7 @@ MONTH_FIELDS = [
     ("trailing_3y_excess", "number", "Average monthly return over the risk-free rate in the three years ending the following month, times twelve; percent a year, not compounded"),
     ("trailing_3y_capm_unexplained", "number", "The part of it the CAPM leaves unexplained, percent a year"),
     ("trailing_3y_mcm_unexplained", "number", "The part of it the MCM equation leaves unexplained, percent a year"),
-    ("volatility_drag", "number", "Half the variance, in points a year: what volatility takes from the average return of a position held alone and never rebalanced. The equation's holders keep a small share of their wealth in the asset and bear that share of it"),
+    ("volatility_drag", "number", "Half the variance, in points a year: what volatility takes from the average return of a position held alone and never rebalanced. The equation's holders keep part of their wealth in the asset and bear that part of it"),
     ("required_compound_lower", "number", "What a position held alone and never rebalanced would compound at if the asset earned the lower edge of the band, percent a year: required_lower less volatility_drag. Not a requirement: the required return is an average"),
     ("required_compound_midpoint", "number", "The same at the midpoint: required_midpoint less volatility_drag. It is also the rate at which the price itself would compound"),
     ("required_compound_upper", "number", "The same at the upper edge: required_upper less volatility_drag"),
@@ -152,7 +152,7 @@ ASSET_FIELDS = [
     ("holder_weight_lower_pct", "number", "Holder's weight at the lower edge, percent of wealth: kappa times the average owner's crypto weight counting fund and treasury investors"),
     ("holder_weight_upper_pct", "number", "Holder's weight at the upper edge, percent of wealth: kappa times the surveyed owner's 19%"),
     ("volatility_drag_pct_points", "number", "Half the variance, in points a year: what volatility takes from the average return of a position held alone and never rebalanced"),
-    ("required_compound_pct_per_year", "number", "Required return at the midpoint less the volatility drag, percent a year: what a position held alone and never rebalanced would compound at if the asset earned its required return. Not a requirement: the required return is an average, asked by holders who keep a small share of their wealth in the asset"),
+    ("required_compound_pct_per_year", "number", "Required return at the midpoint less the volatility drag, percent a year: what a position held alone and never rebalanced would compound at if the asset earned its required return. Not a requirement: the required return is an average, asked by holders who keep part of their wealth in the asset"),
     ("sharpe_ratio", "number", "Required return at the midpoint less the risk-free rate, divided by volatility"),
     ("sharpe_ratio_on_compound", "number", "The same ratio on the compound required return. Descriptive: the Sharpe ratio is defined on average returns"),
     ("share_of_crypto_market_pct", "number", "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"),
@@ -191,6 +191,7 @@ def latest_file(doc: dict) -> dict:
         "what_this_is": "The return holders of each cryptoasset should require for the market, concentration and mortality risk they carry, "
                         "from the MCM equation of the paper \"Bitcoin's Required Return\". A required return, not a forecast.",
         "as_of_month_end": L["month_end"], "source_data_to": m["data_to"], "updated": "third of each month", "next_update_expected": m["next_update"],
+        "change_since_previous_month_end": doc["change"],
         "units_note": "Names ending _pct_per_year are percent a year; _pct are percent; _pct_points are percentage points a year. Betas, kappa and Sharpe ratios are plain numbers.",
         "how_to_quote": "Quote the midpoint with its band, as 'this model gives', and credit the tool and the paper. The band is a range of inputs, not a confidence interval.",
         "equation": "required return = risk-free rate + beta x equity premium + risk aversion x variance x holder's weight + mortality",
@@ -359,7 +360,7 @@ This file is written for AI agents and other programs. People should start at th
 ## Which file to fetch
 
 1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
-   licence and the citation: latest.json (about 13 KB). It also has the Sharpe ratios and, priced the
+   licence and the citation: latest.json (about 14 KB). It also has the Sharpe ratios and, priced the
    same way for scale, gold and three equity series. For most questions, fetch nothing else.
 2. A past month of Bitcoin: months.csv. Use the row dated the month-end at which the requirement is
    set; the return it faces is the following month's. A past month of any asset: assets_monthly.csv.
@@ -513,6 +514,10 @@ files are under api/.
   too small in the first period and too large since. `placebos`: within one sample the share explained
   measures the average size of what is added to the CAPM, not its timing. Say that the CAPM is
   rejected over the whole record and the MCM equation is not, and that failing to reject is not proof.
+- `change` in data.json, and `change_since_previous_month_end` in latest.json, say what moved between the
+  last two month-ends: Bitcoin's midpoint, each term's part of the move and the inputs behind it, and
+  the midpoint of each other asset. Both months are computed with today's method, so it is the move of
+  the inputs, not a revision. Use it for "what changed this month".
 - `assets.tests` in data.json runs Bitcoin's monthly test on Ether, BNB, Solana and Tron. Read it with
   two limits. These four are listed because they are large today: they are survivors, and a survivor
   delivers more than any requirement whether or not the model is right. And their records are short:

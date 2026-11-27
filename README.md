@@ -159,6 +159,7 @@ can read it without scraping the page.
 | `periods` | three-year periods and the two summary samples: delivered, required, the gap and its split, the part each model explains and leaves unexplained, the regression alphas, the average beta and correlation |
 | `comparison` | Bitcoin and three equity series at the latest month-end: beta, required return, what a position held alone compounds at, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this site does not claim", recomputed at each update |
+| `change` | what moved between the last two month-ends: Bitcoin's midpoint, each term's part of the move and the inputs behind it, and the midpoint of each other asset |
 | `strength` | the equation against a fixed premium: the unexplained return of each model and of one constant in 2012-17, since 2018 and over the whole record |
 | `equity_premium` | the tests of fit recomputed with other equity risk premia: the paper's fixed 4%, and the premium implied by stock prices each month |
 | `assets` | Bitcoin, Ether, BNB, Solana and Tron side by side: the latest month-end and every month each has been priced; under `tests`, Bitcoin's monthly test run on the other four, to be read with the limits the guide states |

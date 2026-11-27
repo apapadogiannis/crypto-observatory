@@ -191,7 +191,7 @@
      {
       "name": "volatility_drag",
       "type": "number",
-      "description": "Half the variance, in points a year: what volatility takes from the average return of a position held alone and never rebalanced. The equation's holders keep a small share of their wealth in the asset and bear that share of it"
+      "description": "Half the variance, in points a year: what volatility takes from the average return of a position held alone and never rebalanced. The equation's holders keep part of their wealth in the asset and bear that part of it"
      },
      {
       "name": "required_compound_lower",
@@ -588,7 +588,7 @@
      {
       "name": "required_compound_pct_per_year",
       "type": "number",
-      "description": "Required return at the midpoint less the volatility drag, percent a year: what a position held alone and never rebalanced would compound at if the asset earned its required return. Not a requirement: the required return is an average, asked by holders who keep a small share of their wealth in the asset"
+      "description": "Required return at the midpoint less the volatility drag, percent a year: what a position held alone and never rebalanced would compound at if the asset earned its required return. Not a requirement: the required return is an average, asked by holders who keep part of their wealth in the asset"
      },
      {
       "name": "sharpe_ratio",
@@ -711,7 +711,7 @@
      {
       "name": "required_compound_pct_per_year",
       "type": "number",
-      "description": "Required return at the midpoint less the volatility drag, percent a year: what a position held alone and never rebalanced would compound at if the asset earned its required return. Not a requirement: the required return is an average, asked by holders who keep a small share of their wealth in the asset"
+      "description": "Required return at the midpoint less the volatility drag, percent a year: what a position held alone and never rebalanced would compound at if the asset earned its required return. Not a requirement: the required return is an average, asked by holders who keep part of their wealth in the asset"
      },
      {
       "name": "sharpe_ratio",

@@ -4,6 +4,82 @@
  "source_data_to": "2026-11-19",
  "updated": "third of each month",
  "next_update_expected": "2026-12-03",
+ "change_since_previous_month_end": {
+  "from_month_end": "2026-09-30",
+  "to_month_end": "2026-10-31",
+  "bitcoin": {
+   "midpoint": [
+    19.46,
+    18.78
+   ],
+   "change": -0.68,
+   "terms": {
+    "risk_free": -0.35,
+    "market": 0.0,
+    "concentration": -0.32,
+    "mortality": 0.0
+   },
+   "risk_free": [
+    5.29,
+    4.94
+   ],
+   "volatility": [
+    46.3,
+    45.1
+   ],
+   "beta": [
+    1.45,
+    1.45
+   ]
+  },
+  "assets": [
+   {
+    "asset": "btc",
+    "name": "Bitcoin",
+    "midpoint": [
+     19.46,
+     18.78
+    ],
+    "change": -0.68
+   },
+   {
+    "asset": "eth",
+    "name": "Ether",
+    "midpoint": [
+     25.01,
+     24.6
+    ],
+    "change": -0.41
+   },
+   {
+    "asset": "bnb",
+    "name": "BNB",
+    "midpoint": [
+     17.86,
+     17.32
+    ],
+    "change": -0.54
+   },
+   {
+    "asset": "sol",
+    "name": "Solana",
+    "midpoint": [
+     24.75,
+     24.45
+    ],
+    "change": -0.3
+   },
+   {
+    "asset": "trx",
+    "name": "Tron",
+    "midpoint": [
+     9.34,
+     9.11
+    ],
+    "change": -0.23
+   }
+  ]
+ },
  "units_note": "Names ending _pct_per_year are percent a year; _pct are percent; _pct_points are percentage points a year. Betas, kappa and Sharpe ratios are plain numbers.",
  "how_to_quote": "Quote the midpoint with its band, as 'this model gives', and credit the tool and the paper. The band is a range of inputs, not a confidence interval.",
  "equation": "required return = risk-free rate + beta x equity premium + risk aversion x variance x holder's weight + mortality",

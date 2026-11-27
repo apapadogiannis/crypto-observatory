@@ -13,6 +13,15 @@ New on the site
 - Altcoins: each asset's history, what moves it, and the monthly comparison with delivered returns that
   Bitcoin has, with its limits stated.
 - A mark, a tab icon and a share card; a row under the header that lists the cards of the page in view.
+- Bitcoin, Tests: "What tells the equation from a fixed premium", the unexplained return of each model
+  and of one constant in 2012-17, since 2018 and over the whole record. The Overview tile gives
+  delivered minus required with its standard error.
+- "What changed since last month" on Compare and on Bitcoin: the midpoint before and after, and the
+  terms and inputs that moved it.
+- A glossary ("Words used on this site", address `#glossary`); the three reading rules under the tiles
+  of Compare; each asset's tile opens its detail.
+- Charts carry a name for screen readers, text meets the contrast standard in light mode, and there is
+  a link to skip to the content.
 
 New in the data files (columns are added at the end; none is removed or renamed)
 
@@ -21,8 +30,9 @@ New in the data files (columns are added at the end; none is removed or renamed)
   `pay_for_variance_upper`, `drawdown`.
 - `assets.csv`, `assets_monthly.csv`: `required_compound_lower_pct_per_year`,
   `required_compound_upper_pct_per_year`.
-- `data.json`: `volatility_sensitivity`, `state`, `path`, `assets.tests`, `comparison.gold_inputs`.
-- `latest.json`: `next_update_expected`, `bitcoin_volatility_and_compounding`,
+- `data.json`: `volatility_sensitivity`, `state`, `path`, `assets.tests`, `comparison.gold_inputs`, `strength`,
+  `change`.
+- `latest.json`: `change_since_previous_month_end`, `next_update_expected`, `bitcoin_volatility_and_compounding`,
   `bitcoin_state_at_month_end`. In `bitcoin_delivered_against_required`, the two month fields are now
   `required_set_from_month_end` and `required_set_to_month_end`, and `returns_from_month` and
   `returns_to_month` give the months of the returns (one month later). The unexplained return of each

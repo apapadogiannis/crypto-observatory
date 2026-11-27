@@ -68,7 +68,7 @@ for a in la.values():
     assert abs(a["holder_weight_upper_pct"] - a["kappa"] * la["btc"]["holder_weight_upper_pct"]) < 0.2
 for row in assets_now:
     assert float(row["required_midpoint_pct_per_year"]) == la[row["asset_id"]]["required_midpoint_pct_per_year"]
-assert latest_size < 14_000 and [b['name'] for b in latest_json['benchmarks_for_comparison']][-1] == 'Gold' and "latest.json" in guide.split("## Coverage")[0]
+assert latest_size < 16_000 and [b['name'] for b in latest_json['benchmarks_for_comparison']][-1] == 'Gold' and "latest.json" in guide.split("## Coverage")[0]
 # Ether's kappa in April 2026 is the paper's 0.70 to within 0.02, although the crypto market here is five assets.
 eth_apr = next(r for r in assets_all if r["asset_id"] == "eth" and r["month_end"] == "2026-04-30")
 assert abs(float(eth_apr["kappa"]) - 0.70) <= 0.02, eth_apr["kappa"]
@@ -231,3 +231,19 @@ assert Hv["one_constant"]["unexplained"][0] > 0 > Hv["one_constant"]["unexplaine
 assert doc["strength"]["halves"]["added_terms"][0] > doc["strength"]["halves"]["added_terms"][1] and sum(doc["strength"]["halves"]["months"][:2]) == doc["strength"]["halves"]["months"][2]
 assert 'id="sec-strength"' in page and "`strength` in data.json" in guide
 assert "accounted for by these three risks" not in page
+
+# What changed since the month-end before: the terms' moves add up to the midpoint's, in the data file and in latest.json alike.
+ch = doc["change"]
+assert ch["to_month_end"] == doc["latest"]["month_end"] and ch["from_month_end"] == doc["months"][-2]["month_end"]
+assert abs(sum(ch["bitcoin"]["terms"].values()) - ch["bitcoin"]["change"]) < 0.03 and latest_json["change_since_previous_month_end"] == ch
+assert [a["asset"] for a in ch["assets"]][0] == "btc" and ch["assets"][0]["change"] == ch["bitcoin"]["change"]
+# The page's script: every element it looks up by a fixed name exists in the page, and the conditions on the compound figure are stated.
+import re
+script = max(re.findall(r"<script>(.*?)</script>", page, flags=re.S), key=len)
+markup = page.replace(script, "")
+ids = set(re.findall(r'\bid="([^"]+)"', markup))
+looked_up = set(re.findall(r'getElementById\("([A-Za-z0-9_-]+)"\)', script)) | set(re.findall(r'\b(?:el|\$|set|li)\("([a-z][a-z0-9]*-[a-z0-9-]+)"', script))
+made_by_script = {i for i in looked_up if ('id="' + i + '"') not in markup and (i + '"') in script and ('.id="' + i + '"' in script or "id='" + i in script)}
+missing = sorted(looked_up - ids - made_by_script)
+assert not missing, f"the script looks up elements the page does not have: {missing}"
+assert "If it earned that, held alone it would compound at" in page and "would stand at" in page and 'id="sec-glossary"' in page and '<main id="main">' in page

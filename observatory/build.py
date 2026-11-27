@@ -212,6 +212,7 @@ def build(data: Path, out: Path) -> dict:
         "path": {**state.paths(btc, band), "prices_licence": "Coin Metrics community data, CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/): non-commercial use with attribution. CC BY 4.0 does not extend to these prices."},
     }
     out.mkdir(parents=True, exist_ok=True)
+    doc["change"] = _change(doc)
     doc["vintages"] = _vintages(data, doc)
     from . import publish                              # the files written for programs and AI agents
     doc["meta"]["credit"] = publish.credit(doc)
@@ -288,6 +289,27 @@ def _static(doc: dict) -> dict:
     return {"<!--STATIC-->": summary, "/*LD*/": json.dumps(ld, separators=(",", ":"), ensure_ascii=False).replace("<", "\\u003c")}
 
 
+def _change(doc: dict) -> dict | None:
+    """What moved between the last two month-ends: the midpoint, each term's part of the move and the
+    inputs behind it, for Bitcoin; the midpoint alone for the other assets. Both months are computed
+    with today's method, so this is the move of the inputs and not a revision."""
+    if len(doc["months"]) < 2:
+        return None
+    a, b = doc["months"][-2], doc["months"][-1]
+    d = lambda x, y: round(y - x, 2)
+    prev = {r["asset"]: r for r in doc["assets"]["monthly"] if r["month_end"] == a["month_end"]}
+    return {"from_month_end": a["month_end"], "to_month_end": b["month_end"],
+            "bitcoin": {"midpoint": [a["required"]["midpoint"], b["required"]["midpoint"]],
+                        "change": d(a["required"]["midpoint"], b["required"]["midpoint"]),
+                        "terms": {k: d(a["terms_at_midpoint"][k], b["terms_at_midpoint"][k]) for k in ("risk_free", "market", "concentration", "mortality")},
+                        "risk_free": [a["terms_at_midpoint"]["risk_free"], b["terms_at_midpoint"]["risk_free"]],
+                        "volatility": [a["inputs"]["volatility"], b["inputs"]["volatility"]],
+                        "beta": [a["inputs"]["beta"], b["inputs"]["beta"]]},
+            "assets": [{"asset": r["asset"], "name": r["name"], "midpoint": [prev[r["asset"]]["required_return"], r["required_return"]],
+                        "change": d(prev[r["asset"]]["required_return"], r["required_return"])}
+                       for r in doc["assets"]["latest"] if r["asset"] in prev]}
+
+
 def _assets(data: Path, btc: pd.DataFrame, band: pd.DataFrame, mkt: pd.Series, cfg: dict) -> dict:
     """Bitcoin and the other priced assets side by side: the latest month-end, and every month each has been priced."""
     from . import assets
@@ -362,7 +384,7 @@ def _page_payload(doc: dict) -> dict:
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
     meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"], "next_update": doc["meta"]["next_update"],
-            "state": doc["state"], "strength": doc["strength"], "vsens": doc["volatility_sensitivity"], "path": {k: v for k, v in doc["path"].items() if k != "prices"},
+            "state": doc["state"], "strength": doc["strength"], "change": doc["change"], "vsens": doc["volatility_sensitivity"], "path": {k: v for k, v in doc["path"].items() if k != "prices"},
             "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "anchors_age": doc["meta"]["anchors_age_months"], "anchors_overdue": doc["meta"]["anchors_overdue"], "notes": doc["notes"], "cmp": doc["comparison"], "erp": doc["equity_premium"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
