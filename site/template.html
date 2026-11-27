@@ -447,6 +447,26 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <li><b>Dates.</b> Month-end closes. A month in progress is left out, so a move in the price since the month-end is not in these figures.</li>
     </ul>
   </section>
+  <section class="card" id="sec-path">
+    <h2>A trend line, and the path the required return implies</h2>
+    <p class="sub">Price dashboards often draw Bitcoin against a straight line on a log scale, with bands one and two standard deviations either side, and read a price below the line as cheap. The line assumes the growth of the past goes on for ever. The required return gives another path: the price if holders earn exactly what they require, from a starting month you choose. <b>Neither is a forecast.</b></p>
+    <div class="filters" style="margin:6px 0 4px"><span>Start the path at</span>
+      <div class="seg" role="group" aria-label="Starting month" id="path-presets"></div>
+      <label style="display:inline-flex;align-items:center;gap:8px">or any month <input type="range" id="path-slider" min="0" max="1" step="1" style="width:190px;accent-color:var(--blue)" aria-label="Starting month"><b id="path-month" style="color:var(--ink);min-width:70px"></b></label>
+    </div>
+    <p class="sub" id="path-line" style="color:var(--ink);font-weight:600"></p>
+    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>Bitcoin, month-end close</span><span><i class="ln" style="border-color:var(--orange);border-top-style:dashed"></i>straight trend line, with ±1 and ±2 SD (dotted)</span><span><i class="ln" style="border-color:var(--blue)"></i>path at the required compound return, midpoint</span><span><i class="ln" style="border-color:var(--blue);border-top-style:dashed;border-top-width:1.5px"></i>the same for the holders at the two edges of the band</span><span><i style="background:var(--band)"></i>±1σ (dark) and ±2σ (light) around the path</span></div>
+    <div class="chart" id="c-path"></div>
+    <div class="scroll" style="margin-top:6px"><table id="t-path"></table></div>
+    <ul class="note" style="margin-top:14px">
+      <li><b>Previous peak</b> in the table means the highest month-end close before the last fall of more than half.</li>
+      <li><b>The starting month is a choice.</b> The equation gives a growth rate, not a price level, so the path inherits the price of the month it starts in. Start it at a peak and today's price looks low against it; start it at a trough and today's price looks high. A required return does not look back: a buyer today requires it on the price she pays today, whatever came before. The table shows how much the reading depends on the start.</li>
+      <li><b>The dashed blue lines: who the holder is.</b> They are the two edges of the required-return band carried forward as prices. The lower one is the diversified holder, who asks little for volatility. The upper one is the concentrated holder, who asks more than volatility takes. The spread between them is about not knowing which holder sets the price. It is not about chance.</li>
+      <li><b>The shaded cone: chance.</b> Even if holders earn exactly what they require on average, the price does not follow the line. The cone is one and two standard deviations of the price around the path, at the volatility in the equation. It widens with time, because nothing in the equation pulls the price back.</li>
+      <li><b>The dotted orange bands are a different thing.</b> They measure how far the price has stood from the straight line in the past, and they stay parallel for ever. Reading them as levels to buy and sell at assumes the price returns to the line. The line is also fitted with hindsight: its slope changes as months are added.</li>
+      <li><b>Past and ahead.</b> From the starting month to the latest month-end the path uses each month's own required return and volatility. Ahead of it, <span id="path-ahead"></span> Both will change.</li>
+    </ul>
+  </section>
   </div>
 
   <div class="pane" id="pane-holders">
@@ -1096,6 +1116,63 @@ function comparedTab(){
 const longDateOf=s=>d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(s));
 // the date of the next monthly update, while it is still ahead
 const nextUpdate=()=>{ const d=d3.timeParse("%Y-%m-%d")(DATA.meta.next_update); return d&&d.getTime()+864e5>Date.now()?"next update "+d3.timeFormat("%-d %B %Y")(d):"updated monthly"; };
+let ANCHOR=null;                              // the month the path starts at, "YYYY-MM"; null is the latest month-end
+function pathCard(){
+  const m=DATA.meta, P=m.path, A=DATA.rows, n=A.length-1, H=P.horizon_months, el=id=>document.getElementById(id);
+  const usd=v=>v>=1e6?"$"+(v/1e6).toFixed(v>=1e7?0:1)+"m":v>=1e4?"$"+Math.round(v/1e3)+"k":"$"+d3.format(",.0f")(v);
+  const first=A.findIndex(r=>r.asof>=FROM+"-01"), mon=d3.timeFormat("%B %Y"), dateOf=i=>d3.timeMonth.offset(A[0].t,i), sig=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1)+"σ";
+  const found=ANCHOR==null?n:A.findIndex(r=>r.asof===ANCHOR), a=Math.max(first,found<0?n:found);
+  // the straight line through the log of the month-end closes of the period
+  const X=d3.range(first,n+1).map(i=>(i-first)/12), Y=d3.range(first,n+1).map(i=>Math.log(A[i].px)), mx=d3.mean(X), my=d3.mean(Y);
+  const k=d3.sum(X.map((x,i)=>(x-mx)*(Y[i]-my)))/d3.sum(X.map(x=>(x-mx)**2)), c=my-k*mx, sd=d3.deviation(Y.map((y,i)=>y-(c+k*X[i]))), trend=i=>c+k*(i-first)/12;
+  // the path from the starting month: each month at its own required compound return, then the latest held
+  const run=key=>{ let v=Math.log(A[a].px); const o=new Map([[a,v]]); for(let i=a;i<n+H;i++){ v+=A[Math.min(i,n)][key]/1200; o.set(i+1,v); } return o; };
+  const mid=run("cmid"), lo=run("clo"), hi=run("chi"), spread=new Map([[a,0]]); { let acc=0; for(let i=a;i<n+H;i++){ acc+=(A[Math.min(i,n)].vol/100)**2/12; spread.set(i+1,Math.sqrt(acc)); } }
+  const D=d3.range(first,n+H+1).map(i=>({i,t:dateOf(i),px:i<=n?A[i].px:null,tr:Math.exp(trend(i)),mcm:mid.has(i)?Math.exp(mid.get(i)):null,
+    up:mid.has(i)?Math.exp(mid.get(i)+2*spread.get(i)):null,dn:mid.has(i)?Math.exp(mid.get(i)-2*spread.get(i)):null}));
+  const f=frame(el("c-path"),400,{l:48,r:narrow({iw:el("c-path").clientWidth-60})?58:150,t:12,b:26}), small=narrow(f), E=n+H;
+  const x=d3.scaleTime().domain([dateOf(first),dateOf(E)]).range([0,f.iw]);
+  const lowest=Math.min(d3.min(D,d=>d.px||Infinity),Math.exp(mid.get(E)-2*spread.get(E)),Math.exp(trend(first)-2*sd)), highest=Math.max(Math.exp(trend(E)+2*sd),Math.exp(mid.get(E)+2*spread.get(E)));
+  const y=d3.scaleLog().domain([lowest*0.8,highest*1.25]).range([f.ih,0]).clamp(true);
+  const ticks=[1,10,100,1e3,1e4,1e5,1e6,1e7,1e8].flatMap(v=>[v,3*v]).filter(v=>v>=lowest*0.8&&v<=highest*1.25);
+  const g=axes(f,x,y,{yticks:ticks,yfmt:usd}), X_=d=>x(d.t);
+  const P_=D.filter(d=>d.mcm!=null), band=z=>d3.area().x(X_).y0(d=>y(Math.exp(mid.get(d.i)-z*spread.get(d.i)))).y1(d=>y(Math.exp(mid.get(d.i)+z*spread.get(d.i))));
+  g.append("path").datum(P_).attr("fill",css("--band")).attr("opacity",.4).attr("d",band(2));
+  g.append("path").datum(P_).attr("fill",css("--band")).attr("opacity",.85).attr("d",band(1));
+  [-2,-1,0,1,2].forEach(z=>g.append("path").datum(D).attr("fill","none").attr("stroke",css("--orange")).attr("stroke-width",z?1:1.8).attr("stroke-dasharray",z?"1 4":"6 4").attr("d",d3.line().x(X_).y(d=>y(Math.exp(trend(d.i)+z*sd)))));
+  [[lo,1.2,"4 3"],[hi,1.2,"4 3"],[mid,2.4,null]].forEach(([M,w,dash])=>g.append("path").datum(P_).attr("fill","none").attr("stroke",css("--blue")).attr("stroke-width",w).attr("stroke-dasharray",dash).attr("d",d3.line().x(X_).y(d=>y(Math.exp(M.get(d.i))))));
+  g.append("path").datum(D.filter(d=>d.px!=null)).attr("fill","none").attr("stroke",css("--ink")).attr("stroke-width",1.5).attr("stroke-linejoin","round").attr("d",d3.line().x(X_).y(d=>y(d.px)));
+  g.append("line").attr("x1",x(dateOf(n))).attr("x2",x(dateOf(n))).attr("y1",0).attr("y2",f.ih).attr("stroke",css("--mut")).attr("stroke-dasharray","2 4");
+  g.append("text").attr("x",x(dateOf(n))-5).attr("y",10).attr("text-anchor","end").attr("font-size",11.5).attr("fill",css("--mut")).text("latest month-end");
+  g.append("circle").attr("cx",x(dateOf(a))).attr("cy",y(A[a].px)).attr("r",5.5).attr("fill",css("--blue")).attr("stroke",css("--surface")).attr("stroke-width",2);
+  // values at the right-hand end, kept apart
+  const L=[[Math.exp(trend(E)+2*sd),"trend +2 SD",0],[Math.exp(trend(E)),"trend line",1],[Math.exp(trend(E)-2*sd),"trend −2 SD",0],
+           [Math.exp(mid.get(E)+2*spread.get(E)),"path +2σ",0],[Math.exp(mid.get(E)),"path",1],[Math.exp(mid.get(E)-2*spread.get(E)),"path −2σ",0]]
+    .map(([v,n_,b])=>({v,y:y(v),s:small?usd(v):n_+"  "+usd(v),b})).sort((p,q)=>p.y-q.y);
+  for(let i=1;i<L.length;i++) if(L[i].y-L[i-1].y<14) L[i].y=L[i-1].y+14;
+  L.forEach(l=>g.append("text").attr("x",f.iw+7).attr("y",l.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",l.b?700:400).attr("fill",css(l.b?"--ink":"--ink2")).text(l.s));
+  hover(f,g,x,D,[{k:"px",n:"price",c:"--ink",y},{k:"tr",n:"trend line",c:"--orange",y},{k:"mcm",n:"path",c:"--blue",y},{k:"up",n:"path +2σ",c:"--band"},{k:"dn",n:"path −2σ",c:"--band"}],usd);
+  // the controls
+  const B=el("path-presets"); B.textContent="";
+  P.anchors.filter(p=>A.findIndex(r=>r.asof===p.month)>=first).forEach(p=>{ const b=document.createElement("button"); b.type="button";
+    b.textContent=({latest:"Latest month-end",peak:"Latest peak",previous_peak:"Previous peak"})[p.key]+" · "+fmtM(parse(p.month)); b.setAttribute("aria-pressed",A[a].asof===p.month);
+    b.addEventListener("click",()=>{ANCHOR=p.key==="latest"?null:p.month; pathCard();}); B.appendChild(b); });
+  const sl=el("path-slider"); sl.min=first; sl.max=n; sl.value=a; sl.oninput=()=>{ANCHOR=+sl.value===n?null:A[+sl.value].asof; pathCard();};
+  el("path-month").textContent=fmtM(A[a].t);
+  // the sentence and the table
+  const pathNow=Math.exp(mid.get(n)), z=a===n?null:(Math.log(A[n].px)-mid.get(n))/spread.get(n), g1=v=>(100*(Math.exp(v)-1)).toFixed(0)+"%";
+  el("path-line").textContent="Started at the end of "+mon(A[a].t)+" ("+usd(A[a].px)+"), the path "+(a===n?"":"stands at "+usd(pathNow)+" today, with the price ("+usd(A[n].px)+") "+sig(z)+" from it, and ")
+    +"reaches "+usd(Math.exp(mid.get(E)))+" by "+mon(dateOf(E))+" (±2σ: "+usd(Math.exp(mid.get(E)-2*spread.get(E)))+" to "+usd(Math.exp(mid.get(E)+2*spread.get(E)))+"). The trend line fitted from "+mon(A[first].t)+" grows "+g1(k)+" a year and reaches "+usd(Math.exp(trend(E)))+".";
+  const fill=(id,head,body)=>{ const T=el(id); T.textContent=""; const hr=T.insertRow(); head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+    body.forEach(([cells,cls])=>{const r=T.insertRow(); if(cls) r.className=cls; cells.forEach(v=>{r.insertCell().textContent=v;});}); };
+  const short={latest:"latest month-end",peak:"latest peak",previous_peak:"previous peak"}, rowOf=p=>["Path from "+fmtM(parse(p.month))+" · "+short[p.key],usd(p.price_then),usd(p.path_today),p.price_against_it==null?"on it":sig(p.price_against_it),usd(p.path_at_horizon),usd(p.range_at_horizon[0])+" to "+usd(p.range_at_horizon[1])];
+  const rowsT=P.anchors.map(p=>[rowOf(p),A[a].asof===p.month?"here":""]);
+  if(!P.anchors.some(p=>p.month===A[a].asof)) rowsT.push([["Path from "+fmtM(A[a].t)+" · your choice",usd(A[a].px),usd(pathNow),sig(z),usd(Math.exp(mid.get(E))),usd(Math.exp(mid.get(E)-2*spread.get(E)))+" to "+usd(Math.exp(mid.get(E)+2*spread.get(E)))],"here"]);
+  rowsT.push([["Trend line from "+fmtM(A[first].t)+" · "+g1(k)+" a year","",usd(Math.exp(trend(n))),((Math.log(A[n].px)-trend(n))/sd>0?"+":"−")+Math.abs((Math.log(A[n].px)-trend(n))/sd).toFixed(1)+" SD",usd(Math.exp(trend(E))),usd(Math.exp(trend(E)-2*sd))+" to "+usd(Math.exp(trend(E)+2*sd))],"sep"]);
+  fill("t-path",["","Price at the start","Where it stands today","Today's price ("+usd(A[n].px)+") against it","In "+mon(dateOf(E)),"±2 range then"],rowsT);
+  el("t-path").querySelectorAll("td:first-child").forEach(c=>{c.style.whiteSpace="normal";c.style.maxWidth="230px";});
+  el("path-ahead").textContent="it holds the latest required compound return ("+P.growth_ahead.midpoint.toFixed(1)+"% a year at the midpoint, "+P.growth_ahead.lower.toFixed(1)+"% and "+P.growth_ahead.upper.toFixed(1)+"% at the edges) and the latest volatility ("+P.volatility.toFixed(0)+"%).";
+}
 function volatilityTab(){
   const m=DATA.meta, V=m.vsens, S=m.state, sm=S.samples[FROM], el=id=>document.getElementById(id), d=rows(), L=DATA.rows[DATA.rows.length-1];
   const f1=v=>v.toFixed(1), p1=v=>(v<0?"−":"")+Math.abs(v).toFixed(1)+"%", p0=v=>v==null?"":(v<0?"−":"")+Math.abs(v).toFixed(0)+"%", usd=v=>"$"+d3.format(",.0f")(v);
@@ -1462,7 +1539,7 @@ function draw(){
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
   holdersTab(); edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard(); markScroll();
-  compareView(); dataView(); volatilityTab();
+  compareView(); dataView(); volatilityTab(); pathCard();
 }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
 const TABS=["overview","required-return","volatility","holders","tests","compared"], VIEWS=["compare","bitcoin","equation","census","data"];

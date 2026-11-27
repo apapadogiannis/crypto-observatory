@@ -119,6 +119,22 @@ assert latest_json["next_update_expected"] > latest_json["as_of_month_end"] and 
 assert latest_json["bitcoin_state_at_month_end"]["price_usd"] == st["price_usd"]
 assert "record, not a forecast" in guide and "record, not a forecast" in page
 
+# The trend line and the path: the path from the latest month-end starts on the price, an earlier start has
+# a reading of today's price, the edges and the range bracket the path, and the prices are the months of the band.
+pa = doc["path"]
+assert pa["month_end"] == doc["latest"]["month_end"] and [x[0] for x in pa["prices"]] == [m["month_end"][:7] for m in doc["months"]]
+assert pa["prices"][-1][1] == st["price_usd"] or abs(pa["prices"][-1][1] - st["price_usd"]) < 1
+first = pa["anchors"][0]
+assert first["key"] == "latest" and first["path_today"] == first["price_then"] and first["price_against_it"] is None
+for an in pa["anchors"]:
+    assert an["range_at_horizon"][0] < an["path_at_horizon"] < an["range_at_horizon"][1]
+    assert an["edges_at_horizon"][0] <= an["path_at_horizon"] <= an["edges_at_horizon"][1] or an["key"] != "latest"
+    assert (an["price_against_it"] is None) == (an["key"] == "latest")
+assert pa["growth_ahead"]["midpoint"] == last["compound"]["midpoint"]
+for tr in pa["trend"].values():
+    assert tr["range_at_horizon"][0] < tr["value_at_horizon"] < tr["range_at_horizon"][1] and tr["growth"] > 0
+assert "Neither is a forecast" in page and "`path` in data.json" in guide
+
 # The record of what was first published: one row per month-end, the latest month in it, and stored
 # rows unchanged by a build.
 stored = list(csv.DictReader((ROOT / "data" / "vintages.csv").open(encoding="utf-8")))

@@ -80,6 +80,8 @@ owner's weight times the share of a crypto holding that moves with the asset (ka
    volatilities; and where Bitcoin stands (distance from its highest month-end close, volatility
    against its own past) with the record of the twelve months that followed similar month-ends. A
    record with the number of separate spells behind each row, not a forecast.
+   Last, a straight trend line of the kind price dashboards draw, beside the path the required
+   return implies from a starting month the reader chooses.
 4. **Holders.** Where the holder's weight in the concentration term comes from: the surveyed owner at
    19%, the surveys in the United Kingdom and Canada that show holdings per owner not following the
    price, the lower weight once fund and treasury investors are counted, and the early holder.
@@ -175,6 +177,7 @@ can read it without scraping the page.
 | `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, the list of top-twenty deaths with the rule behind each, the counts by rule, and what is left out |
 | `volatility_sensitivity` | the latest band, average and compound, recomputed at other volatilities with the other inputs held, and the pay for variance at each edge against the one half that compounding takes |
 | `state` | where Bitcoin stood at the month-end (price, distance from its highest month-end close, volatility) and, for each of the two periods, what followed similar month-ends over the next twelve months, with the number of separate spells behind each row |
+| `path` | a straight trend line through the log of the month-end closes, for each period, and the path the required compound return implies from three starting months: where each stands today, today's price against it, and where it leads in three years; with the month-end closes behind the chart |
 | `vintages` | what was published for each month-end when it was first computed |
 | `meta.model` | the model's fixed settings (equity premium, risk aversion, scales, windows, caps) and `meta.anchors_age_months`, the age of the hand-entered inputs |
 

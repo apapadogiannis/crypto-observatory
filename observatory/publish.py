@@ -430,7 +430,7 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 - assets.csv and assets_monthly.csv: the same fields as a table, at the latest month-end and for every
   month-end since each asset has been priced.
 - data.json: everything behind the page. Keys: meta, latest, months, periods, comparison, notes,
-  equity_premium, census, holders, assets, volatility_sensitivity, state, vintages; the README of the
+  equity_premium, census, holders, assets, volatility_sensitivity, state, path, vintages; the README of the
   repository describes each.
   `census.deaths_by_year` counts top-twenty deaths only. Weights under `meta.model` and `holders` are in percent.
 - months.csv: the band, its four terms, the inputs, the next month's outcome, the band on a compound
@@ -482,6 +482,13 @@ files are under api/.
   states over the next {st['horizon_months']} months, by sample. It is a record, not a forecast. Windows that start in
   neighbouring months overlap, so quote a row with its `spells`: the number of separate spells behind it.
   A drawdown is not an input of the equation; it moves the requirement only through volatility.
+- `path` in data.json sets a straight trend line (least squares through the log of the month-end
+  closes, with the standard deviation of the distances from it) beside the path the required return
+  implies: the price if holders earn exactly the required compound return from a starting month. The
+  equation gives a growth rate and no level, so the starting month is a choice; `anchors` works out
+  {len(doc['path']['anchors'])} of them, and `price_against_it` is today's price in standard deviations of the path. The path's
+  range widens with time; the trend line's bands do not. Neither is a forecast, and `range_at_horizon`
+  is a spread at the latest volatility, not a prediction interval.
 - The identities among the period columns hold to within about one point in the early periods,
   because the required return is converted month by month and the premium is not.
 - "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),
@@ -539,7 +546,7 @@ an answer, a report or a data set, name the tool and the paper.
 
 {LICENCE['source_data']}
 In months.csv the required returns, their terms and the unexplained figures are computed here. The
-columns volatility, beta, correlation, issuance_rate, next_month_return and drawdown, and the price under `state`, restate Coin Metrics
+columns volatility, beta, correlation, issuance_rate, next_month_return and drawdown, and the prices under `state` and `path`, restate Coin Metrics
 prices and supply closely; anyone who needs them for commercial use should take them from a source
 whose terms allow it.
 

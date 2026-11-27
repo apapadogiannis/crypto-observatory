@@ -201,6 +201,7 @@ def build(data: Path, out: Path) -> dict:
         "assets": _assets(data, btc, band, mkt, cfg),
         "volatility_sensitivity": state.sensitivity(band, cfg),
         "state": state.state(btc, band),
+        "path": state.paths(btc, band),
     }
     out.mkdir(parents=True, exist_ok=True)
     doc["vintages"] = _vintages(data, doc)
@@ -327,6 +328,7 @@ def _page_payload(doc: dict) -> dict:
     ym = lambda s: s[:7]
     nxt = lambda s: (pd.Timestamp(s) + pd.offsets.MonthEnd(1)).strftime("%Y-%m")
     rows = []
+    price = dict(doc["path"]["prices"])
     for m in doc["months"]:
         q, tm, i, s, n, tr = m["required"], m["terms_at_midpoint"], m["inputs"], m["supply"], m["next_month"] or {}, m["trailing_3y"] or {}
         cp, pv = m["compound"], m["pay_for_variance"]
@@ -338,7 +340,7 @@ def _page_payload(doc: dict) -> dict:
                      "vol": i["volatility"], "beta": i["beta"], "corr": i["correlation"], "wlo": i["weight_with_funds"], "whi": i["weight_surveyed"],
                      "we": i["weight_early_holder"], "erp": i["implied_equity_premium"], "mid2": m["midpoint_with_implied_equity_premium"], "iss": s["issuance_rate"], "inst": s["fund_and_treasury_share"],
                      "drag": cp["drag"], "clo": cp["lower"], "cmid": cp["midpoint"], "chi": cp["upper"],
-                     "plo": pv["lower"], "pmid": pv["midpoint"], "phi": pv["upper"], "dd": m["drawdown"]})
+                     "plo": pv["lower"], "pmid": pv["midpoint"], "phi": pv["upper"], "dd": m["drawdown"], "px": price[ym(m["month_end"])]})
     per = [{"p": p["period"], "n": p["months"], "a": p["from"], "b": p["to"], "sum": p["summary"], "real": p["delivered"], "mid": p["required_mid"],
             "gap": p["gap"], "gse": p["gap_se"], "ex": p["excess"], "prem": p["required_premium"], "eq": p["equity_beyond_premium"], "mk": p["market_part"], "cm": p["concentration_mortality_part"],
             "alpha": p["mcm_alpha"], "se": p["mcm_alpha_se"], "calpha": p["capm_alpha"],
@@ -347,7 +349,7 @@ def _page_payload(doc: dict) -> dict:
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
     meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"], "next_update": doc["meta"]["next_update"],
-            "state": doc["state"], "vsens": doc["volatility_sensitivity"],
+            "state": doc["state"], "vsens": doc["volatility_sensitivity"], "path": {k: v for k, v in doc["path"].items() if k != "prices"},
             "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "anchors_age": doc["meta"]["anchors_age_months"], "anchors_overdue": doc["meta"]["anchors_overdue"], "notes": doc["notes"], "cmp": doc["comparison"], "erp": doc["equity_premium"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],
