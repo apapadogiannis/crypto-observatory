@@ -49,6 +49,8 @@ h2{font-size:20px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
 .tile .v.long{font-size:21px;line-height:1.78;white-space:nowrap}
 @media (min-width:900px){.tiles.five{grid-template-columns:repeat(6,1fr)}.tiles.five .tile{grid-column:span 2}.tiles.five .tile:nth-child(n+4){grid-column:span 3}}
 tr.here td{font-weight:700}
+#sec-compound .risk>p{font-size:14.5px}
+#sec-compound .risk>h3{font-size:17px}
 .site{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;margin:0 0 22px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .site .brand{font-weight:700;font-size:15px;letter-spacing:.01em}
 .site .brand small{font-weight:400;color:var(--mut);font-size:12.5px;margin-left:8px}
@@ -387,24 +389,42 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <div class="pane" id="pane-volatility">
   <section class="card" id="sec-compound">
-    <h2>What the required return compounds at</h2>
-    <p class="sub">The required return is an average across years. Money that is left invested grows at the compound rate, which is lower by half the variance: the drag. The drag does not depend on who holds the asset, so the whole band moves down by it.</p>
+    <h2>What volatility does to the return, in three steps</h2>
+    <p class="sub">The required return is an average across years. What money grows at is the compound return. Volatility is what separates the two, and it does not treat every holder alike.</p>
     <p class="sub" id="vol-headline" style="color:var(--ink);font-weight:600"></p>
-    <div class="grid2">
-      <div class="mini"><h3>Required return on a compound basis</h3><p>percent a year: the band and its midpoint, each less the drag</p>
-        <div class="legend"><span><i style="background:var(--band)"></i>band, compound</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint, compound</span><span><i class="ln" style="border-color:var(--orange)"></i>midpoint, average</span></div>
+
+    <div class="risk">
+      <h3>1. Volatility costs money, even when the average is fine</h3>
+      <p>Put 100 into an asset that gains 50% one year and loses 50% the next. The average return is zero. But 100 becomes 150 and then 75: a quarter is gone. The gap between the average return and what the money grows at is the <b>drag</b>. It is about half the variance each year, and it is the same for every holder.</p>
+      <p id="vol-step1" style="color:var(--ink)"></p>
+      <div class="mini"><h3>Required return: average and compound</h3><p>percent a year. The compound band is the band of the required return, moved down by the drag</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--orange)"></i>required, average (midpoint)</span><span><i class="ln" style="border-color:var(--ink)"></i>required, compound (midpoint)</span><span><i style="background:var(--band)"></i>compound band</span></div>
         <div class="chart" id="c-comp"></div></div>
-      <div class="mini"><h3>Pay for variance, against the half that compounding takes</h3><p>risk aversion × holder's weight. Above the dashed line (one half) more volatility raises the compound requirement; below it, lowers it</p>
-        <div class="legend"><span><i class="ln" style="border-color:var(--blue)"></i>upper edge</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint</span><span><i class="ln" style="border-color:var(--magenta)"></i>lower edge</span></div>
-        <div class="chart" id="c-pay"></div></div>
     </div>
-    <div class="mini" style="margin-top:14px"><h3 id="vsens-title">The latest band at other volatilities</h3><p>percent a year. Only volatility changes: the risk-free rate, beta, the holders' weights and mortality are those of the month-end</p>
-      <div class="scroll"><table id="t-vsens"></table></div></div>
-    <ul class="note" style="margin-top:14px">
-      <li><b>Who is paid for volatility.</b> <span id="vol-who"></span></li>
-      <li><b>Through time.</b> <span id="vol-time"></span></li>
-      <li><b>What the table is not.</b> It changes volatility and holds everything else. It does not say what volatility will be. The drag uses the volatility in the equation, which weights recent months more.</li>
-    </ul>
+
+    <div class="risk">
+      <h3>2. Holders ask to be paid for bearing it</h3>
+      <p>A holder with 5% of her wealth in Bitcoin hardly feels a crash, and asks little extra return for the risk. A holder with all her wealth in it feels the whole crash, and asks a lot. In the equation, what a holder asks for each unit of variance is her risk aversion times the share of her wealth in Bitcoin. Call it her <b>pay for variance</b>. It is 1 for a holder who is all in, and close to zero for a well diversified one.</p>
+    </div>
+
+    <div class="risk">
+      <h3>3. Set the pay beside the drag</h3>
+      <p>So variance does two things at once. It earns the holder the pay she asks, and it costs her the drag, which is one half of the variance. If she asks for more than one half, more volatility means her money should compound faster. If she asks for less than one half, more volatility means it compounds slower.</p>
+      <div class="mini"><h3 id="pay-title">The two effects, holder by holder</h3><p>points of return a year, at the month-end's volatility</p>
+        <div class="scroll"><table id="t-pay"></table></div></div>
+      <p id="vol-who" style="color:var(--ink);margin-top:10px"></p>
+      <div class="mini" style="margin-top:12px"><h3>The pay each holder asks, through time</h3><p>pay for a unit of variance. The dashed line is the half that compounding takes: above it volatility raises the compound return a holder should require, below it lowers it</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--blue)"></i>upper edge of the band</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint</span><span><i class="ln" style="border-color:var(--magenta)"></i>lower edge of the band</span><span><i class="ln" style="border-color:var(--ink);border-top-style:dashed"></i>one half</span></div>
+        <div class="chart" id="c-pay"></div></div>
+      <p id="vol-time" style="margin-top:10px"></p>
+    </div>
+
+    <div class="risk">
+      <h3>What if volatility were different?</h3>
+      <p>The band of the month-end, worked out again at other volatilities. Only volatility changes: the risk-free rate, beta, the holders' weights and mortality stay as they are. Read down a column to see what more volatility does to each edge: the average requirement always rises, and the compound requirement rises only where the pay for variance is above one half.</p>
+      <div class="scroll"><table id="t-vsens"></table></div>
+      <p>The table does not say what volatility will be. The drag uses the volatility in the equation, which weights recent months more.</p>
+    </div>
   </section>
 
   <section class="card" id="sec-state">
@@ -1091,14 +1111,24 @@ function volatilityTab(){
     hover(f,g,x,d,S2,v=>v.toFixed(2)); }
   const fill=(id,head,body)=>{ const T=el(id); T.textContent=""; const hr=T.insertRow(); head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
     body.forEach(([cells,cls])=>{const r=T.insertRow(); if(cls) r.className=cls; cells.forEach(v=>{r.insertCell().textContent=v;});}); };
-  el("vsens-title").textContent="The band of "+month+" at other volatilities";
+  { const P=V.pay_for_variance, vr=2*L.drag, pts=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1)+" pts", early=m.now.early;
+    el("vol-step1").textContent="At the end of "+month+" Bitcoin's volatility is "+S.volatility.toFixed(0)+"% a year, so the drag is "+f1(L.drag)+" points: a required return of "+f1(L.mid)+"% on average compounds at "+p1(L.cmid)+".";
+    el("pay-title").textContent="The two effects, holder by holder, at the end of "+month;
+    const H=[["A holder with all her wealth in Bitcoin, as the early holders were",1],
+      [(early?"Early holder":"Average surveyed owner, high risk aversion")+" (upper edge of the band)",P.upper],
+      ["Midpoint of the band",P.midpoint],
+      ["Average owner counting fund and treasury investors, low risk aversion (lower edge)",P.lower]];
+    fill("t-pay",["Holder","Pay for a unit of variance","Extra return she asks for volatility","What compounding takes","Left over"],
+      H.map(([n,pay],i)=>[[n,pay.toFixed(2),pts(pay*vr),pts(-L.drag),pts(pay*vr-L.drag)],i===2?"here":""]));
+    el("t-pay").querySelectorAll("td:first-child").forEach(c=>{c.style.whiteSpace="normal";c.style.maxWidth="330px";}); }
   fill("t-vsens",["Volatility","Lost to volatility","Average: lower edge","Average: midpoint","Average: upper edge","Compound: lower edge","Compound: midpoint","Compound: upper edge"],
     V.rows.map(r=>[[r.volatility.toFixed(0)+"%"+(r.current?" (now)":""),f1(r.drag)+" pts",p1(r.average.lower),p1(r.average.midpoint),p1(r.average.upper),p1(r.compound.lower),p1(r.compound.midpoint),p1(r.compound.upper)],r.current?"here":""]));
-  { const P=V.pay_for_variance, h=V.break_even_pay_for_variance, side=v=>v>h?"raises":"lowers";
-    el("vol-who").textContent="Each edge of the band rises with variance by risk aversion times the holder's weight: "+P.lower.toFixed(2)+" at the lower edge, "+P.midpoint.toFixed(2)+" at the midpoint and "+P.upper.toFixed(2)+" at the upper edge. Compounding takes one half. So more volatility "+side(P.lower)+" the compound requirement at the lower edge, "+side(P.midpoint)+" it at the midpoint and "+side(P.upper)+" it at the upper edge: whether volatility helps or hurts the compound return a holder should require depends on how concentrated that holder is.";
+  { const P=V.pay_for_variance, h=V.break_even_pay_for_variance, vr=2*L.drag;
+    el("vol-who").textContent="At the midpoint, holders ask "+f1(P.midpoint*vr)+" points for volatility and compounding takes "+f1(L.drag)+". "+(P.midpoint<h?"They ask for less than volatility costs them, so more volatility lowers the compound return they should require.":"They ask for more than volatility costs them, so more volatility raises the compound return they should require.")+" Whether volatility helps or hurts depends on how concentrated the holder is, not on the asset alone.";
     const A=DATA.rows, lastEarly=[...A].reverse().find(r=>r.eb), lastMid=[...A].reverse().find(r=>r.pmid>=h);
-    el("vol-time").textContent=(lastEarly?"Until "+monthOf(lastEarly.asof)+" the early holder set the upper edge. While she held all her wealth in Bitcoin her pay for variance was 1, twice what compounding takes. ":"")
-      +(lastMid?"At the midpoint the pay was last at one half or more in "+monthOf(lastMid.asof)+". Since then, more volatility has meant a lower compound requirement at the midpoint, as more diversified investors hold Bitcoin.":"At the midpoint the pay has been below one half throughout."); }
+    el("vol-time").textContent=(lastEarly?"In Bitcoin's first years the holders who set the upper edge had all their wealth in it, and asked twice what compounding took: for them volatility was a tailwind. That lasted until "+monthOf(lastEarly.asof)+". ":"")
+      +(lastMid?"As ownership spread and funds came in, holders became more diversified and asked less. At the midpoint the pay was last at one half or more in "+monthOf(lastMid.asof)+"; since then volatility has been a headwind for the compound return the typical holder should require.":"At the midpoint the pay has been below one half throughout.")
+      +(lastEarly?" The step in the blue line is the month the upper edge passes from the early holder to the average surveyed owner. It comes from how the band is built, not from a sudden change in the market.":""); }
   // the state and its record
   const since=FROM==="2018"?"since 2018":"since 2012";
   el("st-headline").textContent="At the end of "+month+" Bitcoin closed at "+usd(S.price_usd)+(S.drawdown<0?", "+Math.abs(S.drawdown).toFixed(0)+"% below its highest month-end close ("+usd(S.peak_month_end_close_usd)+", "+monthOf(S.peak_month)+")":", its highest month-end close")+". Its volatility in the equation, "+S.volatility.toFixed(0)+"%, was lower than at "+sm.volatility_percentile.toFixed(0)+"% of month-ends "+since+".";
