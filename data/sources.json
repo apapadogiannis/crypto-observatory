@@ -1,15 +1,15 @@
 {
  "coinmetrics": {
   "source": "Coin Metrics Community API",
-  "last_observation": "2026-11-19",
-  "rows_added": 0,
+  "last_observation": "2026-11-26",
+  "rows_added": 7,
   "overlap_days_checked": 15,
   "revisions": []
  },
  "treasury": {
   "source": "US Treasury, daily par yield curve rates",
-  "last_observation": "2026-11-19",
-  "rows_added": 0
+  "last_observation": "2026-11-25",
+  "rows_added": 4
  },
  "market": {
   "source": "Kenneth R. French data library, Fama/French 3 factors (Mkt-RF plus RF)",
@@ -35,8 +35,38 @@
  "implied_equity_premium": {
   "source": "Aswath Damodaran, implied equity risk premium by month (NYU Stern)",
   "last_observation": "2026-11",
-  "rows_added": 219,
+  "rows_added": 0,
   "revisions": []
  },
- "retrieved": "2026-11-20"
+ "coinmetrics_eth": {
+  "source": "Coin Metrics Community API",
+  "last_observation": "2026-11-26",
+  "rows_added": 2,
+  "revisions": []
+ },
+ "coinmetrics_bnb": {
+  "source": "Coin Metrics Community API",
+  "last_observation": "2026-11-26",
+  "rows_added": 2,
+  "revisions": []
+ },
+ "coinmetrics_sol": {
+  "source": "Coin Metrics Community API",
+  "last_observation": "2026-11-26",
+  "rows_added": 2,
+  "revisions": []
+ },
+ "coinmetrics_trx": {
+  "source": "Coin Metrics Community API",
+  "last_observation": "2026-11-26",
+  "rows_added": 2,
+  "revisions": []
+ },
+ "coinmetrics_paxg": {
+  "source": "Coin Metrics Community API",
+  "last_observation": "2026-11-26",
+  "rows_added": 2,
+  "revisions": []
+ },
+ "retrieved": "2026-11-27"
 }

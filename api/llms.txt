@@ -28,7 +28,7 @@ This file is written for AI agents and other programs. People should start at th
   the same equation from the month it has 36 months of returns. Latest midpoints, percent a year:
   Bitcoin 18.78, Ether 24.6, BNB 17.32, Solana 24.45, Tron 9.11.
   Bitcoin's requirement is tested against what it delivered. The same comparison is computed for the other four assets (data.json, assets.tests) and is not evidence for them: they are survivors with short records.
-- 178 month-ends from 2012-01-31 to 2026-10-31; source data to 2026-11-19.
+- 178 month-ends from 2012-01-31 to 2026-10-31; source data to 2026-11-26.
 - Latest required return, 2026-10-31: 18.78% a year at the midpoint, band 11.65% to 25.92%.
   Of the midpoint: risk-free 4.94, market 5.78, concentration 6.16, mortality 1.9.
 - Tests of fit to 2026-09 (the equity market series is published with a lag of one to two months).
