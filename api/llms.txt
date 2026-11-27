@@ -140,17 +140,20 @@ files are under api/.
 - `delivered_compound` in periods.csv is the compound return over the same months, for a reader
   who asks what holding earned. Compare `delivered` with `required_mid` (both averages); do not set
   `delivered_compound` beside `required_mid`.
-- The required return on a compound basis is `required_compound_pct_per_year` in latest.json and the
-  assets files (and `compound` in data.json under `comparison.rows`): the midpoint less half the
-  variance. It is what a holder who receives the required return can expect to compound at.
-  Its band is `required_compound_lower_pct_per_year` to `required_compound_upper_pct_per_year`; the
-  drag is the same at every edge. months.csv has the same for every Bitcoin month-end.
+- The required return is an average, and it is what the equation's holders ask. `required_compound_pct_per_year`
+  in latest.json and the assets files (and `compound` in data.json under `comparison.rows`) is not a
+  requirement: it is the midpoint less half the variance, what a position held alone and never
+  rebalanced would compound at if the asset earned its required return, and the rate at which the
+  price itself would compound. Its band is `required_compound_lower_pct_per_year` to
+  `required_compound_upper_pct_per_year`. months.csv has the same for every Bitcoin month-end.
 - `pay_for_variance_*` in months.csv is risk aversion times the holder's weight: how much the
-  required return rises for a unit of variance. Compounding takes half the variance, so the compound
-  requirement rises with volatility where the pay is above 0.5 and falls where it is below. At the
-  latest month-end it is 0.074 at the lower edge, 0.303 at the midpoint and 0.532 at the upper edge.
-  `volatility_sensitivity` in data.json recomputes the latest band at other volatilities, the other
-  inputs held. This follows from the equation; it is not an estimate of what volatility will be.
+  required return rises for a unit of variance. At the latest month-end it is 0.074 at the lower
+  edge, 0.303 at the midpoint and 0.532 at the upper edge. Read it against one half in one way only: a position
+  held alone and never rebalanced loses half the variance, so the required return covers that
+  position's drag where the pay is above 0.5 and not below. The holders who set the band keep a share
+  of their wealth in the asset and bear that share of the drag, which their pay exceeds. Do not say
+  that volatility lowers "the compound return holders require". `volatility_sensitivity` in data.json
+  recomputes the latest band at other volatilities, the other inputs held.
 - `state` in data.json says where Bitcoin stood at the month-end (33.2% below its highest
   month-end close; volatility lower than at 7% of month-ends since 2018) and what followed similar
   states over the next 12 months, by sample. It is a record, not a forecast. Windows that start in

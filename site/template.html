@@ -283,7 +283,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <section class="card" id="sec-a-reward">
     <h2>The price of the return: volatility</h2>
-    <p class="sub">A higher required return is pay for more risk. The Sharpe ratio says how much: the return over the risk-free rate for each point of volatility. Volatility also takes a share of the return itself, about half the variance each year, so a volatile asset compounds at much less than its average return. Gold and three equity series are priced the same way for scale.</p>
+    <p class="sub">A higher required return is pay for more risk. The Sharpe ratio says how much: the return over the risk-free rate for each point of volatility. Volatility also takes a share of the return itself, about half the variance each year, so the price of a volatile asset, and a position held alone and never rebalanced, compound at much less than the average return. The equation's holders keep a small share of their wealth in the asset and bear a small part of that. Gold and three equity series are priced the same way for scale.</p>
     <p class="sub" id="a-reward-line" style="color:var(--ink);font-weight:600"></p>
     <div class="scroll"><table id="t-reward"></table></div>
     <ul class="note" style="margin-top:12px">
@@ -297,15 +297,15 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. Bitcoin and gold are priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
     <p class="sub" id="cmp-headline" style="color:var(--ink);font-weight:600"></p>
     <div class="grid2">
-      <div class="mini"><h3>Required return: average and compound</h3><p>percent a year</p>
-        <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>average</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>compound</span><span><i class="ln" style="border-color:var(--axis)"></i>drag: the distance between them</span><span><i class="ln" style="border-color:var(--ink2);border-top-style:dashed"></i>risk-free rate</span></div>
+      <div class="mini"><h3>Required return, and what a position held alone compounds at</h3><p>percent a year</p>
+        <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>required return</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>held alone, compound</span><span><i class="ln" style="border-color:var(--axis)"></i>drag: the distance between them</span><span><i class="ln" style="border-color:var(--ink2);border-top-style:dashed"></i>risk-free rate</span></div>
         <div class="chart" id="c-cmp-ret"></div></div>
       <div class="mini"><h3>Sharpe ratio: on the average and on the compound return</h3><p>return over the risk-free rate, divided by volatility</p>
         <div class="legend"><span><i class="cd" style="background:var(--blue)"></i>on the average</span><span><i class="cd" style="border:2px solid var(--blue);background:var(--surface)"></i>on the compound</span></div>
         <div class="chart" id="c-cmp-sh"></div></div>
     </div>
     <ul class="note" style="margin-top:14px">
-      <li><b>Average and compound.</b> The required return is an average across years. A position that is bought and never rebalanced grows at the compound rate, which is lower by the drag: half the variance. For a volatile asset the drag is large.</li>
+      <li><b>Average and compound.</b> The required return is an average across years. A position that is bought alone and never rebalanced grows at the compound rate, which is lower by the drag: half the variance. For a volatile asset the drag is large. The equation's holders, who keep a small share of their wealth in the asset, bear a small part of it.</li>
       <li><b>While it survives.</b> Bitcoin's figures are what holders require in the years the asset lives. <span id="cmp-death"></span></li>
       <li><b>How each column is measured.</b> <span id="cmp-sample"></span> Bitcoin's beta and volatility are the ones used in its required return, with recent months weighted more. The Sharpe ratio on the compound return is descriptive: the measure is defined on average returns.</li>
       <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Gold is a gold ETF to May 2026 and the month-end price of a gold token after. The other cryptoassets are under Compare. The Nasdaq-100, which the paper also shows, is not here.</li>
@@ -324,7 +324,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <ul class="note">
       <li><b>A hurdle, not a forecast.</b> A required return is what holders should ask for given the risk. An asset can deliver more or less for years.</li>
       <li><b>Quote the figure with its band.</b> Risk aversion and the holder's weight are not known exactly, so the answer is a range. The band is a range of inputs, not a statistical confidence interval.</li>
-      <li><b>Average and compound are different things.</b> The required return is an average yearly return. A volatile asset compounds at much less: about half its variance is lost each year. The table gives both.</li>
+      <li><b>Average and compound are different things.</b> The required return is an average yearly return, and it is what the equation's holders ask. The price of a volatile asset compounds at much less: a position held alone and never rebalanced loses about half the variance each year. The table gives both.</li>
       <li><b>Only Bitcoin is tested.</b> Bitcoin's requirement is set against what it delivered since 2012, under <a href="#overview">Bitcoin</a>. The other assets are priced with the same equation; what their short records allow is under <a href="#altcoins">Altcoins</a>.</li>
       <li><b>A low figure is not a safety rating.</b> An asset that has moved little with stocks gets a small market term. That says nothing about who controls it or how it is run.</li>
     </ul>
@@ -393,15 +393,15 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <div class="pane" id="pane-volatility">
   <section class="card" id="sec-compound">
     <h2>What volatility does to the return, in three steps</h2>
-    <p class="sub">The required return is an average across years. What money grows at is the compound return. Volatility is what separates the two, and it does not treat every holder alike.</p>
+    <p class="sub">The required return is an average across years, and it is what the equation's holders ask. What a position compounds at is lower, and how much lower depends on how it is held.</p>
     <p class="sub" id="vol-headline" style="color:var(--ink);font-weight:600"></p>
 
     <div class="risk">
       <h3>1. Volatility costs money, even when the average is fine</h3>
-      <p>Put 100 into an asset that gains 50% one year and loses 50% the next. The average return is zero. But 100 becomes 150 and then 75: a quarter is gone. The gap between the average return and what the money grows at is the <b>drag</b>. It is about half the variance each year, and it is the same for every holder.</p>
+      <p>Put 100 into an asset that gains 50% one year and loses 50% the next. The average return is zero. But 100 becomes 150 and then 75: a quarter is gone. The gap between the average return and what the money grows at is the <b>drag</b>. For a position held alone and never rebalanced it is about half the variance each year.</p>
       <p id="vol-step1" style="color:var(--ink)"></p>
-      <div class="mini"><h3>Required return: average and compound</h3><p>percent a year. The compound band is the band of the required return, moved down by the drag</p>
-        <div class="legend"><span><i class="ln" style="border-color:var(--orange)"></i>required, average (midpoint)</span><span><i class="ln" style="border-color:var(--ink)"></i>required, compound (midpoint)</span><span><i style="background:var(--band)"></i>compound band</span></div>
+      <div class="mini"><h3>The required return, and what the price would compound at</h3><p>percent a year. The compound band is the band of the required return, moved down by the drag of a position held alone</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--orange)"></i>required return (midpoint)</span><span><i class="ln" style="border-color:var(--ink)"></i>held alone, compound (midpoint)</span><span><i style="background:var(--band)"></i>the same across the band</span></div>
         <div class="chart" id="c-comp"></div></div>
     </div>
 
@@ -411,12 +411,12 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </div>
 
     <div class="risk">
-      <h3>3. Set the pay beside the drag</h3>
-      <p>So variance does two things at once. It earns the holder the pay she asks, and it costs her the drag, which is one half of the variance. If she asks for more than one half, more volatility means her money should compound faster. If she asks for less than one half, more volatility means it compounds slower.</p>
-      <div class="mini"><h3 id="pay-title">The two effects, holder by holder</h3><p>points of return a year, at the month-end's volatility</p>
+      <h3>3. Who bears the drag</h3>
+      <p>The full drag, half the variance, falls only on someone who holds nothing else and never rebalances. A holder who keeps a share of her wealth in Bitcoin loses that share of the drag on each unit she invests; the rest is diversified away. So the equation's holders are paid for volatility more than it costs them. The all-in buyer is not in their position: she earns a return priced by diversified holders, and bears the whole drag.</p>
+      <div class="mini"><h3 id="pay-title">Pay and drag, holder by holder</h3><p>points of return a year on each unit invested, at the month-end's volatility</p>
         <div class="scroll"><table id="t-pay"></table></div></div>
       <p id="vol-who" style="color:var(--ink);margin-top:10px"></p>
-      <div class="mini" style="margin-top:12px"><h3>The pay each holder asks, through time</h3><p>pay for a unit of variance. The dashed line is the half that compounding takes: above it volatility raises the compound return a holder should require, below it lowers it</p>
+      <div class="mini" style="margin-top:12px"><h3>Would the required return cover the drag of a position held alone?</h3><p>pay for a unit of variance at each edge of the band. The dashed line is one half, the drag of a position held alone and never rebalanced: above it the required return more than covers that drag, below it it does not</p>
         <div class="legend"><span><i class="ln" style="border-color:var(--blue)"></i>upper edge of the band</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint</span><span><i class="ln" style="border-color:var(--magenta)"></i>lower edge of the band</span><span><i class="ln" style="border-color:var(--ink);border-top-style:dashed"></i>one half</span></div>
         <div class="chart" id="c-pay"></div></div>
       <p id="vol-time" style="margin-top:10px"></p>
@@ -424,7 +424,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
     <div class="risk">
       <h3>What if volatility were different?</h3>
-      <p>The band of the month-end, worked out again at other volatilities. Only volatility changes: the risk-free rate, beta, the holders' weights and mortality stay as they are. Read down a column to see what more volatility does to each edge: the average requirement always rises, and the compound requirement rises only where the pay for variance is above one half.</p>
+      <p>The band of the month-end, worked out again at other volatilities. Only volatility changes: the risk-free rate, beta, the holders' weights and mortality stay as they are. Read down a column: the required return always rises with volatility, and what a position held alone would compound at rises only where the pay for variance is above one half.</p>
       <div class="scroll"><table id="t-vsens"></table></div>
       <p>The table does not say what volatility will be. The drag uses the volatility in the equation, which weights recent months more.</p>
     </div>
@@ -456,7 +456,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <label style="display:inline-flex;align-items:center;gap:8px">or any level <input type="range" id="path-slider" min="0" max="200" step="1" style="width:190px;accent-color:var(--blue)" aria-label="Starting level"><b id="path-month" style="color:var(--ink);min-width:70px"></b></label>
     </div>
     <p class="sub" id="path-line" style="color:var(--ink);font-weight:600"></p>
-    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>Bitcoin, month-end close</span><span><i class="ln" style="border-color:var(--orange);border-top-style:dashed"></i>straight trend line, with ±1 and ±2 SD (dotted)</span><span><i class="ln" style="border-color:var(--blue)"></i>path at the required compound return, midpoint</span><span><i class="ln" style="border-color:var(--blue);border-top-style:dashed;border-top-width:1.5px"></i>the same for the holders at the two edges of the band</span><span><i style="background:var(--band)"></i>±1σ (dark) and ±2σ (light) around the path</span></div>
+    <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>Bitcoin, month-end close</span><span><i class="ln" style="border-color:var(--orange);border-top-style:dashed"></i>straight trend line, with ±1 and ±2 SD (dotted)</span><span><i class="ln" style="border-color:var(--blue)"></i>price path if Bitcoin earns its required return, midpoint</span><span><i class="ln" style="border-color:var(--blue);border-top-style:dashed;border-top-width:1.5px"></i>the same for the holders at the two edges of the band</span><span><i style="background:var(--band)"></i>±1σ (dark) and ±2σ (light) around the path</span></div>
     <div class="chart" id="c-path"></div>
     <div class="scroll" style="margin-top:6px"><table id="t-path"></table></div>
     <ul class="note" style="margin-top:14px">
@@ -528,7 +528,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <section class="card" id="sec-alt-band">
     <h2 id="alt-band-title">The required return through time</h2>
     <p class="sub" id="alt-band-sub"></p>
-    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i class="ln" style="border-color:var(--ink)"></i>compound, midpoint</span><span><i class="ln" style="border-color:var(--mut);border-top-style:dashed"></i>Bitcoin, midpoint</span></div>
+    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i class="ln" style="border-color:var(--mut);border-top-style:dashed"></i>Bitcoin, midpoint</span></div>
     <div class="chart" id="c-alt-band"></div>
   </section>
 
@@ -1182,7 +1182,7 @@ function dumbbell(id,rows,a,b,fmt,ref,refLabel){
     G.append("rect").attr("x",-f.m.l).attr("width",f.w).attr("y",y(r.name)-8).attr("height",y.bandwidth()+16).attr("fill","transparent")
       .on("pointermove",()=>tip(r)); G.on("focus",()=>tip(r)).on("pointerleave blur",()=>f.tip.style("display","none")); });
   function tip(r){ const n=f.tip.node(); n.textContent=""; const t=document.createElement("div"); t.className="t"; t.textContent=r.name+" · priced by the "+r.priced_by+(r.priced_by==="MCM"?" equation":""); n.appendChild(t);
-    [["beta",r.beta.toFixed(2)],["required, average",r.average.toFixed(1)+"%"],["volatility",r.volatility.toFixed(1)+"%"],["drag",r.drag.toFixed(1)+" pts"],["required, compound",r.compound.toFixed(1)+"%"],["Sharpe, on the average",r.sharpe_average.toFixed(2)],["Sharpe, on the compound",r.sharpe_compound.toFixed(2)]].forEach(([k,v])=>{const d=document.createElement("div"); d.className="r"; const l=document.createElement("span"); l.textContent=k; const b2=document.createElement("b"); b2.textContent=v; d.appendChild(l); d.appendChild(b2); n.appendChild(d);});
+    [["beta",r.beta.toFixed(2)],["required, average",r.average.toFixed(1)+"%"],["volatility",r.volatility.toFixed(1)+"%"],["drag",r.drag.toFixed(1)+" pts"],["held alone, compound",r.compound.toFixed(1)+"%"],["Sharpe, on the average",r.sharpe_average.toFixed(2)],["Sharpe, on the compound",r.sharpe_compound.toFixed(2)]].forEach(([k,v])=>{const d=document.createElement("div"); d.className="r"; const l=document.createElement("span"); l.textContent=k; const b2=document.createElement("b"); b2.textContent=v; d.appendChild(l); d.appendChild(b2); n.appendChild(d);});
     f.tip.style("display","block"); f.tip.style("left",Math.max(0,f.w-n.offsetWidth-4)+"px").style("top",(f.m.t+y(r.name)+y.bandwidth()+10)+"px"); }
 }
 function comparedTab(){
@@ -1190,7 +1190,7 @@ function comparedTab(){
   dumbbell("c-cmp-ret",R,"average","compound",v=>v.toFixed(v%1?1:0)+"%",c.risk_free,"risk-free "+c.risk_free.toFixed(1)+"%");
   dumbbell("c-cmp-sh",R,"sharpe_average","sharpe_compound",v=>v.toFixed(2),null);
   const set=(id,s)=>{document.getElementById(id).textContent=s;};
-  set("cmp-headline","At "+when+": Bitcoin requires "+b.average.toFixed(1)+"% a year on average, against "+e.average.toFixed(1)+"% for the "+e.name+". After drag the compound figures are "+b.compound.toFixed(1)+"% and "+e.compound.toFixed(1)+"%, and the Sharpe ratio on the compound return is "+b.sharpe_compound.toFixed(2)+" for Bitcoin against "+e.sharpe_compound.toFixed(2)+".");
+  set("cmp-headline","At "+when+": Bitcoin requires "+b.average.toFixed(1)+"% a year on average, against "+e.average.toFixed(1)+"% for the "+e.name+". Held alone and never rebalanced, they would compound at "+b.compound.toFixed(1)+"% and "+e.compound.toFixed(1)+"%, and the Sharpe ratio on the compound return is "+b.sharpe_compound.toFixed(2)+" for Bitcoin against "+e.sharpe_compound.toFixed(2)+".");
   set("cmp-death","Averaged over the chance of death as well, which costs "+(b.average-b.average_net_of_death).toFixed(1)+" points a year, they are "+b.average_net_of_death.toFixed(1)+"% on average and "+b.compound_net_of_death.toFixed(1)+"% compounded.");
   set("cmp-sample","For the equity series, beta (to the US stock market) and volatility are measured on monthly returns from "+fmtM(parse(c.equity_sample.from))+" to "+fmtM(parse(c.equity_sample.to))+", and the required return uses the ten-year Treasury yield of "+c.risk_free.toFixed(2)+"%.");
 }
@@ -1261,7 +1261,7 @@ function pathCard(){
   rowsT.push([["The trend line itself · "+g1(k)+" a year",usd(Math.exp(trend(n))),off(Math.exp(trend(n))),usd(Math.exp(trend(E))),usd(Math.exp(trend(E)-2*sd))+" to "+usd(Math.exp(trend(E)+2*sd))],"sep"]);
   fill("t-path",["","Level today","Today's price ("+usd(now.px)+") is","In "+mon(dateOf(E)),"±2 range then"],rowsT);
   el("t-path").querySelectorAll("td:first-child").forEach(c=>{c.style.whiteSpace="normal";c.style.maxWidth="230px";});
-  el("path-ahead").textContent="The path holds the latest required compound return ("+P.growth_ahead.midpoint.toFixed(1)+"% a year at the midpoint, "+P.growth_ahead.lower.toFixed(1)+"% and "+P.growth_ahead.upper.toFixed(1)+"% at the edges) and the latest volatility ("+P.volatility.toFixed(0)+"%) for the whole of the three years.";
+  el("path-ahead").textContent="The path grows at the latest required return less half the variance, the rate the price itself compounds at ("+P.growth_ahead.midpoint.toFixed(1)+"% a year at the midpoint, "+P.growth_ahead.lower.toFixed(1)+"% and "+P.growth_ahead.upper.toFixed(1)+"% at the edges), at the latest volatility ("+P.volatility.toFixed(0)+"%), for the whole of the three years.";
 }
 let ALT="eth";                                // the asset shown under Altcoins
 function altView(){
@@ -1273,21 +1273,21 @@ function altView(){
   const B=el("alt-pick"); B.textContent="";
   list.forEach(x=>{ const b=document.createElement("button"); b.type="button"; b.textContent=x.name; b.setAttribute("aria-pressed",x.asset===ALT); b.addEventListener("click",()=>{ALT=x.asset; altView();}); B.appendChild(b); });
   const T=[["Required return, "+a.name,f1(a.required_return)+"%","a year · band "+f1(a.required_low)+"% to "+f1(a.required_high)+"% · a hurdle rate, not a forecast"],
-           ["Left invested, it compounds at",p1(a.compound_required_return),"a year · band "+p1(a.compound_required_low)+" to "+p1(a.compound_required_high)+" · after "+f1(a.volatility_drag)+" points lost to volatility"],
+           ["Held alone, it would compound at",p1(a.compound_required_return),"a year · band "+p1(a.compound_required_low)+" to "+p1(a.compound_required_high)+" · a position never rebalanced loses "+f1(a.volatility_drag)+" points to volatility"],
            ["What it is made of",f1(a.risk_free)+" + "+f1(a.market_term)+" + "+f1(a.concentration_term)+" + "+f1(a.mortality_term),"risk-free rate + market risk + concentration risk + mortality risk, in points a year"]];
   const TE=el("alt-tiles"); TE.textContent="";
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const e=document.createElement("div"); e.className=c+(c==="v"&&v.length>10?" long":""); e.textContent=t; d.appendChild(e);}); TE.appendChild(d);});
   el("alt-band-title").textContent=a.name+": the required return through time";
-  el("alt-band-sub").textContent="Priced since "+fmtM(parse(a.priced_since))+", the month it had three years of returns. The band is the range the answer takes when risk aversion and the holder's weight are set low or high; the compound line is the midpoint less what volatility takes. Bitcoin's midpoint is drawn for reference. Percent a year.";
+  el("alt-band-sub").textContent="Priced since "+fmtM(parse(a.priced_since))+", the month it had three years of returns. The band is the range the answer takes when risk aversion and the holder's weight are set low or high. Bitcoin's midpoint is drawn for reference. Percent a year.";
   { const f=frame(el("c-alt-band"),300,{l:44,r:52,t:10,b:26});
     const x=d3.scaleTime().domain(d3.extent(D,r=>r.t)).range([0,f.iw]);
-    const y=d3.scaleLinear().domain([Math.min(0,d3.min(D,r=>r.cmid)),d3.max(D,r=>r.hi)]).nice(4).range([f.ih,0]);
-    const g=axes(f,x,y,{yticks:y.ticks(5),yfmt:v=>(v<0?"−":"")+Math.abs(v)+"%"});
+    const y=d3.scaleLinear().domain([0,d3.max(D,r=>Math.max(r.hi,r.btc||0))]).nice(4).range([f.ih,0]);
+    const g=axes(f,x,y,{yticks:y.ticks(5),yfmt:v=>v+"%"});
     g.append("path").datum(D).attr("fill",css("--band")).attr("opacity",.6).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.lo)).y1(r=>y(r.hi)));
     g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(0)).attr("y2",y(0)).attr("stroke",css("--axis"));
-    const S=[{k:"mid",n:"required, midpoint",c:"--blue",y,w:2.4},{k:"cmid",n:"compound, midpoint",c:"--ink",y,w:1.8},{k:"btc",n:"Bitcoin, midpoint",c:"--mut",y,w:1.4,dash:"5 4"},{k:"hi",n:"band, upper edge",c:"--band"},{k:"lo",n:"band, lower edge",c:"--band"}];
+    const S=[{k:"mid",n:"required, midpoint",c:"--blue",y,w:2.4},{k:"btc",n:"Bitcoin, midpoint",c:"--mut",y,w:1.4,dash:"5 4"},{k:"hi",n:"band, upper edge",c:"--band"},{k:"lo",n:"band, lower edge",c:"--band"}];
     S.filter(s=>s.w).forEach(s=>g.append("path").datum(D.filter(r=>r[s.k]!=null)).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",s.w).attr("stroke-dasharray",s.dash||null).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k]))));
-    const L=D[D.length-1], ends=[{y:y(L.mid),s:f1(L.mid)+"%"},{y:y(L.cmid),s:p1(L.cmid)}].sort((p,q)=>p.y-q.y); if(ends[1].y-ends[0].y<13) ends[1].y=ends[0].y+13;
+    const L=D[D.length-1], ends=[{y:y(L.mid),s:f1(L.mid)+"%"}];
     ends.forEach(e=>g.append("text").attr("x",x(L.t)+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
     hover(f,g,x,D,S,p1); }
   const small=(id,S,fmt,zero)=>{ const f=frame(el(id),170,{l:40,r:40,t:8,b:24});
@@ -1320,14 +1320,14 @@ function volatilityTab(){
   const m=DATA.meta, V=m.vsens, S=m.state, sm=S.samples[FROM], el=id=>document.getElementById(id), d=rows(), L=DATA.rows[DATA.rows.length-1];
   const f1=v=>v.toFixed(1), p1=v=>(v<0?"−":"")+Math.abs(v).toFixed(1)+"%", p0=v=>v==null?"":(v<0?"−":"")+Math.abs(v).toFixed(0)+"%", usd=v=>"$"+d3.format(",.0f")(v);
   const month=d3.timeFormat("%B %Y")(parse(m.now.asof)), monthOf=s=>d3.timeFormat("%B %Y")(parse(s));
-  el("vol-headline").textContent="At the end of "+month+": "+f1(L.mid)+"% a year required on average, "+f1(L.drag)+" points lost to volatility, "+p1(L.cmid)+" compound (band "+p1(L.clo)+" to "+p1(L.chi)+").";
+  el("vol-headline").textContent="At the end of "+month+": "+f1(L.mid)+"% a year required. A position held alone and never rebalanced loses "+f1(L.drag)+" points of that to volatility and would compound at "+p1(L.cmid)+" (band "+p1(L.clo)+" to "+p1(L.chi)+").";
   { const f=frame(el("c-comp"),250,{l:44,r:46,t:10,b:26});
     const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
     const y=d3.scaleLinear().domain([Math.min(0,d3.min(d,r=>r.clo)),d3.max(d,r=>Math.max(r.chi,r.mid))]).nice(4).range([f.ih,0]);
     const g=axes(f,x,y,{yticks:y.ticks(5),yfmt:v=>(v<0?"−":"")+Math.abs(v)+"%"});
     g.append("path").datum(d).attr("fill",css("--band")).attr("opacity",.6).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.clo)).y1(r=>y(r.chi)));
     g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(0)).attr("y2",y(0)).attr("stroke",css("--axis"));
-    const S2=[{k:"mid",n:"midpoint, average",c:"--orange",y},{k:"cmid",n:"midpoint, compound",c:"--ink",y},{k:"chi",n:"upper edge, compound",c:"--blue",y},{k:"clo",n:"lower edge, compound",c:"--magenta",y}];
+    const S2=[{k:"mid",n:"required return, midpoint",c:"--orange",y},{k:"cmid",n:"held alone, compound, midpoint",c:"--ink",y},{k:"chi",n:"held alone, upper edge",c:"--blue",y},{k:"clo",n:"held alone, lower edge",c:"--magenta",y}];
     S2.slice(0,2).forEach(s=>g.append("path").datum(d).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",s.k==="cmid"?2.2:1.5).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k]))));
     const Ld=d[d.length-1], ends=[{y:y(Ld.mid),s:f1(Ld.mid)+"%"},{y:y(Ld.cmid),s:p1(Ld.cmid)}].sort((a,b)=>a.y-b.y); if(ends[1].y-ends[0].y<13) ends[1].y=ends[0].y+13;
     ends.forEach(e=>g.append("text").attr("x",x(Ld.t)+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
@@ -1344,23 +1344,24 @@ function volatilityTab(){
     hover(f,g,x,d,S2,v=>v.toFixed(2)); }
   const fill=(id,head,body)=>{ const T=el(id); T.textContent=""; const hr=T.insertRow(); head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
     body.forEach(([cells,cls])=>{const r=T.insertRow(); if(cls) r.className=cls; cells.forEach(v=>{r.insertCell().textContent=v;});}); };
-  { const P=V.pay_for_variance, vr=2*L.drag, pts=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1)+" pts", early=m.now.early;
-    el("vol-step1").textContent="At the end of "+month+" Bitcoin's volatility is "+S.volatility.toFixed(0)+"% a year, so the drag is "+f1(L.drag)+" points: a required return of "+f1(L.mid)+"% on average compounds at "+p1(L.cmid)+".";
-    el("pay-title").textContent="The two effects, holder by holder, at the end of "+month;
-    const H=[["A holder with all her wealth in Bitcoin, as the early holders were",1],
-      [(early?"Early holder":"Average surveyed owner, high risk aversion")+" (upper edge of the band)",P.upper],
-      ["Midpoint of the band",P.midpoint],
-      ["Average owner counting fund and treasury investors, low risk aversion (lower edge)",P.lower]];
-    fill("t-pay",["Holder","Pay for a unit of variance","Extra return she asks for volatility","What compounding takes","Left over"],
-      H.map(([n,pay],i)=>[[n,pay.toFixed(2),pts(pay*vr),pts(-L.drag),pts(pay*vr-L.drag)],i===2?"here":""]));
-    el("t-pay").querySelectorAll("td:first-child").forEach(c=>{c.style.whiteSpace="normal";c.style.maxWidth="330px";}); }
-  fill("t-vsens",["Volatility","Lost to volatility","Average: lower edge","Average: midpoint","Average: upper edge","Compound: lower edge","Compound: midpoint","Compound: upper edge"],
+  { const P=V.pay_for_variance, n0=m.now, pts=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(1)+" pts", early=n0.early;
+    el("vol-step1").textContent="At the end of "+month+" Bitcoin's volatility is "+S.volatility.toFixed(0)+"% a year, so the drag on a position held alone is "+f1(L.drag)+" points: if Bitcoin earned exactly its required "+f1(L.mid)+"%, its price would compound at "+p1(L.cmid)+".";
+    el("pay-title").textContent="Pay and drag, holder by holder, at the end of "+month;
+    // each row: share of wealth in Bitcoin, the pay she asks for volatility, and the part of the drag that share leaves her with
+    const H=[["Average owner counting fund and treasury investors, low risk aversion (lower edge of the band)",n0.wlo,n0.clo,L.drag*n0.wlo/100,""],
+      [(early?"Early holder":"Average surveyed owner, high risk aversion")+" (upper edge of the band)",n0.whi,n0.chi,L.drag*n0.whi/100,""],
+      ["A holder with all her wealth in Bitcoin, asking what such a holder asks",100,2*L.drag,L.drag,""],
+      ["An all-in buyer who never rebalances, earning the required return of the midpoint",100,n0.conc,L.drag,"here"]];
+    fill("t-pay",["Holder","Share of her wealth in Bitcoin","Pay for volatility","Drag she bears","Left over"],
+      H.map(([n_,w,pay,drag,cls])=>[[n_,w.toFixed(w<10?1:0)+"%",pts(pay),pts(-drag),pts(pay-drag)],cls]));
+    el("t-pay").querySelectorAll("td:first-child").forEach(c=>{c.style.whiteSpace="normal";c.style.maxWidth="360px";}); }
+  fill("t-vsens",["Volatility","Drag, held alone","Required: lower edge","Required: midpoint","Required: upper edge","Held alone, compound: lower edge","Held alone, compound: midpoint","Held alone, compound: upper edge"],
     V.rows.map(r=>[[r.volatility.toFixed(0)+"%"+(r.current?" (now)":""),f1(r.drag)+" pts",p1(r.average.lower),p1(r.average.midpoint),p1(r.average.upper),p1(r.compound.lower),p1(r.compound.midpoint),p1(r.compound.upper)],r.current?"here":""]));
-  { const P=V.pay_for_variance, h=V.break_even_pay_for_variance, vr=2*L.drag;
-    el("vol-who").textContent="At the midpoint, holders ask "+f1(P.midpoint*vr)+" points for volatility and compounding takes "+f1(L.drag)+". "+(P.midpoint<h?"They ask for less than volatility costs them, so more volatility lowers the compound return they should require.":"They ask for more than volatility costs them, so more volatility raises the compound return they should require.")+" Whether volatility helps or hurts depends on how concentrated the holder is, not on the asset alone.";
+  { const h=V.break_even_pay_for_variance;
+    el("vol-who").textContent="The first two rows are the holders who set the band: each is paid more for volatility than the drag she bears. The last row is the warning. Someone who buys only Bitcoin, never rebalances and earns the required return is paid "+f1(m.now.conc)+" points for volatility at the midpoint and loses "+f1(L.drag)+" to it.";
     const A=DATA.rows, lastEarly=[...A].reverse().find(r=>r.eb), lastMid=[...A].reverse().find(r=>r.pmid>=h);
-    el("vol-time").textContent=(lastEarly?"In Bitcoin's first years the holders who set the upper edge had all their wealth in it, and asked twice what compounding took: for them volatility was a tailwind. That lasted until "+monthOf(lastEarly.asof)+". ":"")
-      +(lastMid?"As ownership spread and funds came in, holders became more diversified and asked less. At the midpoint the pay was last at one half or more in "+monthOf(lastMid.asof)+"; since then volatility has been a headwind for the compound return the typical holder should require.":"At the midpoint the pay has been below one half throughout.")
+    el("vol-time").textContent=(lastEarly?"In Bitcoin's first years the holders who set the upper edge had all their wealth in it, so the required return covered the drag of holding it alone twice over. That lasted until "+monthOf(lastEarly.asof)+". ":"")
+      +(lastMid?"As ownership spread and funds came in, the return came to be set by more diversified holders, who ask less. At the midpoint the pay was last at one half or more in "+monthOf(lastMid.asof)+"; since then the required return has not covered the full drag of a position held alone.":"At the midpoint the pay has been below one half throughout.")
       +(lastEarly?" The step in the blue line is the month the upper edge passes from the early holder to the average surveyed owner. It comes from how the band is built, not from a sudden change in the market.":""); }
   // the state and its record
   const since=FROM==="2018"?"since 2018":"since 2012";
@@ -1522,7 +1523,7 @@ function tiles(){
   const m=DATA.meta, a=DATA.per.find(p=>p.sum&&p.p.startsWith("2012")), b=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
   const eq=m.cmp.rows.find(r=>r.priced_by==="CAPM"), n0=m.now, L0=DATA.rows[DATA.rows.length-1];
   const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","a year · band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% · a hurdle rate, not a forecast"],
-           ["Left invested, it compounds at",(L0.cmid<0?"−":"")+Math.abs(L0.cmid).toFixed(1)+"%","a year · band "+L0.clo.toFixed(1)+"% to "+L0.chi.toFixed(1)+"% · after "+L0.drag.toFixed(1)+" points lost to volatility"],
+           ["Held alone, it would compound at",(L0.cmid<0?"−":"")+Math.abs(L0.cmid).toFixed(1)+"%","a year · band "+L0.clo.toFixed(1)+"% to "+L0.chi.toFixed(1)+"% · a position never rebalanced loses "+L0.drag.toFixed(1)+" points to volatility"],
            ["What it is made of",n0.rf.toFixed(1)+" + "+n0.mkt.toFixed(1)+" + "+n0.conc.toFixed(1)+" + "+n0.mort.toFixed(1),"risk-free rate + market risk + concentration risk + mortality risk, in points a year"],
            ["US stock market, for scale",eq.average.toFixed(1)+"%","a year · risk-free rate plus the "+m.cmp.equity_risk_premium.toFixed(0)+"% equity premium"],
            ["Did Bitcoin deliver it? Since 2018",b.s_mcm+"%","of Bitcoin's return over the risk-free rate is accounted for by these three risks · by market risk alone "+b.s_capm+"%"]];
@@ -1606,9 +1607,9 @@ function compareView(){
   const scale=Math.max(...A.map(a=>a.required_return));
   A.forEach(a=>card(a.name,f1(a.required_return)+"%","band "+f1(a.required_low)+" to "+f1(a.required_high)+"% a year",
     [[100*a.risk_free/scale,"--rf"],[100*a.market_term/scale,"--violet"],[100*a.concentration_term/scale,"--orange"],[100*a.mortality_term/scale,"--aqua"]],
-    "Sharpe ratio "+a.sharpe_ratio.toFixed(2)+" · compounds at "+f1(a.compound_required_return)+"%"+(a.asset==="btc"?" · full detail →":""),a.asset==="btc"?"#overview":null));
+    "Sharpe ratio "+a.sharpe_ratio.toFixed(2)+" · held alone, compounds at "+f1(a.compound_required_return)+"%"+(a.asset==="btc"?" · full detail →":""),a.asset==="btc"?"#overview":null));
   card("US stock market, for scale",f1(eq.average)+"%","risk-free rate plus the "+m.cmp.equity_risk_premium.toFixed(0)+"% equity premium",
-    [[100*m.cmp.risk_free/scale,"--rf"],[100*(eq.average-m.cmp.risk_free)/scale,"--violet"]],"Sharpe ratio "+eq.sharpe_average.toFixed(2)+" · compounds at "+f1(eq.compound)+"%",null);
+    [[100*m.cmp.risk_free/scale,"--rf"],[100*(eq.average-m.cmp.risk_free)/scale,"--violet"]],"Sharpe ratio "+eq.sharpe_average.toFixed(2)+" · held alone, compounds at "+f1(eq.compound)+"%",null);
   // stacked bars
   const parts=(rf,mk,cn,mo)=>[["risk-free rate",rf,"--rf"],["market risk",mk,"--violet"],["concentration risk",cn,"--orange"],["mortality risk",mo,"--aqua"]].filter(p=>p[1]>0.005);
   const crypto=A.map(a=>({n:a.name,t:a.required_return,lo:a.required_low,hi:a.required_high,main:a.asset==="btc",p:parts(a.risk_free,a.market_term,a.concentration_term,a.mortality_term)}));
@@ -1634,18 +1635,18 @@ function compareView(){
     .concat(bench.map(b=>m.cmp.rows.find(r=>r.name===b.n)).map(r=>({n:r.name,ref:1,req:r.average,vol:r.volatility,sh:r.sharpe_average,drag:r.drag,comp:r.compound,shc:r.sharpe_compound})));
   const fill=(id,head,body)=>{ const T=el(id); T.textContent=""; const hr=T.insertRow(); head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
     body.forEach(([cells,cls])=>{const r=T.insertRow(); if(cls) r.className=cls; cells.forEach(v=>{r.insertCell().textContent=v;});}); };
-  fill("t-reward",["Asset","Required return","Volatility","Sharpe ratio","Lost to volatility","Compounds at","Sharpe ratio, compound"],
+  fill("t-reward",["Asset","Required return","Volatility","Sharpe ratio","Drag, held alone","Held alone, compounds at","Sharpe ratio, compound"],
     all.map((r,i)=>[[r.n,f1(r.req)+"%",r.vol.toFixed(0)+"%",r.sh.toFixed(2),f1(r.drag)+" pts",f1(r.comp)+"%",r.shc.toFixed(2)],r.main?"tot":i===A.length?"sep":""]));
   { const b=all[0], s=all.find(r=>r.n==="US stock market"), best=[...all].sort((x,y)=>y.sh-x.sh)[0];
     el("a-reward-line").textContent="For each point of volatility, Bitcoin's holders require "+b.sh.toFixed(2)+" points of return over the risk-free rate; holders of the US stock market, "+s.sh.toFixed(2)+". "
-      +"Once volatility has taken its share, Bitcoin compounds at "+f1(b.comp)+"% against "+f1(s.comp)+"% for stocks, at "+(b.vol/s.vol).toFixed(0)+" times the volatility: a Sharpe ratio of "+b.shc.toFixed(2)+" against "+s.shc.toFixed(2)+"."; }
+      +"Held alone and never rebalanced, Bitcoin would compound at "+f1(b.comp)+"% against "+f1(s.comp)+"% for stocks, at "+(b.vol/s.vol).toFixed(0)+" times the volatility: a Sharpe ratio of "+b.shc.toFixed(2)+" against "+s.shc.toFixed(2)+"."; }
   el("a-table-sub").textContent="At the end of "+month+". Volatility, beta and the share of a crypto holding that moves with each asset are measured from its own prices, the same way for all five. The holder's weight and the mortality rate come from surveys, filings and the census of deaths.";
   fill("t-assets",["Asset","Required return","Band","Beta to US stocks","Moves with it","Holder's weight","Share of the crypto market","Priced since"],
     A.map(a=>[[a.name,f1(a.required_return)+"%",f1(a.required_low)+" to "+f1(a.required_high)+"%",a.beta_to_us_equities.toFixed(2),(100*a.kappa).toFixed(0)+"%",f1(a.holder_weight_low)+" to "+f1(a.holder_weight_high)+"%",a.share_of_crypto_market==null?"":a.share_of_crypto_market.toFixed(0)+"%",fmtM(parse(a.priced_since))],a.asset==="btc"?"tot":""]));
   const N=el("a-notes"); N.textContent=""; const hi=[...A].sort((a,b)=>b.required_return-a.required_return)[0], lo=[...A].sort((a,b)=>a.required_return-b.required_return)[0], neg=A.filter(a=>a.compound_required_return<0);
   const notes=[["Moves with it.","An owner holds a mix of coins. What matters for one of them is how much of her whole crypto holding moves when it moves, not its slice of the holding. For Bitcoin that is all of it. The holder's weight of another asset is this share times the crypto owner's weight (19% of financial assets for the surveyed owner, less once investors in funds and in companies that hold Bitcoin are counted)."],
     ["Highest and lowest.",hi.name+" has the highest requirement ("+f1(hi.required_return)+"%): volatility of "+hi.volatility.toFixed(0)+"% and a beta of "+hi.beta_to_us_equities.toFixed(2)+". "+lo.name+" has the lowest ("+f1(lo.required_return)+"%): over the last four years it has moved little with stocks (beta "+lo.beta_to_us_equities.toFixed(2)+") and its volatility is "+lo.volatility.toFixed(0)+"%. A trailing beta can change quickly."]];
-  if(neg.length) notes.push(["A negative compound figure.","At "+neg.map(a=>a.name+"'s").join(" and ")+" volatility, the required average return does not cover what volatility takes away, so a holder who receives exactly the required return would not grow her money."]);
+  if(neg.length) notes.push(["A negative compound figure.","At "+neg.map(a=>a.name+"'s").join(" and ")+" volatility, the required return does not cover what volatility takes from a position held alone, so someone who held only that asset, never rebalanced and received exactly the required return would not grow her money."]);
   notes.forEach(([b,t])=>{const li=document.createElement("li"), s=document.createElement("b"); s.textContent=b+" "; li.appendChild(s); li.appendChild(document.createTextNode(t)); N.appendChild(li);});
   // history
   const H=m.assets.hist, HE=el("a-hist"), fh=frame(HE,300,{l:44,r:70,t:10,b:26}), start="2019-01";

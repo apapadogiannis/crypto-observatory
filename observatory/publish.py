@@ -58,11 +58,11 @@ MONTH_FIELDS = [
     ("trailing_3y_excess", "number", "Average monthly return over the risk-free rate in the three years ending the following month, times twelve; percent a year, not compounded"),
     ("trailing_3y_capm_unexplained", "number", "The part of it the CAPM leaves unexplained, percent a year"),
     ("trailing_3y_mcm_unexplained", "number", "The part of it the MCM equation leaves unexplained, percent a year"),
-    ("volatility_drag", "number", "Half the variance, in points a year: what volatility takes from an average return to give a compound one. The same at every edge of the band"),
-    ("required_compound_lower", "number", "Lower edge of the band on a compound basis, percent a year: required_lower less volatility_drag"),
-    ("required_compound_midpoint", "number", "Midpoint on a compound basis, percent a year: required_midpoint less volatility_drag. What a holder who receives the required return can expect to compound at"),
-    ("required_compound_upper", "number", "Upper edge on a compound basis, percent a year: required_upper less volatility_drag"),
-    ("pay_for_variance_lower", "number", "Change in the lower edge for a unit change in variance: risk aversion times the holder's weight, a plain number. The compound requirement rises with volatility when this is above 0.5 and falls when it is below, because compounding takes half the variance"),
+    ("volatility_drag", "number", "Half the variance, in points a year: what volatility takes from the average return of a position held alone and never rebalanced. The equation's holders keep a small share of their wealth in the asset and bear that share of it"),
+    ("required_compound_lower", "number", "What a position held alone and never rebalanced would compound at if the asset earned the lower edge of the band, percent a year: required_lower less volatility_drag. Not a requirement: the required return is an average"),
+    ("required_compound_midpoint", "number", "The same at the midpoint: required_midpoint less volatility_drag. It is also the rate at which the price itself would compound"),
+    ("required_compound_upper", "number", "The same at the upper edge: required_upper less volatility_drag"),
+    ("pay_for_variance_lower", "number", "Change in the lower edge for a unit change in variance: risk aversion times the holder's weight, a plain number. Above 0.5 the required return more than covers the drag of a position held alone and never rebalanced (half the variance); below 0.5 it does not. The holder herself bears only her weight's share of that drag"),
     ("pay_for_variance_midpoint", "number", "The same at the midpoint: the average of the two edges"),
     ("pay_for_variance_upper", "number", "The same at the upper edge: risk aversion times the surveyed owner's weight, or the early holder's weight where that holder sets the edge"),
     ("drawdown", "number", "Percent by which the month-end close stands below the highest month-end close up to that date; zero at a new high. Context, not an input of the equation (computed from Coin Metrics prices)"),
@@ -136,12 +136,12 @@ ASSET_FIELDS = [
     ("kappa", "number", "Share of the owner's crypto holding that moves with this asset: covariance with the crypto market over the asset's variance, trailing 48 months. 1 for Bitcoin by construction"),
     ("holder_weight_lower_pct", "number", "Holder's weight at the lower edge, percent of wealth: kappa times the average owner's crypto weight counting fund and treasury investors"),
     ("holder_weight_upper_pct", "number", "Holder's weight at the upper edge, percent of wealth: kappa times the surveyed owner's 19%"),
-    ("volatility_drag_pct_points", "number", "Half the variance, in points a year: what volatility takes from an average return to give a compound one"),
-    ("required_compound_pct_per_year", "number", "Required return at the midpoint less the volatility drag, percent a year: the compound return a holder who receives the required return can expect"),
+    ("volatility_drag_pct_points", "number", "Half the variance, in points a year: what volatility takes from the average return of a position held alone and never rebalanced"),
+    ("required_compound_pct_per_year", "number", "Required return at the midpoint less the volatility drag, percent a year: what a position held alone and never rebalanced would compound at if the asset earned its required return. Not a requirement: the required return is an average, asked by holders who keep a small share of their wealth in the asset"),
     ("sharpe_ratio", "number", "Required return at the midpoint less the risk-free rate, divided by volatility"),
     ("sharpe_ratio_on_compound", "number", "The same ratio on the compound required return. Descriptive: the Sharpe ratio is defined on average returns"),
     ("share_of_crypto_market_pct", "number", "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"),
-    ("required_compound_lower_pct_per_year", "number", "Lower edge of the band less the volatility drag, percent a year"),
+    ("required_compound_lower_pct_per_year", "number", "Lower edge of the band less the volatility drag, percent a year, on the same reading"),
     ("required_compound_upper_pct_per_year", "number", "Upper edge of the band less the volatility drag, percent a year. With required_compound_lower_pct_per_year, the band of the compound figure"),
 ]
 
@@ -201,9 +201,10 @@ def latest_file(doc: dict) -> dict:
         "bitcoin_volatility_and_compounding": {
             "pay_for_variance_lower": vs["pay_for_variance"]["lower"], "pay_for_variance_midpoint": vs["pay_for_variance"]["midpoint"],
             "pay_for_variance_upper": vs["pay_for_variance"]["upper"], "break_even": vs["break_even_pay_for_variance"],
-            "note": "Pay for variance is risk aversion times the holder's weight. Compounding takes half the variance, so the compound "
-                    "requirement rises with volatility only for a holder whose pay for variance is above 0.5. The band's compound figures "
-                    "at other volatilities are in data.json under volatility_sensitivity."},
+            "note": "Pay for variance is risk aversion times the holder's weight. A position held alone and never rebalanced loses half the "
+                    "variance, so the required return covers that drag only where the pay is above 0.5. The holders who set the band bear "
+                    "only their weight's share of the drag and are paid more than it costs them. Figures at other volatilities are in "
+                    "data.json under volatility_sensitivity."},
         "bitcoin_state_at_month_end": {
             "price_usd": st["price_usd"], "drawdown_from_highest_month_end_close_pct": st["drawdown"], "highest_month_end_close_month": st["peak_month"],
             "volatility_pct_annualised": st["volatility"], "share_of_month_ends_since_2018_with_lower_volatility_pct": since["volatility_percentile"],
@@ -218,7 +219,7 @@ def latest_file(doc: dict) -> dict:
         "cautions": ["Not a forecast, a price target or advice.",
                      "Only Bitcoin's history is tested against what it delivered. The other assets are priced with the same equation and are not tested.",
                      "Volatility, beta and kappa are trailing estimates and move from month to month; a low beta gives a low requirement and says nothing about issuer or governance risk.",
-                     "A negative required_compound means the required average return does not cover the volatility drag at this volatility."],
+                     "required_compound is what a position held alone and never rebalanced would compound at, not a requirement. A negative one means the required return does not cover that position's volatility drag."],
         "licence": LICENCE["name"], "licence_url": LICENCE["url"], "commercial_reuse_note": LICENCE["source_data"],
         "cite_tool": cr["cite_as"], "cite_paper": PAPER["citation"] + " " + PAPER["doi"], "tool_doi": cr["doi"], "paper_doi": PAPER["doi"],
         "other_files": {f["file"]: f["what"] for f in FILES if f["file"] != "latest.json"},
@@ -466,17 +467,20 @@ files are under api/.
 - `delivered_compound` in periods.csv is the compound return over the same months, for a reader
   who asks what holding earned. Compare `delivered` with `required_mid` (both averages); do not set
   `delivered_compound` beside `required_mid`.
-- The required return on a compound basis is `required_compound_pct_per_year` in latest.json and the
-  assets files (and `compound` in data.json under `comparison.rows`): the midpoint less half the
-  variance. It is what a holder who receives the required return can expect to compound at.
-  Its band is `required_compound_lower_pct_per_year` to `required_compound_upper_pct_per_year`; the
-  drag is the same at every edge. months.csv has the same for every Bitcoin month-end.
+- The required return is an average, and it is what the equation's holders ask. `required_compound_pct_per_year`
+  in latest.json and the assets files (and `compound` in data.json under `comparison.rows`) is not a
+  requirement: it is the midpoint less half the variance, what a position held alone and never
+  rebalanced would compound at if the asset earned its required return, and the rate at which the
+  price itself would compound. Its band is `required_compound_lower_pct_per_year` to
+  `required_compound_upper_pct_per_year`. months.csv has the same for every Bitcoin month-end.
 - `pay_for_variance_*` in months.csv is risk aversion times the holder's weight: how much the
-  required return rises for a unit of variance. Compounding takes half the variance, so the compound
-  requirement rises with volatility where the pay is above 0.5 and falls where it is below. At the
-  latest month-end it is {vs['pay_for_variance']['lower']} at the lower edge, {vs['pay_for_variance']['midpoint']} at the midpoint and {vs['pay_for_variance']['upper']} at the upper edge.
-  `volatility_sensitivity` in data.json recomputes the latest band at other volatilities, the other
-  inputs held. This follows from the equation; it is not an estimate of what volatility will be.
+  required return rises for a unit of variance. At the latest month-end it is {vs['pay_for_variance']['lower']} at the lower
+  edge, {vs['pay_for_variance']['midpoint']} at the midpoint and {vs['pay_for_variance']['upper']} at the upper edge. Read it against one half in one way only: a position
+  held alone and never rebalanced loses half the variance, so the required return covers that
+  position's drag where the pay is above 0.5 and not below. The holders who set the band keep a share
+  of their wealth in the asset and bear that share of the drag, which their pay exceeds. Do not say
+  that volatility lowers "the compound return holders require". `volatility_sensitivity` in data.json
+  recomputes the latest band at other volatilities, the other inputs held.
 - `state` in data.json says where Bitcoin stood at the month-end ({-st['drawdown']:g}% below its highest
   month-end close; volatility lower than at {since['volatility_percentile']:.0f}% of month-ends since 2018) and what followed similar
   states over the next {st['horizon_months']} months, by sample. It is a record, not a forecast. Windows that start in

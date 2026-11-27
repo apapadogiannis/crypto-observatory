@@ -1,14 +1,18 @@
-"""Volatility and the compound return: what the equation implies, and where Bitcoin stands.
+"""Volatility and compounding: what the equation implies, and where Bitcoin stands.
 
 Two things, both read off the band and the price. Neither is a forecast.
 
-1.  What volatility does to the required return. At each edge of the band the required return rises
-    with variance at a rate of risk aversion times the holder's weight (the "pay for variance").
-    Compounding takes half the variance away. So
+1.  What volatility does to the return. The required return is an average, asked by holders who keep a
+    share w of their wealth in the asset. At each edge of the band it rises with variance at a rate of
+    risk aversion times that share (the "pay for variance"). A position held alone and never
+    rebalanced loses half the variance; a holder with share w, kept roughly constant, loses w times
+    that on each unit invested. So
 
-        required compound return = required average return - variance / 2
+        price compounds at   = required average return - variance / 2
+        the holder is paid   = risk aversion x w x variance      and bears   w x variance / 2
 
-    rises with volatility where the pay for variance is above one half, and falls where it is below.
+    The holders who set the band are paid more than the drag they bear. The required return covers
+    the drag of a position held alone only where the pay for variance is above one half.
 
 2.  The state at the month-end, and the record of what followed similar states: how far the price
     stands below its highest month-end close, and where the model's volatility sits in its own
@@ -39,7 +43,7 @@ def loadings(band: pd.DataFrame, cfg: dict) -> pd.DataFrame:
 
 
 def compound(band: pd.DataFrame) -> pd.DataFrame:
-    """The band on a compound basis: each edge less half the variance. The drag is the same at every edge."""
+    """What a position held alone and never rebalanced would compound at, at each edge of the band: the edge less half the variance."""
     drag = band.variance / 2
     return pd.DataFrame({"drag": drag, "lower": band.lower - drag, "midpoint": band.midpoint - drag, "upper": band.upper - drag})
 

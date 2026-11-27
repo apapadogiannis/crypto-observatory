@@ -65,9 +65,9 @@ The site has five sections.
 
 **Compare** is the landing page: the required return of Bitcoin, Ether, BNB, Solana and Tron side by
 side, what each is made of (risk-free rate, market, concentration and mortality risk), the inputs
-behind it, the Sharpe ratio and the compound return of each, and how each has moved. Gold and three
+behind it, the Sharpe ratio of each and what a position held alone would compound at, and how each has moved. Gold and three
 equity series (US market, developed markets, US small caps) are priced the same way for scale, and
-Bitcoin is set beside them on an average and a compound basis.
+Bitcoin is set beside them, with what a position held alone would compound at.
 
 **Bitcoin** has the full history and the tests, in four tabs:
 
@@ -76,9 +76,9 @@ Bitcoin is set beside them on an average and a compound basis.
    equation each explain.
 2. **Tests.** Why delivered differed from required, what each model leaves unexplained through time,
    and, folded away, the cumulative view and the rerun with the equity premium implied by stock prices.
-3. **Volatility and drawdown.** What the required return compounds at, with its band; how much each
-   holder is paid for variance against the half that compounding takes, and the latest band at other
-   volatilities; and where Bitcoin stands (distance from its highest month-end close, volatility
+3. **Volatility and drawdown.** What a position held alone would compound at if Bitcoin earned its
+   required return; how much each holder is paid for volatility against the drag she bears, and whether
+   the required return covers the drag of a position held alone; the latest band at other volatilities; and where Bitcoin stands (distance from its highest month-end close, volatility
    against its own past) with the record of the twelve months that followed similar month-ends. A
    record with the number of separate spells behind each row, not a forecast.
 4. **Trend and path.** A straight trend line of the kind price dashboards draw, with its bands, beside
@@ -86,8 +86,7 @@ Bitcoin is set beside them on an average and a compound basis.
    reader chooses (the latest close, a past peak, the level of the trend line): where each leads in
    three years. Neither is a forecast.
 
-**Altcoins** takes Ether, BNB, Solana and Tron one at a time: the required return and its compound
-figure through time, the two terms and three inputs that differ from asset to asset, and Bitcoin's
+**Altcoins** takes Ether, BNB, Solana and Tron one at a time: the required return through time, the two terms and three inputs that differ from asset to asset, and Bitcoin's
 monthly test run on each. The test is shown with its limits: the four are survivors, their records are
 short, and neither model is rejected for any of them.
 
@@ -128,8 +127,8 @@ nothing else.
 ```
 observatory/mcm.py            the required-return band, month by month
 observatory/tests_of_fit.py   the monthly test, CAPM and MCM alpha, shares explained
-observatory/compare.py        Bitcoin beside equities: average and compound required returns
-observatory/state.py          the band on a compound basis, pay for variance, and the state with what followed
+observatory/compare.py        Bitcoin beside equities: required returns, and what a position held alone compounds at
+observatory/state.py          pay for variance, what a position held alone compounds at, the state with what followed, trend and path
 observatory/build.py          builds the page and the data file from the stored data
 observatory/publish.py        writes the files for programs and AI agents (api/)
 api/                          those files: latest.json, assets.csv, assets_monthly.csv, months.csv, periods.csv, census_deaths.csv, vintages.csv, datapackage.json, llms.txt
@@ -156,17 +155,17 @@ can read it without scraping the page.
 |---|---|
 | `meta` | asset, date of the data, units, method, sources, and under `credit` the licence, the citation and the paper |
 | `latest` | the required return of the latest month, worked out term by term at both edges and the midpoint |
-| `months` | one entry per month-end: the band, the terms at the midpoint, the inputs, supply measures, the next month's return with what each model leaves unexplained, the band on a compound basis, the pay for variance and the drawdown |
+| `months` | one entry per month-end: the band, the terms at the midpoint, the inputs, supply measures, the next month's return with what each model leaves unexplained, what a position held alone would compound at, the pay for variance and the drawdown |
 | `periods` | three-year periods and the two summary samples: delivered, required, the gap and its split, the part each model explains and leaves unexplained, the regression alphas, the average beta and correlation |
-| `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
+| `comparison` | Bitcoin and three equity series at the latest month-end: beta, required return, what a position held alone compounds at, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
 | `equity_premium` | the tests of fit recomputed with other equity risk premia: the paper's fixed 4%, and the premium implied by stock prices each month |
 | `assets` | Bitcoin, Ether, BNB, Solana and Tron side by side: the latest month-end and every month each has been priced; under `tests`, Bitcoin's monthly test run on the other four, to be read with the limits the guide states |
 | `holders` | what the holder's weight rests on: the owners' weight, the weight of fund and treasury investors, the ownership surveys behind the early holder's weight, and the British and Canadian survey waves shown under Holders |
 | `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, the list of top-twenty deaths with the rule behind each, the counts by rule, and what is left out |
-| `volatility_sensitivity` | the latest band, average and compound, recomputed at other volatilities with the other inputs held, and the pay for variance at each edge against the one half that compounding takes |
+| `volatility_sensitivity` | the latest band, and what a position held alone would compound at, recomputed at other volatilities with the other inputs held, and the pay for variance at each edge, to be read against the one half that a position held alone loses |
 | `state` | where Bitcoin stood at the month-end (price, distance from its highest month-end close, volatility) and, for each of the two periods, what followed similar month-ends over the next twelve months, with the number of separate spells behind each row |
-| `path` | a straight trend line through the log of the month-end closes, for each period, and the path the required compound return implies from the latest month-end, started at the latest close, at past peaks and at the level of the trend line: where each leads in three years; with the month-end closes behind the chart |
+| `path` | a straight trend line through the log of the month-end closes, for each period, and the price path the required return implies from the latest month-end, started at the latest close, at past peaks and at the level of the trend line: where each leads in three years; with the month-end closes behind the chart |
 | `vintages` | what was published for each month-end when it was first computed |
 | `meta.model` | the model's fixed settings (equity premium, risk aversion, scales, windows, caps) and `meta.anchors_age_months`, the age of the hand-entered inputs |
 

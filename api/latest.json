@@ -227,7 +227,7 @@
   "pay_for_variance_midpoint": 0.303,
   "pay_for_variance_upper": 0.532,
   "break_even": 0.5,
-  "note": "Pay for variance is risk aversion times the holder's weight. Compounding takes half the variance, so the compound requirement rises with volatility only for a holder whose pay for variance is above 0.5. The band's compound figures at other volatilities are in data.json under volatility_sensitivity."
+  "note": "Pay for variance is risk aversion times the holder's weight. A position held alone and never rebalanced loses half the variance, so the required return covers that drag only where the pay is above 0.5. The holders who set the band bear only their weight's share of the drag and are paid more than it costs them. Figures at other volatilities are in data.json under volatility_sensitivity."
  },
  "bitcoin_state_at_month_end": {
   "price_usd": 77401.0,
@@ -249,7 +249,7 @@
   "Not a forecast, a price target or advice.",
   "Only Bitcoin's history is tested against what it delivered. The other assets are priced with the same equation and are not tested.",
   "Volatility, beta and kappa are trailing estimates and move from month to month; a low beta gives a low requirement and says nothing about issuer or governance risk.",
-  "A negative required_compound means the required average return does not cover the volatility drag at this volatility."
+  "required_compound is what a position held alone and never rebalanced would compound at, not a requirement. A negative one means the required return does not cover that position's volatility drag."
  ],
  "licence": "CC-BY-4.0",
  "licence_url": "https://creativecommons.org/licenses/by/4.0/",
