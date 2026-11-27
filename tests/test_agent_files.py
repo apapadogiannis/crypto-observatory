@@ -215,3 +215,19 @@ dr = latest_json["bitcoin_delivered_against_required"]
 assert dr["required_set_from_month_end"] == "2018-01" and dr["returns_from_month"] == "2018-02" and dr["unexplained_by_mcm_standard_error_pct_points"] > 0
 assert "are not tested" not in guide + json.dumps(latest_json) and "by-nc/4.0" in guide and "by-nc/4.0" in doc["path"]["prices_licence"]
 assert "% of month-ends since 2018 had lower volatility" in guide and "required compound return" not in guide
+
+# How strong the evidence is: the stand-in constant scores exactly as the equation does (the share measures size, not timing),
+# the arithmetic gap is the one of the period table, and the page and the guide both say so.
+for key, per in (("2012", next(p for p in doc["periods"] if p["summary"] and p["period"].startswith("2012"))),
+                 ("2018", next(p for p in doc["periods"] if p["summary"] and p["period"].startswith("2018")))):
+    S = doc["strength"][key]
+    pl = {p["key"]: p for p in S["placebos"]}
+    assert pl["constant"]["explained"] == pl["mcm"]["explained"] and pl["capm"]["explained"] < pl["mcm"]["explained"]
+    assert abs(pl["mcm"]["unexplained"] - per["mcm_alpha"]) < 0.06 and abs(pl["mcm"]["explained"] - per["explained_mcm"]) < 0.06
+    assert abs(S["arithmetic"]["gap"] - per["gap"]) < 0.06 and abs(S["arithmetic"]["se"] - per["gap_se"]) < 0.06 and S["months"] == per["months"]
+    assert set(S) == {"months", "constant", "placebos", "arithmetic"}
+Hv = {r["key"]: r for r in doc["strength"]["halves"]["rows"]}
+assert Hv["one_constant"]["unexplained"][0] > 0 > Hv["one_constant"]["unexplained"][1] and abs(Hv["one_constant"]["unexplained"][2] - Hv["mcm"]["unexplained"][2]) < 0.06
+assert doc["strength"]["halves"]["added_terms"][0] > doc["strength"]["halves"]["added_terms"][1] and sum(doc["strength"]["halves"]["months"][:2]) == doc["strength"]["halves"]["months"][2]
+assert 'id="sec-strength"' in page and "`strength` in data.json" in guide
+assert "accounted for by these three risks" not in page

@@ -173,6 +173,7 @@ th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left;white-space:nowrap}
 th{font-weight:600;color:var(--ink2);font-size:12.5px;vertical-align:bottom}
 td{white-space:nowrap}
+#t-st-halves td:first-child,#t-st-halves th:first-child{white-space:normal;min-width:150px}
 table.now td:first-child{white-space:normal}
 tr.tot td{font-weight:650;border-top:1.5px solid var(--axis)}
 #t-reward tr.tot td,#t-assets tr.tot td{border-top:0;font-weight:700}
@@ -395,7 +396,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <section class="card" id="sec-per" data-nav="CAPM against MCM">
     <h2>How much of the delivered return each model explains</h2>
-    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the US equity market's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is the unexplained return, in the lower panel: the circle less the top of the bar.</p>
+    <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the US equity market's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is the unexplained return, in the lower panel: the circle less the top of the bar. The MCM equation explains more partly by construction, because it adds two terms that are never negative; what tells it from a premium that does not move is that the two terms fall when the unexplained return falls: see <a href="#tests">Tests</a>.</p>
     <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--ink2)"></i>left unexplained by the MCM equation, with ± one standard error</span></div>
     <div class="chart" id="c-per"></div>
     <div class="scroll"><table id="t-per"></table></div>
@@ -498,6 +499,20 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <div class="chart" id="c-why"></div>
     <div class="scroll"><table id="t-why"></table></div>
     <p class="sub" style="margin-top:10px">The gap is the paper's monthly test. The unexplained return is the quantity behind the paper's "share explained", and its regression alpha is within a point or two of it (both on this tab). Showing one inside the other is the observatory's own reading and involves no new estimate. Two cautions. The split depends on the 4% equity premium, which is a convention: with a higher premium, more of the gap would count as required and less as coming with the equity market. And the equity part is only as firm as the beta: where the correlation with equities is low, as in the early periods, the beta is poorly measured and so is the split.</p>
+  </section>
+
+  <section class="card" id="sec-strength" data-nav="Against a fixed premium">
+    <h2>What tells the equation from a fixed premium</h2>
+    <p class="sub" id="st-key" style="color:var(--ink);font-weight:600"></p>
+    <div class="mini" style="margin:6px 0 14px"><h3>The two added terms fall when the unexplained return falls</h3>
+      <p class="sub" id="st-p1"></p>
+      <div class="scroll"><table id="t-st-halves"></table></div></div>
+    <ul class="note">
+      <li id="st-n-share"></li>
+      <li><b>Little power.</b> Monthly returns this volatile leave wide standard errors, so the test can fail to reject an equation without confirming it. It does reject the CAPM over the whole record.</li>
+      <li><b>Computed today.</b> Every month before November 2026 is computed with today's method and with surveys taken later. The two added terms are not fitted to returns. Figures published at the time start in November 2026 and are kept in <a href="vintages.csv" target="_blank" rel="noopener">vintages.csv</a>, where they are never rewritten.</li>
+      <li><b>What a test of a required return assumes.</b> Setting it against delivered returns assumes that holders, on average, got what they required. Nothing here claims that holds from now on, which is why the required return is not offered as a forecast.</li>
+    </ul>
   </section>
 
   <section class="card" id="sec-trail" data-nav="Unexplained, through time">
@@ -1559,11 +1574,12 @@ function notesText(){
 function tiles(){
   const m=DATA.meta, a=DATA.per.find(p=>p.sum&&p.p.startsWith("2012")), b=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
   const eq=m.cmp.rows.find(r=>r.priced_by==="CAPM"), n0=m.now, L0=DATA.rows[DATA.rows.length-1];
+  const N=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(0);
   const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","a year · band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% · a hurdle rate, not a forecast"],
            ["Held alone, it would compound at",(L0.cmid<0?"−":"")+Math.abs(L0.cmid).toFixed(1)+"%","a year · band "+L0.clo.toFixed(1)+"% to "+L0.chi.toFixed(1)+"% · a position never rebalanced loses "+L0.drag.toFixed(1)+" points to volatility"],
            ["What it is made of",n0.rf.toFixed(1)+" + "+n0.mkt.toFixed(1)+" + "+n0.conc.toFixed(1)+" + "+n0.mort.toFixed(1),"risk-free rate + market risk + concentration risk + mortality risk, in points a year"],
            ["US stock market, for scale",eq.average.toFixed(1)+"%","a year · risk-free rate plus the "+m.cmp.equity_risk_premium.toFixed(0)+"% equity premium"],
-           ["Did Bitcoin deliver it? Since 2018",b.s_mcm+"%","of Bitcoin's return over the risk-free rate is accounted for by these three risks · by market risk alone "+b.s_capm+"%"]];
+           ["Delivered minus required, since 2018",N(b.gap)+" ± "+b.gse.toFixed(0),"points a year · delivered "+b.real.toFixed(0)+"% against "+b.mid.toFixed(0)+"% required: a gap chance can give · since 2012: "+N(a.gap)+" ± "+a.gse.toFixed(0)]];
   const el=document.getElementById("tiles"); el.textContent="";
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c+(c==="v"&&v.length>10?" long":""); s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
   const day=d3.timeParse("%Y-%m-%d"), longDate=d3.timeFormat("%-d %B %Y"), monthEnd=day(m.month_end);
@@ -1577,6 +1593,19 @@ function tiles(){
     stale.textContent="Some inputs of the holder's weight are entered by hand and are due for renewal: "+DATA.meta.anchors_overdue.map(k=>what[k]).join(", and ")+". The concentration term rests on them."; stale.style.display="block"; }
   stale2.textContent=stale.textContent; stale2.style.display=stale.style.display;
   document.getElementById("asof").textContent="Dates of the data: prices and the Treasury yield to "+longDate(monthEnd)+"; equity market returns, and so the tests, to "+fmtM(parse(m.market_to))+" (the beta is carried forward from that month); ownership survey to "+fmtM(parse(m.anchors.ownership_survey))+"; fund and treasury holdings to "+fmtM(parse(m.anchors.fund_and_treasury_holdings))+", held flat after.";
+}
+function strengthCard(){
+  const N=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(0), S=DATA.meta.strength, A=S["2012"], B=S["2018"], H=S.halves, pm=(v,se)=>N(v)+" ± "+se.toFixed(0);
+  const R=k=>H.rows.find(r=>r.key===k), c=R("capm"), m=R("mcm"), k1=R("one_constant");
+  const names={capm:"CAPM",mcm:"MCM equation: the CAPM plus the concentration and mortality terms",one_constant:"CAPM plus one constant for the whole record ("+H.constant.toFixed(0)+" points a year, chosen with hindsight)"};
+  plainTable("t-st-halves",["Left unexplained, points a year","2012–17","Since 2018","Whole record"],
+    [["The two added terms, for reference",H.added_terms[0].toFixed(0),H.added_terms[1].toFixed(0),H.added_terms[2].toFixed(0)]].concat(
+    ["capm","mcm","one_constant"].map(k=>{const r=R(k); return [names[k]].concat(r.unexplained.map((v,i)=>pm(v,r.se[i])));})));
+  const tc=c.unexplained[2]/c.se[2];
+  document.getElementById("st-key").textContent="The CAPM leaves "+c.unexplained[2].toFixed(0)+" points a year of Bitcoin's return since 2012 unexplained, "+tc.toFixed(1)+" standard errors from zero. The two terms the MCM equation adds are set from holder surveys and the census of deaths, not fitted to returns, and they bring that to "+m.unexplained[2].toFixed(0)+" (within one standard error) and to "+m.unexplained[1].toFixed(0)+" since 2018.";
+  document.getElementById("st-p1").textContent="What the CAPM leaves unexplained fell from "+c.unexplained[0].toFixed(0)+" points a year in 2012–17 to "+c.unexplained[1].toFixed(0)+" since 2018. The concentration and mortality terms fell with it, from "+H.added_terms[0].toFixed(0)+" to "+H.added_terms[1].toFixed(0)+", as ownership spread and volatility came down. A premium that did not move could not do that: one constant for the whole record, even chosen with hindsight to match it, is "+Math.abs(k1.unexplained[0]).toFixed(0)+" points too small in the first period and "+Math.abs(k1.unexplained[1]).toFixed(0)+" too large since. Points a year, ± one standard error.";
+  const li=(id,b,t)=>{const e=document.getElementById(id); e.textContent=""; const s=document.createElement("b"); s.textContent=b; e.appendChild(s); e.appendChild(document.createTextNode(" "+t));};
+  li("st-n-share","Level, not months.","Within one period the share explained measures whether the added terms are of the right size on average, not whether they move in the right months: single months are far too noisy for that. The evidence is about the level of the required return over long periods and its fall between them.");
 }
 function plainTable(id,head,body){
   const T=document.getElementById(id); T.textContent="";
@@ -1741,6 +1770,7 @@ function draw(){
   safely(()=>{ dataView(); });
   safely(()=>{ volatilityTab(); });
   safely(()=>{ pathCard(); });
+  safely(()=>{ strengthCard(); });
   safely(()=>{ altView(); });
   safely(()=>{ const G=DATA.meta.cmp.gold_inputs; document.getElementById("gold-note").textContent="Gold's inputs are set by judgment, not surveyed as Bitcoin's holders are: a holder with "+G.weight_pct[0].toFixed(0)+"% to "+G.weight_pct[1].toFixed(0)+"% of wealth in gold, a beta between "+G.beta[0]+" and "+G.beta[1]+", and up to "+G.mortality_pct[1]+"% a year for the risk of sovereign restrictions. Its two small terms are an illustration of scale."; });
 }

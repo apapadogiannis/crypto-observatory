@@ -50,6 +50,9 @@ def build(data: Path, out: Path) -> dict:
     t = tests_of_fit.monthly_test(band, mkt)
     periods = tests_of_fit.period_table(t)
     page_notes = tests_of_fit.notes(band, t, btc)
+    def _tidy(v):                                       # the new key, to one decimal throughout
+        return round(v, 1) if isinstance(v, float) else {a: _tidy(b) for a, b in v.items()} if isinstance(v, dict) else [_tidy(b) for b in v] if isinstance(v, list) else v
+    strength = _tidy(tests_of_fit.strength(t))
     implied = inputs.implied_equity_premium(data)
     if implied is not None:
         implied = implied.reindex(implied.index.union(band.index)).ffill()      # a month the source has not posted yet keeps the last value
@@ -199,6 +202,7 @@ def build(data: Path, out: Path) -> dict:
                                        "beta": [cfg["gold"]["beta_low"], cfg["gold"]["beta_high"]], "basis": "set by judgment, not surveyed (paper, Appendix E.1)"},
                        "rows": [{k: (round(v, 2) if isinstance(v, float) else {a: round(b, 2) for a, b in v.items()} if isinstance(v, dict) else v) for k, v in r.items()} for r in compared["rows"]]},
         "notes": page_notes,
+        "strength": strength,
         "equity_premium": premium_doc,
         "census": census_doc,
         "holders": _holders(data, cfg),
@@ -358,7 +362,7 @@ def _page_payload(doc: dict) -> dict:
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
     meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"], "next_update": doc["meta"]["next_update"],
-            "state": doc["state"], "vsens": doc["volatility_sensitivity"], "path": {k: v for k, v in doc["path"].items() if k != "prices"},
+            "state": doc["state"], "strength": doc["strength"], "vsens": doc["volatility_sensitivity"], "path": {k: v for k, v in doc["path"].items() if k != "prices"},
             "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "anchors_age": doc["meta"]["anchors_age_months"], "anchors_overdue": doc["meta"]["anchors_overdue"], "notes": doc["notes"], "cmp": doc["comparison"], "erp": doc["equity_premium"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],

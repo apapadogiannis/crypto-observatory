@@ -159,6 +159,12 @@ files are under api/.
   states over the next 12 months, by sample. It is a record, not a forecast. Windows that start in
   neighbouring months overlap, so quote a row with its `spells`: the number of separate spells behind it.
   A drawdown is not an input of the equation; it moves the requirement only through volatility.
+- `strength` in data.json sets the equation against a fixed premium. `halves`: what the CAPM leaves
+  unexplained fell from 2012-17 to the years since 2018, and the two added terms, which are set from
+  surveys and the census and not fitted to returns, fell with it; one constant for the whole record is
+  too small in the first period and too large since. `placebos`: within one sample the share explained
+  measures the average size of what is added to the CAPM, not its timing. Say that the CAPM is
+  rejected over the whole record and the MCM equation is not, and that failing to reject is not proof.
 - `assets.tests` in data.json runs Bitcoin's monthly test on Ether, BNB, Solana and Tron. Read it with
   two limits. These four are listed because they are large today: they are survivors, and a survivor
   delivers more than any requirement whether or not the model is right. And their records are short:

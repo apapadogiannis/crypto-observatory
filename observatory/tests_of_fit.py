@@ -104,6 +104,39 @@ def summarize(t: pd.DataFrame) -> dict:
     }
 
 
+def strength(t: pd.DataFrame) -> dict:
+    """The equation set against a fixed premium.
+
+    placebos    by sample (2012, 2018): the share explained, for the two models and for the CAPM plus a
+                constant equal to the average of the two added terms in that sample. Within one sample
+                the share depends on the average size of what is added, not on when.
+    halves      what tells the equation from a constant: the two terms are set from surveys and the
+                census, not fitted to returns, and fall from 2012-17 to the years since 2018. One constant
+                for the whole record, even chosen with hindsight, is too small in the first and too large since."""
+    a = lambda s: float(1200 * s.mean())
+    se_ = lambda s: float(1200 * s.std(ddof=1) / np.sqrt(len(s)))
+    out = {}
+    for label, x in (("2012", t), ("2018", t["2018-01-01":])):
+        added = x.concentration_mortality_part
+        stand_ins = [("capm", "CAPM", x.capm_unexplained), ("mcm", "MCM equation", x.mcm_unexplained),
+                     ("constant", "CAPM plus a constant", x.capm_unexplained - added.mean())]
+        gap = x.ret - x.required_mid
+        out[label] = {
+            "months": int(len(x)), "constant": a(added),
+            "placebos": [{"key": k, "name": n, "unexplained": a(u), "se": se_(u), "explained": float(100 - 100 * u.mean() / x.excess.mean())}
+                         for k, n, u in stand_ins],
+            "arithmetic": {"delivered": a(x.ret), "required": a(x.required_mid), "gap": a(gap), "se": se_(gap)},
+        }
+    c = t.concentration_mortality_part.mean()
+    parts = [("2012-17", t[:"2017-12-31"]), ("since 2018", t["2018-01-01":]), ("whole record", t)]
+    out["halves"] = {"constant": a(t.concentration_mortality_part), "samples": [n for n, _ in parts],
+                     "months": [int(len(x)) for _, x in parts], "added_terms": [a(x.concentration_mortality_part) for _, x in parts],
+                     "rows": [{"key": k, "unexplained": [a(f(x)) for _, x in parts], "se": [se_(f(x)) for _, x in parts]}
+                              for k, f in (("capm", lambda x: x.capm_unexplained), ("mcm", lambda x: x.mcm_unexplained),
+                                           ("one_constant", lambda x: x.capm_unexplained - c))]}
+    return out
+
+
 def notes(band: pd.DataFrame, t: pd.DataFrame, btc: pd.DataFrame) -> dict:
     """The figures quoted under "What this page does not claim", recomputed on the current data."""
     idx = t.index
