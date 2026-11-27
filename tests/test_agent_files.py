@@ -247,3 +247,4 @@ made_by_script = {i for i in looked_up if ('id="' + i + '"') not in markup and (
 missing = sorted(looked_up - ids - made_by_script)
 assert not missing, f"the script looks up elements the page does not have: {missing}"
 assert "If it earned that, held alone it would compound at" in page and "would stand at" in page and 'id="sec-glossary"' in page and '<main id="main">' in page
+assert 'id="sec-about"' in page and 'about:["data"]' in page

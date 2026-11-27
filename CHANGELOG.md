@@ -18,6 +18,7 @@ New on the site
   delivered minus required with its standard error.
 - "What changed since last month" on Compare and on Bitcoin: the midpoint before and after, and the
   terms and inputs that moved it.
+- An "About" card for the observatory and its author (address `#about`), linked beside the author line.
 - A glossary ("Words used on this site", address `#glossary`); the three reading rules under the tiles
   of Compare; each asset's tile opens its detail.
 - Charts carry a name for screen readers, text meets the contrast standard in light mode, and there is
