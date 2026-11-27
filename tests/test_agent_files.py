@@ -152,6 +152,7 @@ for view in ("compare", "bitcoin", "altcoins", "method", "data"):
     assert f'id="view-{view}"' in page
 for pane in ("overview", "tests", "volatility", "path", "equation", "band", "holders", "census"):
     assert page.count(f'id="pane-{pane}"') == 1 and f'data-tab="{pane}"' in page
+assert 'id="onpage"' in page and page.count('<section class="card"') == page.count('data-nav="')      # every card is listed in "On this page"
 assert '"required-return":["method","band"]' in page and 'compared:["compare"]' in page
 
 # The record of what was first published: one row per month-end, the latest month in it, and stored

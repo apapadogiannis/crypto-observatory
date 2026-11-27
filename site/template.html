@@ -76,6 +76,16 @@ footer .sig .mark{width:22px;height:22px}
 .site nav button[aria-current="page"]{color:var(--surface);background:var(--ink)}
 .site nav button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 .view{display:none}.view.on{display:block}
+.onpage{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;margin:-10px 0 16px;padding:7px 0;background:var(--page);border-bottom:1px solid var(--line);font-size:13px}
+.onpage[hidden]{display:none}
+.onpage .lab{color:var(--mut);flex:none}
+.onpage .links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;min-width:0}
+.onpage .links::-webkit-scrollbar{display:none}
+.onpage button{font:inherit;color:var(--ink2);background:none;border:1px solid transparent;border-radius:999px;padding:4px 11px;cursor:pointer;white-space:nowrap;flex:none}
+.onpage button:hover{color:var(--ink);border-color:var(--line)}
+.onpage button[aria-current="true"]{color:var(--ink);background:var(--surface);border-color:var(--axis);font-weight:600}
+.onpage button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+section.card{scroll-margin-top:52px}
 .method{font-size:12.5px;color:var(--mut);margin:8px 0 18px}
 .method a{color:var(--ink2)}
 .stamp + .method{margin-top:-8px}
@@ -176,6 +186,8 @@ tr.sep td{border-top:1.5px dashed var(--axis)}
   .card{padding:16px 14px 12px;border-radius:12px}
   .site{margin-bottom:16px;padding-bottom:10px;gap:8px}
   .site .brand small{display:none}
+  .onpage .lab{display:none}
+  .onpage{margin:-6px -12px 12px;padding:6px 12px}
   .site nav{margin-left:0;width:100%;gap:2px}
   .site nav button{flex:1;padding:6px 4px;font-size:13.5px;white-space:nowrap}
   .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin-left:-12px;margin-right:-12px;padding:0 12px}
@@ -247,6 +259,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <div class="brand"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="var(--blue)"/><polygon points="13,32 54,9 54,55" fill="#fff" opacity=".38"/><line x1="13" y1="32" x2="54" y2="32" stroke="#fff" stroke-width="6" stroke-linecap="round"/><circle cx="14" cy="32" r="8" fill="#fff"/></svg><span>Crypto Observatory<small>the return holders should require</small></span></div>
     <nav aria-label="Sections"><button type="button" data-view="compare">Compare</button><button type="button" data-view="bitcoin">Bitcoin</button><button type="button" data-view="altcoins">Altcoins</button><button type="button" data-view="method">Method</button><button type="button" data-view="data">Data</button></nav>
   </header>
+  <nav class="onpage" id="onpage" aria-label="On this page" hidden><span class="lab">On this page</span><div class="links" id="onpage-links"></div></nav>
   <div class="view" id="view-compare">
   <h1>What return should a cryptoasset's holders require?</h1>
   <p class="lede">The return an investor should demand before holding each asset, given the risks it carries. It is a hurdle rate from one published equation, <b>not a forecast</b> of what the asset will deliver.</p>
@@ -261,7 +274,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <a href="#data"><b>Data</b><span>Every figure as files, with a guide written for AI assistants and the terms of reuse.</span></a>
   </nav>
 
-  <section class="card" id="sec-a-bars">
+  <section class="card" id="sec-a-bars" data-nav="What each is made of">
     <h2>What each required return is made of</h2>
     <p class="sub">Each bar adds up to the required return, in percent a year. The band beside it is the range the answer takes when risk aversion and the holder's weight are set low or high. Below the dotted line, gold and three equity series are shown for scale.</p>
     <div class="legend"><span><i style="background:var(--rf)"></i>risk-free rate</span><span><i style="background:var(--violet)"></i>market risk</span><span><i style="background:var(--orange)"></i>concentration risk</span><span><i style="background:var(--aqua)"></i>mortality risk</span></div>
@@ -275,13 +288,13 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub" id="gold-note" style="margin-top:12px"></p>
   </section>
 
-  <section class="card" id="sec-a-hist">
+  <section class="card" id="sec-a-hist" data-nav="Through time">
     <h2>How the required returns have moved through time</h2>
     <p class="sub">The midpoint of each asset's band at every month-end since it has been priced, percent a year. A required return falls when the asset becomes less volatile, moves less with stocks, or when more diversified investors hold it.</p>
     <div class="chart" id="a-hist"></div>
   </section>
 
-  <section class="card" id="sec-a-reward">
+  <section class="card" id="sec-a-reward" data-nav="Risk and reward">
     <h2>The price of the return: volatility</h2>
     <p class="sub">A higher required return is pay for more risk. The Sharpe ratio says how much: the return over the risk-free rate for each point of volatility. Volatility also takes a share of the return itself, about half the variance each year, so the price of a volatile asset, and a position held alone and never rebalanced, compound at much less than the average return. The equation's holders keep a small share of their wealth in the asset and bear a small part of that. Gold and three equity series are priced the same way for scale.</p>
     <p class="sub" id="a-reward-line" style="color:var(--ink);font-weight:600"></p>
@@ -292,7 +305,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </ul>
   </section>
 
-  <section class="card" id="sec-cmp">
+  <section class="card" id="sec-cmp" data-nav="Stocks and gold">
     <h2>Bitcoin beside stocks and gold</h2>
     <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. Bitcoin and gold are priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
     <p class="sub" id="cmp-headline" style="color:var(--ink);font-weight:600"></p>
@@ -312,14 +325,14 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </ul>
   </section>
 
-  <section class="card" id="sec-a-table">
+  <section class="card" id="sec-a-table" data-nav="Inputs">
     <h2>The inputs behind each cryptoasset</h2>
     <p class="sub" id="a-table-sub"></p>
     <div class="scroll"><table id="t-assets"></table></div>
     <ul class="note" style="margin-top:12px" id="a-notes"></ul>
   </section>
 
-  <section class="card" id="sec-a-read">
+  <section class="card" id="sec-a-read" data-nav="How to read">
     <h2>How to read this page</h2>
     <ul class="note">
       <li><b>A hurdle, not a forecast.</b> A required return is what holders should ask for given the risk. An asset can deliver more or less for years.</li>
@@ -363,7 +376,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <div class="pane" id="pane-overview">
   <div class="tiles five" id="tiles"></div>
 
-  <section class="card" id="sec-band">
+  <section class="card" id="sec-band" data-nav="Required and delivered">
     <h2>The required return, and what Bitcoin delivered</h2>
     <p class="sub">The band and its midpoint are the equation at each month-end. A single month's return is too noisy to set beside them, so the comparison is by three-year period, named along the top and separated by dotted lines. In each period the circle is the average delivered return and the thick blue bar is the average required return (midpoint) over the same months. The grey bar through each circle is one standard error either side of the delivered average: where it reaches the blue bar, delivered and required cannot be told apart. Where the bar would run below the bottom of the scale it ends in an arrow, with the figure it reaches. The last period is shorter while it is still running. The dot at the right-hand end is the required return now, with its band. Percent a year, log scale.</p>
     <p class="sub" id="band-line" style="color:var(--ink);font-weight:600"></p>
@@ -376,7 +389,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </ul>
   </section>
 
-  <section class="card" id="sec-per">
+  <section class="card" id="sec-per" data-nav="CAPM against MCM">
     <h2>How much of the delivered return each model explains</h2>
     <p class="sub">Bitcoin's return over the risk-free rate in each three-year period, percent a year. The CAPM explains the market part: Bitcoin's beta times the US equity market's return over the risk-free rate. The MCM equation adds the concentration and mortality terms. What is left is the unexplained return, in the lower panel: the circle less the top of the bar.</p>
     <div class="legend"><span><i style="background:var(--violet)"></i>market (the CAPM part)</span><span><i style="background:var(--orange)"></i>concentration and mortality (added by MCM)</span><span><i class="dot"></i>delivered</span><span><i style="background:var(--ink2)"></i>left unexplained by the MCM equation, with ± one standard error</span></div>
@@ -391,7 +404,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </div>
 
   <div class="pane" id="pane-volatility">
-  <section class="card" id="sec-compound">
+  <section class="card" id="sec-compound" data-nav="Volatility in three steps">
     <h2>What volatility does to the return, in three steps</h2>
     <p class="sub">The required return is an average across years, and it is what the equation's holders ask. What a position compounds at is lower, and how much lower depends on how it is held.</p>
     <p class="sub" id="vol-headline" style="color:var(--ink);font-weight:600"></p>
@@ -430,7 +443,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </div>
   </section>
 
-  <section class="card" id="sec-state">
+  <section class="card" id="sec-state" data-nav="Where Bitcoin stands">
     <h2>Where Bitcoin stands, and what followed before</h2>
     <p class="sub">Two descriptions of the month-end: how far the price is below its highest month-end close, and how the volatility in the equation compares with its own past. A fall in the price is not an input of the equation. It moves the required return only through volatility. The tables are the record of the twelve months that followed similar month-ends. <b>They are a record, not a forecast.</b></p>
     <p class="sub" id="st-headline" style="color:var(--ink);font-weight:600"></p>
@@ -448,7 +461,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </div>
 
   <div class="pane" id="pane-path">
-  <section class="card" id="sec-path">
+  <section class="card" id="sec-path" data-nav="Trend and path">
     <h2>A trend line, and the path the required return implies</h2>
     <p class="sub">Price dashboards often draw Bitcoin against a straight line on a log scale, with bands one and two standard deviations either side, and read a price below the line as cheap. The line assumes the growth of the past goes on for ever. The required return gives another path: the price if holders earn exactly what they require from today on, starting from a price level you choose. <b>Neither is a forecast.</b></p>
     <div class="filters" style="margin:6px 0 4px"><span>Start the path today from</span>
@@ -471,7 +484,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </div>
 
   <div class="pane" id="pane-tests">
-  <section class="card" id="sec-why">
+  <section class="card" id="sec-why" data-nav="Why they differed">
     <h2>Why delivered differed from required</h2>
     <p class="sub">Read each period in two moves. <b>First, the gap.</b> The blue bar is the premium holders required over the risk-free rate, and the circle is what Bitcoin delivered. The black line between them is the gap: delivered minus required. <b>Then, where the gap came from.</b> Part of it came with the equity market: equities paid more, or less, than the 4% a year the equation assumes, and Bitcoin moves with them in proportion to its beta. The rest is left unexplained by the equation: it is the part specific to Bitcoin. Percent a year.</p>
     <div class="mini" style="margin:4px 0 12px"><h3 id="why-title"></h3><p>percent a year over the risk-free rate</p>
@@ -483,14 +496,14 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub" style="margin-top:10px">The gap is the paper's monthly test. The unexplained return is the quantity behind the paper's "share explained", and its regression alpha is within a point or two of it (both under Tests). Showing one inside the other is the observatory's own reading and involves no new estimate. Two cautions. The split depends on the 4% equity premium, which is a convention: with a higher premium, more of the gap would count as required and less as coming with the equity market. And the equity part is only as firm as the beta: where the correlation with equities is low, as in the early periods, the beta is poorly measured and so is the split.</p>
   </section>
 
-  <section class="card" id="sec-trail">
+  <section class="card" id="sec-trail" data-nav="Unexplained, through time">
     <h2>What each model leaves unexplained, through time</h2>
     <p class="sub">Trailing three-year averages, percent a year. The grey line is the return to be explained: what Bitcoin delivered over the risk-free rate. The other two are what the CAPM and the MCM equation leave over.</p>
     <div class="legend"><span><i class="ln" style="border-color:var(--mut)"></i>delivered over the risk-free rate</span><span><i class="ln" style="border-color:var(--orange)"></i>left unexplained by the CAPM</span><span><i class="ln" style="border-color:var(--blue)"></i>left unexplained by the MCM equation</span></div>
     <div class="chart" id="c-trail"></div>
   </section>
 
-  <section class="card" id="sec-cum">
+  <section class="card" id="sec-cum" data-nav="Added up">
     <details class="more"><summary>Unexplained return, added up</summary>
     <p class="sub">Each month's return less what the model allows, summed from the start of the period. Percentage points. A flat line means the model accounts for what Bitcoin delivered.</p>
     <div class="legend"><span><i class="ln" style="border-color:var(--orange)"></i>CAPM</span><span><i class="ln" style="border-color:var(--blue)"></i>MCM equation</span></div>
@@ -498,7 +511,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </details>
   </section>
 
-  <section class="card" id="sec-erp">
+  <section class="card" id="sec-erp" data-nav="Equity premium">
     <details class="more"><summary>Does the assumed equity premium matter?</summary>
     <p class="sub">The market term is beta times the equity premium, which the paper holds at 4% a year. The premium that stock prices imply is not constant, so this section reruns everything with it, month by month, and with other fixed values. The required return moves by about beta times the change in the premium. The tests of fit hardly move, because the unexplained return is computed from what equities actually returned, not from the premium assumed.</p>
     <div class="grid2">
@@ -525,14 +538,14 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <div class="filters"><span>Asset</span><div class="seg" role="group" aria-label="Asset" id="alt-pick"></div></div>
   <div class="tiles" id="alt-tiles"></div>
 
-  <section class="card" id="sec-alt-band">
+  <section class="card" id="sec-alt-band" data-nav="Through time">
     <h2 id="alt-band-title">The required return through time</h2>
     <p class="sub" id="alt-band-sub"></p>
     <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i class="ln" style="border-color:var(--mut);border-top-style:dashed"></i>Bitcoin, midpoint</span></div>
     <div class="chart" id="c-alt-band"></div>
   </section>
 
-  <section class="card" id="sec-alt-terms">
+  <section class="card" id="sec-alt-terms" data-nav="What moves it">
     <h2>What moves it</h2>
     <p class="sub">The two terms that differ from asset to asset, and the three inputs behind them, each measured from the asset's own prices. The risk-free rate and the mortality term are the same for every asset.</p>
     <div class="grid2">
@@ -545,7 +558,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <ul class="note" style="margin-top:12px" id="alt-notes"></ul>
   </section>
 
-  <section class="card" id="sec-alt-test">
+  <section class="card" id="sec-alt-test" data-nav="Tested against delivery">
     <h2>Set against what they delivered</h2>
     <p class="sub">Bitcoin's monthly test, run on each asset over the months it has been priced. Percent a year. "Unexplained" is what the asset delivered beyond what each model allows; the figure in brackets is its standard error.</p>
     <div class="scroll"><table id="t-alt-test"></table></div>
@@ -571,14 +584,14 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <div class="pane" id="pane-equation">
 
-  <section class="card">
+  <section class="card" id="sec-e-eq" data-nav="The equation">
     <h2>The equation</h2>
     <p class="formula">required return <em>=</em> <span style="border-bottom-color:var(--rf)">risk-free rate</span> <em>+</em> <span style="border-bottom-color:var(--violet)">β × equity premium</span> <em>+</em> <span style="border-bottom-color:var(--orange)">γ × σ² × w</span> <em>+</em> <span style="border-bottom-color:var(--aqua)">λ × (1 − δ)</span></p>
     <div class="legend" style="margin-top:10px"><span><i style="background:var(--rf)"></i>what a safe bond pays</span><span><i style="background:var(--violet)"></i><span style="display:inline"><b>M</b>arket risk</span></span><span><i style="background:var(--orange)"></i><span style="display:inline"><b>C</b>oncentration risk</span></span><span><i style="background:var(--aqua)"></i><span style="display:inline"><b>M</b>ortality risk</span></span></div>
     <p class="sub" style="margin-top:12px">It answers one question: what return must holders expect, a year, to be willing to keep the asset, given the risks they carry? It is a required return at a date and for a holder. It is not a forecast of what the asset will do. Section 2 of the paper derives it.</p>
   </section>
 
-  <section class="card">
+  <section class="card" id="sec-e-build" data-nav="Build a required return">
     <h2>Build a required return</h2>
     <p class="sub">Pick a case, then move any slider. The cases use this site's own data for <span id="eqn-when"></span>.</p>
     <div class="presets" id="eqn-presets"></div>
@@ -622,7 +635,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </div>
   </section>
 
-  <section class="card">
+  <section class="card" id="sec-e-band" data-nav="From one holder to the band">
     <h2>From one holder to the band</h2>
     <ul class="note">
       <li><b>One holder here, a range on the Bitcoin page.</b> Risk aversion and the holder's weight are not measured exactly, so the Bitcoin page shows a band. Its lower edge is the holder through a fund and its upper edge the surveyed owner, the two Bitcoin cases above, with the market term taken 15% lower and 15% higher. Through 2018 the early holder set the upper edge. The <a href="#required-return">Required return</a> tab shows this month by month.</li>
@@ -641,21 +654,21 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </div>
     <span class="hint">applies to the charts of this tab</span>
   </div>
-  <section class="card" id="sec-edges">
+  <section class="card" id="sec-edges" data-nav="How the band is built">
     <h2>How the band is built</h2>
     <p class="sub">The band prices three holders. The <b>lower edge</b> is the average owner when fund and treasury investors are counted, with the low inputs. The <b>upper edge</b> is the larger of two candidates: the average surveyed owner with the high inputs, or the early holder, who was all-in while few people owned Bitcoin. Each candidate is solid while it sets the upper edge and dashed while it does not, and the strip along the top names the holder who sets it. The <b>midpoint</b> is the simple average of the two edges; it is the required return used in the tests. Percent a year, log scale.</p>
     <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint</span><span><i class="ln" style="border-color:var(--magenta)"></i>lower edge: average owner, counting fund and treasury investors</span><span><i class="ln" style="border-color:var(--blue)"></i>upper candidate: average surveyed owner</span><span><i class="ln" style="border-color:var(--yellow)"></i>upper candidate: early holder</span></div>
     <div class="chart" id="m-edges"></div>
   </section>
 
-  <section class="card" id="sec-terms">
+  <section class="card" id="sec-terms" data-nav="The four terms">
     <h2>What the required return is made of</h2>
     <p class="sub">The four terms of the equation at the midpoint of the band, and their sum, at each month-end. Percent a year, log scale. A term below 1% is drawn at 1%.</p>
     <div class="legend"><span><i class="ln" style="border-color:var(--ink)"></i>required return (sum)</span><span><i class="ln" style="border-color:var(--orange)"></i>concentration risk</span><span><i class="ln" style="border-color:var(--violet)"></i>market risk</span><span><i class="ln" style="border-color:var(--rf)"></i>risk-free rate</span><span><i class="ln" style="border-color:var(--aqua)"></i>mortality risk</span></div>
     <div class="chart" id="c-terms"></div>
   </section>
 
-  <section class="card" id="sec-risk">
+  <section class="card" id="sec-risk" data-nav="The three risks">
     <h2>The three risks</h2>
     <p class="sub">The required return is the risk-free rate plus one term for each risk. Each block below shows one risk: its formula, what it adds at the midpoint of the band, and the inputs that move it.</p>
     <div class="eq" id="eq"></div>
@@ -703,7 +716,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </div>
 
   <div class="pane" id="pane-holders">
-  <section class="card" id="sec-h-who">
+  <section class="card" id="sec-h-who" data-nav="Whose risk">
     <h2>Whose risk the concentration term prices</h2>
     <p class="sub">The concentration term is risk aversion × variance × the share of the holder's wealth that moves with Bitcoin. Variance comes from prices. The share cannot be read from prices: it depends on who holds Bitcoin, and it is measured from household surveys and company filings. The band prices three holders, and this tab shows where each weight comes from.</p>
     <div class="tiles" id="h-tiles"></div>
@@ -713,7 +726,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub" id="h-edge" style="margin-top:10px"></p>
   </section>
 
-  <section class="card" id="sec-h-owner">
+  <section class="card" id="sec-h-owner" data-nav="Surveyed owner">
     <h2>The surveyed owner: <span id="h-ow"></span>% at every date</h2>
     <p class="sub">US households that owned crypto in 2021 kept 19% of their financial assets in it on average, and the 2025 wave of the same survey reports similar shares (Weber, Candia, Coibion and Gorodnichenko 2026). Between the two waves Bitcoin's price rose 2.3 times. An owner who had simply held would have gone from 19% to about 35%. The surveys do not show that, so the page uses 19% in every month and does not move it with the price.</p>
     <p class="sub">Two national surveys ask owners what their holdings are worth, wave after wave. Each line below is a multiple of its value in the first wave. The price multiplies; the holding per owner stays close to ×1. A higher market value shows up as more owners, not as more per owner.</p>
@@ -727,7 +740,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub" style="margin-top:10px">Holdings are in pounds and Canadian dollars as the surveys report them. Bitcoin's price is its average in US dollars over the months of each survey's fieldwork. The Canadian survey reports the median holding only.</p>
   </section>
 
-  <section class="card" id="sec-h-funds">
+  <section class="card" id="sec-h-funds" data-nav="Funds and treasuries">
     <h2>The lower edge: adding fund and treasury investors</h2>
     <p class="sub">Someone who owns a spot ETF, or shares of a company that holds Bitcoin, is not a "crypto owner" in a household survey, yet carries Bitcoin's risk. These investors are diversified: they are taken to keep <span id="h-fw"></span>% of their wealth in Bitcoin. Counting their wealth beside the surveyed owners' gives a lower average weight, the one behind the lower edge of the band.</p>
     <div class="mini" style="margin:4px 0 12px"><h3 id="h-work-title"></h3><p>for every $100 of Bitcoin outstanding</p>
@@ -739,14 +752,14 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub" style="margin-top:10px">This weight does not move with the price. It falls only as funds and companies hold more of the supply, which is how the required return falls as more diversified investors hold Bitcoin. The holdings are from the Grayscale trust's filings to 2023, US spot ETFs from 2024, and public companies' reported holdings.</p>
   </section>
 
-  <section class="card" id="sec-h-early">
+  <section class="card" id="sec-h-early" data-nav="Early holder">
     <h2>The early holder</h2>
     <p class="sub">While few people owned Bitcoin, the coins sat with holders for whom it was nearly everything they owned. The band gives that holder a weight of 100% as long as ownership is no higher than in the 2018 survey (<span id="h-few"></span>% of US adults), and lets the weight fall in proportion as ownership grows: weight = <span id="h-few2"></span>% ÷ ownership. With log utility (γ = 1), that holder's required return is the risk-free rate plus the weight times variance. It sets the upper edge of the band whenever it is the higher of the two. <span id="h-early-until"></span></p>
     <div class="scroll"><table id="t-h-own"></table></div>
     <p class="sub" style="margin-top:10px">Between surveys ownership grows at a constant rate. Before the first survey it follows the number of funded Bitcoin addresses.</p>
   </section>
 
-  <section class="card" id="sec-h-unc">
+  <section class="card" id="sec-h-unc" data-nav="What is uncertain">
     <h2>What is uncertain, and what changed</h2>
     <ul class="note">
       <li><b>19% is an average in which every owner counts once.</b> The median owner held about 8%. What prices the asset is the share of owners' combined wealth, which no survey reports and which is lower if wealthier owners hold smaller shares. With the weight at 12% or at 8% the paper's required return for 2026 is one to two points lower (16.9% and 16.1% against 18.1%).</li>
@@ -770,7 +783,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <div class="stamp" id="census-stamp"></div>
   <div class="tiles" id="census-tiles"></div>
 
-  <section class="card" id="sec-c-age">
+  <section class="card" id="sec-c-age" data-nav="By age">
     <h2>Does surviving make an asset safer?</h2>
     <p class="sub">The popular "Lindy" idea says the longer an asset has lived, the longer it will live, which would make the death rate fall like one over age: the dashed line. The data reject it. The death rate rises over the first years of an asset's life and stays high. Deaths per hundred assets a year, by age; whiskers are 95% intervals, and the number of deaths in each group is at the foot of its bar.</p>
     <div class="legend"><span><i style="background:var(--blue)"></i>death rate</span><span><i class="ln" style="border-color:var(--orange);border-top-style:dashed"></i>what Lindy would predict</span></div>
@@ -783,20 +796,20 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="sub" style="margin-top:10px">The dashed line is k / age drawn through the bar for ages 2 to 3 years. The estimate of b comes from a regression of monthly deaths on the logarithm of age.</p>
   </section>
 
-  <section class="card" id="sec-c-size">
+  <section class="card" id="sec-c-size" data-nav="By size">
     <h2>What protects: size</h2>
     <p class="sub">Assets are sorted into four groups by their peak trading volume, then the assets that ever reached the top fifty and the top twenty are followed from the month they entered. The last bar counts only sudden collapses among top-twenty assets. Deaths per hundred assets a year, with 95% intervals.</p>
     <div class="chart" id="c-size"></div>
     <div class="scroll"><table id="t-size"></table></div>
   </section>
 
-  <section class="card" id="sec-c-surv">
+  <section class="card" id="sec-c-surv" data-nav="How long they last">
     <h2>How long they last</h2>
     <p class="sub">The share of assets still alive at each age, by size group. Half of the smallest group is dead by its fourth year; most of the largest group is still alive after thirteen.</p>
     <div class="chart" id="c-surv"></div>
   </section>
 
-  <section class="card" id="sec-c-grave">
+  <section class="card" id="sec-c-grave" data-nav="Deaths at the top">
     <h2>The deaths at the top</h2>
     <p class="sub" id="grave-sub"></p>
     <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
@@ -805,7 +818,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <p class="note" id="grave-rules"></p>
   </section>
 
-  <section class="card" id="sec-c-method">
+  <section class="card" id="sec-c-method" data-nav="What counts as a death">
     <h2>What counts as a death, and how it is priced</h2>
     <ul class="note">
       <li><b>Three ways to die.</b> The data feed ends more than 180 days before the census date. Or the price falls below 1% of its peak and does not recover. Or trading dries up: three-month volume below 1% of its peak and under $250,000 a day, with no recovery.</li>
@@ -822,20 +835,20 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <h1>Use the data</h1>
   <p class="lede">Every number on this site is published as small files that a person, a spreadsheet or an AI assistant can read directly. Free to reuse with credit.</p>
 
-  <section class="card" id="sec-d-ai">
+  <section class="card" id="sec-d-ai" data-nav="Ask an AI assistant">
     <h2>Ask an AI assistant</h2>
     <p class="sub">Paste this into an assistant that can open web pages. It reads a short guide, then one small file, and answers with the current figures and their source.</p>
     <pre class="prompt" id="d-prompt">Read https://apapadogiannis.github.io/crypto-observatory/llms.txt and the file it tells you to start with. Then tell me what return the holders of Bitcoin and of Ether should require now, what each figure is made of, and how to cite it.</pre>
     <p class="sub" style="margin-top:10px">For an assistant that uses skills, <a href="https://github.com/apapadogiannis/apapadogiannis/blob/main/skill/SKILL.md" target="_blank" rel="noopener">one skill</a> covers this tool and the rest of the research.</p>
   </section>
 
-  <section class="card" id="sec-d-files">
+  <section class="card" id="sec-d-files" data-nav="The files">
     <h2>The files</h2>
     <p class="sub">All figures are percent a year unless the name says otherwise. Column and field names carry their units.</p>
     <div class="scroll"><table id="t-files" class="now"></table></div>
   </section>
 
-  <section class="card" id="sec-claims">
+  <section class="card" id="sec-claims" data-nav="What it does not claim">
     <h2>What this site does not claim</h2>
     <ul class="note">
       <li><b>Nothing here is a forecast.</b> A required return is what holders should ask for given the risk, not what the asset will deliver.</li>
@@ -845,7 +858,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </ul>
   </section>
 
-  <section class="card" id="sec-d-method">
+  <section class="card" id="sec-d-method" data-nav="Sources and dates">
     <h2>Method, sources and dates</h2>
     <div class="note">    <p>Method and inputs: A. Papadogiannis (2026), "Bitcoin's Required Return: Market Risk, Concentration and Mortality", working paper, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">doi.org/10.2139/ssrn.7705239</a>. Replication package: <a href="https://github.com/apapadogiannis/bitcoin-required-return" target="_blank" rel="noopener">github.com/apapadogiannis/bitcoin-required-return</a>, archived at <a href="https://doi.org/10.5281/zenodo.24003938" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24003938</a>. Required returns are dated at the month-end they are set; returns at the month they are earned. On data to May 2026 the paper reports an MCM alpha of 34 points a year over the whole sample and 2 since 2018.</p>
     <p id="asof"></p>
@@ -1692,6 +1705,25 @@ const VIEWS=["compare","bitcoin","altcoins","method","data"], PANES=["overview",
 const ROUTES={compare:["compare"],bitcoin:["bitcoin","overview"],overview:["bitcoin","overview"],tests:["bitcoin","tests"],volatility:["bitcoin","volatility"],path:["bitcoin","path"],
   altcoins:["altcoins"],method:["method","equation"],equation:["method","equation"],band:["method","band"],holders:["method","holders"],census:["method","census"],data:["data"],
   "required-return":["method","band"],compared:["compare"]};
+// "On this page": one button per card of the section and tab in view, so that what lies further down is known from the top
+let ONPAGE=[];
+function onPage(){
+  const nav=document.getElementById("onpage"), box=document.getElementById("onpage-links"); box.textContent="";
+  ONPAGE=[...document.querySelectorAll(".view.on section.card[data-nav]")].filter(c=>c.offsetParent!==null).map(card=>{
+    const b=document.createElement("button"); b.type="button"; b.textContent=card.dataset.nav;
+    b.addEventListener("click",()=>card.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"}));
+    box.appendChild(b); return {card,b}; });
+  nav.hidden=ONPAGE.length<2; spy();
+}
+function spy(){
+  if(ONPAGE.length<2) return;
+  let cur=-1; ONPAGE.forEach((o,i)=>{ if(o.card.getBoundingClientRect().top<=window.innerHeight*0.5) cur=i; });      // none is marked until the first card is half way up the screen
+  if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4) cur=ONPAGE.length-1;      // at the foot of the page the last card is the one in view
+  ONPAGE.forEach((o,i)=>{ if(i===cur) o.b.setAttribute("aria-current","true"); else o.b.removeAttribute("aria-current"); });
+  if(cur<0) return;
+  const a=ONPAGE[cur].b, box=a.parentNode; if(a.offsetLeft<box.scrollLeft||a.offsetLeft+a.offsetWidth>box.scrollLeft+box.clientWidth) box.scrollLeft=a.offsetLeft-20;
+}
+{ let tick=false; window.addEventListener("scroll",()=>{ if(tick) return; tick=true; requestAnimationFrame(()=>{tick=false; spy();}); },{passive:true}); }
 function showTab(){
   const h=location.hash.slice(1), [view,pane]=ROUTES[h]||["compare"];
   VIEWS.forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));
@@ -1699,6 +1731,7 @@ function showTab(){
   PANES.forEach(n=>document.getElementById("pane-"+n).classList.toggle("on",n===pane));
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===pane));
   draw();                                   // charts size themselves from their container, so draw once the pane is visible
+  onPage();
   if(h==="compared") document.getElementById("sec-cmp").scrollIntoView();
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ if(location.hash.slice(1)===b.dataset.tab) return; location.hash=b.dataset.tab; }));
