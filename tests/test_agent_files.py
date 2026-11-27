@@ -30,6 +30,8 @@ with tempfile.TemporaryDirectory() as tmp:
     latest_size = len((out / "latest.json").read_bytes())
     vintages = read("vintages.csv")
     api = {p.name: p.read_text(encoding="utf-8") for p in (ROOT / "api").iterdir()}
+    assets = {p.name for p in (ROOT / "site" / "assets").iterdir()}
+    assert assets == {"favicon.svg", "apple-touch-icon.png", "social-card.png"} and all((out / n).stat().st_size > 0 for n in assets)
     for name, text in api.items():
         assert (out / name).read_text(encoding="utf-8") == text, f"api/{name} is not what the build produces"
 
@@ -162,6 +164,9 @@ assert f"{latest['midpoint']}% a year at the midpoint" in guide
 assert "SKILL.md" not in api and "apapadogiannis/main/skill/SKILL.md" in guide and "apapadogiannis/blob/main/skill/SKILL.md" in page
 for name in ("llms.txt", "latest.json", "assets.csv", "assets_monthly.csv", "data.json", "months.csv", "periods.csv", "census_deaths.csv", "vintages.csv", "datapackage.json"):
     assert name in api, name
+
+# The mark, the tab icon and the share card are linked from the page, and the card by its full address.
+assert 'href="favicon.svg"' in page and 'href="apple-touch-icon.png"' in page and credit["site"] + "social-card.png" in page
 
 # The page says the answer without JavaScript, and no placeholder is left in it.
 assert "<noscript>" in page and "<!--STATIC-->" not in page and "/*LD*/" not in page and "__DATA__" not in page

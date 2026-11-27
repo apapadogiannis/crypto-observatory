@@ -215,6 +215,8 @@ def build(data: Path, out: Path) -> dict:
     for mark, text in _static(doc).items():           # readable without JavaScript
         html = html.replace(mark, text)
     (out / "index.html").write_text(html)
+    for asset in sorted((ROOT / "site" / "assets").iterdir()):         # the mark, the tab icon and the card shown when the page is shared
+        (out / asset.name).write_bytes(asset.read_bytes())
     return doc
 
 

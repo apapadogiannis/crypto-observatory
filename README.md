@@ -154,6 +154,7 @@ observatory/update.py         downloads the latest data into data/ (the only cod
 config/model.toml             constants and hand-entered anchors, each with its source
 data/                         all input data (see data/README.md)
 site/template.html            the page
+site/assets/                  the mark as the tab icon, the phone icon and the card shown when the page is shared
 tests/test_continuity.py      checks the code against the paper on a frozen snapshot
 tests/test_agent_files.py     checks the files in api/ against data.json
 tests/snapshot/               the frozen inputs of the paper
