@@ -924,9 +924,9 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <section class="card" id="sec-about" data-nav="About">
     <h2>About the observatory</h2>
-    <p class="sub">Each month the observatory computes the return the holders of five cryptoassets should require, from one published equation and public data. It reports required returns. It is not a forecast, a price target or advice.</p>
+    <p class="sub">Each month the observatory recomputes, from the latest public data, the return the holders of five cryptoassets should require, using one published equation. It reports required returns. It is not a forecast, a price target or advice.</p>
     <ul class="note">
-      <li><b>The paper's method, verified each month.</b> Before every build the code is run on a frozen copy of the data behind the paper "Bitcoin's Required Return: Market Risk, Concentration and Mortality" and must reproduce the paper's published band and test results. The page is published only if it does. This shows the site computes what the paper describes; the live figures differ from the paper's because the data are newer.</li>
+      <li><b>Live figures, by the paper's method.</b> Every month the required returns are computed afresh from new public data: prices, the Treasury yield and equity returns to the latest month-end. As a separate check on the code, each build first runs it on the data the paper "Bitcoin's Required Return: Market Risk, Concentration and Mortality" used, and it must reproduce the paper's published results before the new month is published.</li>
       <li><b>Dated and kept.</b> Figures are set at each month-end and published on the third of the next month. The figure first published for a month is kept in <a href="vintages.csv" target="_blank" rel="noopener">vintages.csv</a> and never rewritten.</li>
       <li><b>Open.</b> The <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a>, the stored source data and every figure on the site are public. A wrong number is welcome as an <a href="https://github.com/apapadogiannis/crypto-observatory/issues" target="_blank" rel="noopener">issue</a>.</li>
     </ul>
