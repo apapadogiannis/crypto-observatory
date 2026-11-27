@@ -299,6 +299,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
     <button type="button" role="tab" data-tab="overview">Overview</button>
     <button type="button" role="tab" data-tab="required-return">Required return</button>
     <button type="button" role="tab" data-tab="volatility">Volatility and drawdown</button>
+    <button type="button" role="tab" data-tab="path">Trend and path</button>
     <button type="button" role="tab" data-tab="holders">Holders</button>
     <button type="button" role="tab" data-tab="tests">Tests</button>
     <button type="button" role="tab" data-tab="compared">Versus stocks and gold</button>
@@ -447,6 +448,9 @@ window.goatcounter = {path: function () { return location.pathname; }};
       <li><b>Dates.</b> Month-end closes. A month in progress is left out, so a move in the price since the month-end is not in these figures.</li>
     </ul>
   </section>
+  </div>
+
+  <div class="pane" id="pane-path">
   <section class="card" id="sec-path">
     <h2>A trend line, and the path the required return implies</h2>
     <p class="sub">Price dashboards often draw Bitcoin against a straight line on a log scale, with bands one and two standard deviations either side, and read a price below the line as cheap. The line assumes the growth of the past goes on for ever. The required return gives another path: the price if holders earn exactly what they require, from a starting month you choose. <b>Neither is a forecast.</b></p>
@@ -1542,7 +1546,7 @@ function draw(){
   compareView(); dataView(); volatilityTab(); pathCard();
 }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
-const TABS=["overview","required-return","volatility","holders","tests","compared"], VIEWS=["compare","bitcoin","equation","census","data"];
+const TABS=["overview","required-return","volatility","path","holders","tests","compared"], VIEWS=["compare","bitcoin","equation","census","data"];
 function showTab(){
   const h=location.hash.slice(1), view=TABS.includes(h)||h==="bitcoin"?"bitcoin":VIEWS.includes(h)?h:"compare";
   VIEWS.forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));

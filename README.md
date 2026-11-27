@@ -70,7 +70,7 @@ equity series (US market, developed markets, US small caps) are priced the same 
 priced with the paper's equation for other cryptoassets: an asset's holder weight is the crypto
 owner's weight times the share of a crypto holding that moves with the asset (kappa).
 
-**Bitcoin** has the full history and the tests, in six tabs:
+**Bitcoin** has the full history and the tests, in seven tabs:
 
 1. **Overview.** The required return and what was delivered, by three-year period.
 2. **Required return.** How the band is built, which holder sets each edge, and the three risks
@@ -80,15 +80,16 @@ owner's weight times the share of a crypto holding that moves with the asset (ka
    volatilities; and where Bitcoin stands (distance from its highest month-end close, volatility
    against its own past) with the record of the twelve months that followed similar month-ends. A
    record with the number of separate spells behind each row, not a forecast.
-   Last, a straight trend line of the kind price dashboards draw, beside the path the required
-   return implies from a starting month the reader chooses.
-4. **Holders.** Where the holder's weight in the concentration term comes from: the surveyed owner at
+4. **Trend and path.** A straight trend line of the kind price dashboards draw, with its bands, beside
+   the path the required return implies from a starting month the reader chooses: where each stands
+   today, today's price against it, and where it leads in three years. Neither is a forecast.
+5. **Holders.** Where the holder's weight in the concentration term comes from: the surveyed owner at
    19%, the surveys in the United Kingdom and Canada that show holdings per owner not following the
    price, the lower weight once fund and treasury investors are counted, and the early holder.
-5. **Tests.** How much of the delivered return the CAPM and the MCM equation each explain, why
+6. **Tests.** How much of the delivered return the CAPM and the MCM equation each explain, why
    delivered differed from required, and, folded away, the regression, the cumulative view and the
    rerun with the equity premium implied by stock prices.
-6. **Versus stocks and gold.** Bitcoin beside the US stock market, developed markets, US small caps and gold: average
+7. **Versus stocks and gold.** Bitcoin beside the US stock market, developed markets, US small caps and gold: average
    and compound required returns, drag and Sharpe ratios.
 
 **Data** lists the files, gives a prompt to paste into an AI assistant, and says what the site does
