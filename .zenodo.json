@@ -40,6 +40,7 @@
       "scheme": "url"
     }
   ],
-  "version": "1.6.0",
-  "publication_date": "2026-11-25"
+  "version": "1.7.0",
+  "publication_date": "2026-11-27",
+  "notes": "Licences: the code is under the MIT License; the page's text, charts and computed figures are under CC BY 4.0. The source data stored in the archive keep their own terms: Coin Metrics community data (data/coinmetrics, and the Bitcoin prices restated in the data files) are CC BY-NC 4.0, for non-commercial use with attribution; the equity market returns are copyright Kenneth R. French; the d3 library is under the ISC License."
 }

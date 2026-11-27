@@ -132,6 +132,10 @@ def update_other_asset(data: Path, asset: str) -> dict:
                 default=(0, ""))
     added = [{"time": d, "PriceUSD": r["PriceUSD"], "MarketCapUSD": r.get("CapMrktCurUSD") or r.get("CapMrktEstUSD") or ""}
              for d, r in sorted(fresh.items()) if d > last]
+    days = [last] + [r["time"] for r in added]
+    gaps = [b for a, b in zip(days, days[1:]) if (date.fromisoformat(b) - date.fromisoformat(a)).days != 1]
+    if gaps:
+        raise SystemExit(f"Coin Metrics, {asset}: days missing before {gaps[:5]}")
     if added:
         _write_csv(path, stored + added, ["time", "PriceUSD", "MarketCapUSD"])
     return {"source": "Coin Metrics Community API", "last_observation": (added or stored)[-1]["time"], "rows_added": len(added),
@@ -143,8 +147,15 @@ def update_treasury(data: Path) -> dict:
     stored = {r["date"]: r["yield_10y"] for r in _read_csv(path)} if path.exists() else {}
     first_year = int(max(stored)[:4]) if stored else 2011
     before = len(stored)
-    for y in range(first_year, date.today().year + 1):
-        for r in csv.DictReader(io.StringIO(_get(TREASURY.format(y=y)).decode())):
+    this_year = date.today().year
+    for y in range(first_year, this_year + 1):
+        try:
+            text = _get(TREASURY.format(y=y)).decode()
+        except urllib.error.HTTPError:
+            if y == this_year and y > first_year and date.today().month == 1:
+                continue                                            # early January: the new year's file may not exist yet
+            raise
+        for r in csv.DictReader(io.StringIO(text)):
             if r.get("10 Yr"):
                 stored[datetime.strptime(r["Date"], "%m/%d/%Y").date().isoformat()] = r["10 Yr"]
     if not stored:
@@ -283,15 +294,35 @@ def update_equity_premium(data: Path) -> dict:
             "rows_added": len(added), "revisions": revised[:20]}
 
 
+def _optional(name: str, path: Path, key: str, fetch) -> dict:
+    """A source that feeds one table or one chart and not the required return: when its download or its
+    format fails, the stored file is kept, the run carries on and the log says so. The limit on its age
+    below still stops the run once the stored file has grown old."""
+    try:
+        return fetch()
+    except (Exception, SystemExit) as e:                            # SystemExit: the fetchers' own checks
+        if not path.exists():
+            raise
+        stored = _read_csv(path)
+        print(f"::warning::{name}: not updated ({type(e).__name__}: {e}); the stored file to {stored[-1][key]} is kept")
+        return {"source": name, "last_observation": stored[-1][key], "rows_added": 0, "revisions": [], "kept_stored": True}
+
+
 def main(argv):
     data = Path(argv[1]) if len(argv) > 1 else ROOT / "data"
+    market = data / "market"
     log = {"coinmetrics": update_coinmetrics(data), "treasury": update_treasury(data), "market": update_market(data),
-           "developed_markets": update_developed(data), "us_small_caps": update_small_caps(data),
-           "implied_equity_premium": update_equity_premium(data)}
+           "developed_markets": _optional("developed_markets", market / "developed_markets_monthly.csv", "month", lambda: update_developed(data)),
+           "us_small_caps": _optional("us_small_caps", market / "us_small_caps_monthly.csv", "month", lambda: update_small_caps(data)),
+           "implied_equity_premium": _optional("implied_equity_premium", market / "implied_equity_premium_monthly.csv", "start_of_month",
+                                               lambda: update_equity_premium(data))}
     import tomllib
     _cfg = tomllib.loads((ROOT / "config" / "model.toml").read_text(encoding="utf-8"))
     others = list(_cfg["other_assets"]) + [_cfg["gold"]["price_asset"]]          # the gold token carries the gold series forward
-    log.update({f"coinmetrics_{a}": update_other_asset(data, a) for a in others})
+    gold_token = _cfg["gold"]["price_asset"]
+    log.update({f"coinmetrics_{a}": update_other_asset(data, a) for a in _cfg["other_assets"]})
+    log[f"coinmetrics_{gold_token}"] = _optional(f"coinmetrics_{gold_token}", data / "coinmetrics" / f"{gold_token}.csv", "time",
+                                                 lambda: update_other_asset(data, gold_token))
     changed = any(v["rows_added"] for v in log.values())
     for k, v in log.items():
         print(f"{k:18s} to {v['last_observation']}, {v['rows_added']} rows added" + (f", {len(v['revisions'])} series differ from the stored overlap" if v.get("revisions") else ""))
@@ -299,7 +330,7 @@ def main(argv):
             print("   ", r)
     # A source that has stopped must fail the run, so that the page is never rebuilt on stale data unnoticed.
     today = date.today()
-    limits = {**{f"coinmetrics_{a}": 7 for a in others}, "coinmetrics": 7, "treasury": 10, "market": 130, "developed_markets": 130, "us_small_caps": 130, "implied_equity_premium": 75}
+    limits = {**{f"coinmetrics_{a}": 7 for a in others}, f"coinmetrics_{gold_token}": 45, "coinmetrics": 7, "treasury": 10, "market": 130, "developed_markets": 130, "us_small_caps": 130, "implied_equity_premium": 75}
     late = []
     for k, days in limits.items():
         obs = log[k]["last_observation"]

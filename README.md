@@ -119,8 +119,8 @@ python3 -I build.py                    # writes _site/index.html and _site/data.
 python3 update.py                      # optional: downloads the latest data into data/
 ```
 
-Open `_site/index.html` in a browser. The page loads one library (d3) from a public CDN and
-nothing else.
+Open `_site/index.html` in a browser. The page draws its charts with one library (d3 7.9.0, ISC License, copyright Mike Bostock),
+served from the site itself, and counts visits with GoatCounter.
 
 ## Layout
 
@@ -206,15 +206,17 @@ hard-coded in the model.
 
 The page is a static file. It sets no cookies and asks nothing of the visitor. It counts visits with GoatCounter, which sets no cookies and keeps no IP address: it records the page
 opened, the site the visitor came from, the browser, the screen size and the country.
-The only other outside request is for the d3 library.
+That is the only outside request the page makes.
 
 ## Data and licensing
 
 - Copyright (c) 2026 Agisilaos Papadogiannis.
 - Code: MIT License.
-- The page's text, charts and numbers (`data.json`): CC BY 4.0. Cite the tool and the paper.
-- Coin Metrics community data in `data/coinmetrics`: CC BY-NC 4.0, non-commercial use with
-  attribution. It is not covered by the two licenses above.
+- The page's text, charts and numbers (`data.json`): CC BY 4.0. Cite the tool and the paper. This does
+  not extend to the Bitcoin prices given in `data.json` (under `state` and `path`) and `latest.json`, nor
+  to figures that restate prices closely: those keep the terms of the line below.
+- Coin Metrics community data in `data/coinmetrics`: CC BY-NC 4.0
+  (https://creativecommons.org/licenses/by-nc/4.0/), non-commercial use with attribution. It is not covered by the two licenses above.
 - Equity market returns in `data/market`: copyright Kenneth R. French.
 - Implied equity premium in `data/market`: Aswath Damodaran, NYU Stern, used with attribution.
 - Other sources are listed in `data/README.md`.

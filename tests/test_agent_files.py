@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory() as tmp:
     vintages = read("vintages.csv")
     api = {p.name: p.read_text(encoding="utf-8") for p in (ROOT / "api").iterdir()}
     assets = {p.name for p in (ROOT / "site" / "assets").iterdir()}
-    assert assets == {"favicon.svg", "apple-touch-icon.png", "social-card.png"} and all((out / n).stat().st_size > 0 for n in assets)
+    assert assets == {"favicon.svg", "apple-touch-icon.png", "social-card.png", "d3.min.js"} and all((out / n).stat().st_size > 0 for n in assets)
     for name, text in api.items():
         assert (out / name).read_text(encoding="utf-8") == text, f"api/{name} is not what the build produces"
 
@@ -64,7 +64,8 @@ for a in la.values():
     parts = a["risk_free_pct_per_year"] + a["market_term_pct_per_year"] + a["concentration_term_pct_per_year"] + a["mortality_term_pct_per_year"]
     assert abs(parts - a["required_midpoint_pct_per_year"]) < 0.03, a["asset_id"]
     assert a["required_lower_pct_per_year"] < a["required_midpoint_pct_per_year"] < a["required_upper_pct_per_year"]
-    assert abs(a["holder_weight_upper_pct"] - a["kappa"] * la["btc"]["holder_weight_upper_pct"]) < 0.1
+    # both sides are rounded for publication (weights to 0.1, kappa to 0.01), which alone allows 0.2
+    assert abs(a["holder_weight_upper_pct"] - a["kappa"] * la["btc"]["holder_weight_upper_pct"]) < 0.2
 for row in assets_now:
     assert float(row["required_midpoint_pct_per_year"]) == la[row["asset_id"]]["required_midpoint_pct_per_year"]
 assert latest_size < 14_000 and [b['name'] for b in latest_json['benchmarks_for_comparison']][-1] == 'Gold' and "latest.json" in guide.split("## Coverage")[0]
@@ -189,3 +190,28 @@ assert 'href="favicon.svg' in page and 'href="apple-touch-icon.png' in page and 
 assert "<noscript>" in page and "<!--STATIC-->" not in page and "/*LD*/" not in page and "__DATA__" not in page
 assert f"is {latest['midpoint']}% a year" in page
 print(f"agent files agree with data.json: {len(months)} months, {len(periods)} periods, {len(deaths)} deaths")
+
+# What keeps the monthly update from stopping, and the page from coming up empty.
+# 1. The three-year periods cover every month, also in the first months of a new period and for a record that starts late in one.
+import pandas as pd
+from observatory import tests_of_fit
+for first, last in (("2012-01", "2027-01"), ("2012-01", "2027-05"), ("2012-01", "2027-06"), ("2012-01", "2030-02"), ("2020-10", "2027-03"),
+                    ("2023-11", "2026-08"), ("2026-09", "2027-02"), ("2026-11", "2027-01")):
+    idx = pd.date_range(first, last, freq="ME")
+    spans = tests_of_fit.period_spans(idx)
+    sizes = [int(((idx.year >= a) & (idx.year <= b)).sum()) for a, b in spans]
+    assert sum(sizes) == len(idx) and (min(sizes) >= 6 or len(spans) == 1), (first, last, spans)
+    assert all(b < c for (_, b), (c, _) in zip(spans, spans[1:]))
+# 2. The page draws with a library it serves itself, checked against a fixed hash, and says so when it is missing.
+import base64, hashlib
+d3 = (ROOT / "site" / "assets" / "d3.min.js").read_bytes()
+# d3 7.9.0 as published: the hash is the one cdnjs lists for the file
+assert base64.b64encode(hashlib.sha512(d3).digest()).decode() == "vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
+assert 'src="d3.min.js"' in page and "cdnjs" not in page
+assert page.index("<noscript>") < page.index('id="view-compare"') and 'id="nolib"' in page and "function safely" in page
+# 3. One name, one unit; the months of the test say what they are; one answer on the other assets' test.
+assert all("price_against_it_sd" in v and "price_against_it" not in v for v in doc["path"]["trend"].values())
+dr = latest_json["bitcoin_delivered_against_required"]
+assert dr["required_set_from_month_end"] == "2018-01" and dr["returns_from_month"] == "2018-02" and dr["unexplained_by_mcm_standard_error_pct_points"] > 0
+assert "are not tested" not in guide + json.dumps(latest_json) and "by-nc/4.0" in guide and "by-nc/4.0" in doc["path"]["prices_licence"]
+assert "% of month-ends since 2018 had lower volatility" in guide and "required compound return" not in guide

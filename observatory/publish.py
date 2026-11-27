@@ -27,8 +27,23 @@ DESCRIBE_AS = ("Crypto Observatory, by Agisilaos Papadogiannis: the required ret
                "MCM equation of the paper \"Bitcoin's Required Return\".")
 LICENCE = {"name": "CC-BY-4.0", "url": "https://creativecommons.org/licenses/by/4.0/",
            "condition": "Reuse is allowed with credit to the tool and to the paper.",
-           "source_data": "The source data keep their own terms. Coin Metrics community data are CC BY-NC 4.0, for "
-                          "non-commercial use; the equity market returns are copyright Kenneth R. French."}
+           "source_data": "The source data keep their own terms and CC BY 4.0 does not extend to them. Coin Metrics community data are "
+                          "CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/), for non-commercial use with attribution: "
+                          "that covers the Bitcoin prices given here (price_usd, and the prices under state and path in data.json) and "
+                          "the figures that restate prices closely (volatility, beta, kappa, market share, drawdown, monthly returns). "
+                          "The equity market returns are copyright Kenneth R. French.",
+           "commercial_reuse": "The required returns, their terms and the test results may be reused commercially with credit. "
+                               "For prices and the figures that restate them, a commercial user should take the series from a source whose terms allow it."}
+
+OTHERS_TEST = ("Bitcoin's requirement is tested against what it delivered. The same comparison is computed for the other four assets "
+               "(data.json, assets.tests) and is not evidence for them: they are survivors with short records.")
+
+
+def _next_month(ym: str) -> str:
+    """'2018-01' -> '2018-02': the month whose return a requirement set at that month-end faces."""
+    y, m = int(ym[:4]), int(ym[5:7])
+    return f"{y + m // 12}-{m % 12 + 1:02d}"
+
 
 MONTH_FIELDS = [
     ("month_end", "date", "The month-end at which the required return is set"),
@@ -193,11 +208,16 @@ def latest_file(doc: dict) -> dict:
              "required_compound_pct_per_year": x["compound"], "sharpe_ratio": x["sharpe_average"], "sharpe_ratio_on_compound": x["sharpe_compound"]}
             for x in doc["comparison"]["rows"] if x["name"] != "Bitcoin"],
         "bitcoin_delivered_against_required": None if s18 is None else {
-            "period": s18["period"], "returns_from_month": s18["from"], "returns_to_month": s18["to"], "months": s18["months"],
+            "period": s18["period"], "required_set_from_month_end": s18["from"], "required_set_to_month_end": s18["to"],
+            "returns_from_month": _next_month(s18["from"]), "returns_to_month": _next_month(s18["to"]), "months": s18["months"],
             "delivered_average_pct_per_year": s18["delivered"], "required_midpoint_average_pct_per_year": s18["required_mid"],
             "gap_pct_points": s18["gap"], "gap_standard_error_pct_points": s18["gap_se"],
+            "unexplained_by_mcm_pct_points": s18["mcm_alpha"], "unexplained_by_mcm_standard_error_pct_points": s18["mcm_alpha_se"],
+            "unexplained_by_capm_pct_points": s18["capm_alpha"],
             "share_of_excess_return_explained_by_mcm_pct": s18["explained_mcm"], "share_explained_by_capm_pct": s18["explained_capm"],
-            "note": "Averages of monthly returns times twelve, not what a holder earned. The test has little power: see the standard error."},
+            "note": "Averages of monthly returns times twelve, not what a holder earned. The test has little power: see the standard errors. "
+                    "Neither model is rejected. The share explained is higher for the MCM equation partly by construction, because it adds two "
+                    "terms that are never negative to the CAPM; it does not show that the model is validated or that it beats the CAPM."},
         "bitcoin_volatility_and_compounding": {
             "pay_for_variance_lower": vs["pay_for_variance"]["lower"], "pay_for_variance_midpoint": vs["pay_for_variance"]["midpoint"],
             "pay_for_variance_upper": vs["pay_for_variance"]["upper"], "break_even": vs["break_even_pay_for_variance"],
@@ -217,10 +237,10 @@ def latest_file(doc: dict) -> dict:
         "top_twenty_deaths": {"census_date": c["census_date"], "assets_ever_in_top_twenty": c["ever_top_twenty"], "died": c["ever_top_twenty_deaths"],
                               "death_rate_pct_per_year": c["ever_top_twenty_death_rate"], "updated_monthly": False},
         "cautions": ["Not a forecast, a price target or advice.",
-                     "Only Bitcoin's history is tested against what it delivered. The other assets are priced with the same equation and are not tested.",
+                     OTHERS_TEST,
                      "Volatility, beta and kappa are trailing estimates and move from month to month; a low beta gives a low requirement and says nothing about issuer or governance risk.",
                      "required_compound is what a position held alone and never rebalanced would compound at, not a requirement. A negative one means the required return does not cover that position's volatility drag."],
-        "licence": LICENCE["name"], "licence_url": LICENCE["url"], "commercial_reuse_note": LICENCE["source_data"],
+        "licence": LICENCE["name"], "licence_url": LICENCE["url"], "commercial_reuse_note": LICENCE["commercial_reuse"] + " " + LICENCE["source_data"],
         "cite_tool": cr["cite_as"], "cite_paper": PAPER["citation"] + " " + PAPER["doi"], "tool_doi": cr["doi"], "paper_doi": PAPER["doi"],
         "other_files": {f["file"]: f["what"] for f in FILES if f["file"] != "latest.json"},
         "page": SITE,
@@ -293,6 +313,7 @@ def publish(doc: dict, dirs: list[Path]) -> list[dict]:
     mo, age = m["model"], m["anchors_age_months"]
     st, vs = doc["state"], doc["volatility_sensitivity"]
     since = st["samples"]["2018"]
+    paper_mid = next((f"{x['required']['midpoint']:.1f}%" for x in doc["months"] if x["month_end"] == "2026-05-31"), "under 19%")   # the paper's data end in May 2026
     rule_n = c["deaths_by_rule"]
 
     w = L["worked"]
@@ -338,7 +359,7 @@ This file is written for AI agents and other programs. People should start at th
 ## Which file to fetch
 
 1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
-   licence and the citation: latest.json (about 12 KB). It also has the Sharpe ratios and, priced the
+   licence and the citation: latest.json (about 13 KB). It also has the Sharpe ratios and, priced the
    same way for scale, gold and three equity series. For most questions, fetch nothing else.
 2. A past month of Bitcoin: months.csv. Use the row dated the month-end at which the requirement is
    set; the return it faces is the following month's. A past month of any asset: assets_monthly.csv.
@@ -354,7 +375,7 @@ This file is written for AI agents and other programs. People should start at th
 - Assets: Bitcoin, with its full history and tests, and Ether, BNB, Solana and Tron, each priced with
   the same equation from the month it has {doc['assets']['min_months']} months of returns. Latest midpoints, percent a year:
   {', '.join(f"{r['name']} {r['required_return']}" for r in doc['assets']['latest'])}.
-  Only Bitcoin's requirement is tested against what it delivered.
+  {OTHERS_TEST}
 - {len(doc['months'])} month-ends from {doc['months'][0]['month_end']} to {m['latest_month_end']}; source data to {m['data_to']}.
 - Latest required return, {L['month_end']}: {L['required']['midpoint']}% a year at the midpoint, band {L['required']['lower']}% to {L['required']['upper']}%.
   Of the midpoint: risk-free {w['risk_free']}, market {w['market']['midpoint']}, concentration {w['concentration']['midpoint']}, mortality {w['mortality']['midpoint']}.
@@ -481,8 +502,8 @@ files are under api/.
   of their wealth in the asset and bear that share of the drag, which their pay exceeds. Do not say
   that volatility lowers "the compound return holders require". `volatility_sensitivity` in data.json
   recomputes the latest band at other volatilities, the other inputs held.
-- `state` in data.json says where Bitcoin stood at the month-end ({-st['drawdown']:g}% below its highest
-  month-end close; volatility lower than at {since['volatility_percentile']:.0f}% of month-ends since 2018) and what followed similar
+- `state` in data.json says where Bitcoin stood at the month-end ({abs(st['drawdown']):g}% below its highest
+  month-end close; only {since['volatility_percentile']:.0f}% of month-ends since 2018 had lower volatility) and what followed similar
   states over the next {st['horizon_months']} months, by sample. It is a record, not a forecast. Windows that start in
   neighbouring months overlap, so quote a row with its `spells`: the number of separate spells behind it.
   A drawdown is not an input of the equation; it moves the requirement only through volatility.
@@ -493,11 +514,11 @@ files are under api/.
   it as evidence that the equation is confirmed for these assets.
 - `path` in data.json sets a straight trend line (least squares through the log of the month-end
   closes, with the standard deviation of the distances from it) beside the path the required return
-  implies: the price if holders earn exactly the required compound return from the latest month-end
-  on. The equation gives a growth rate and no level, so the price the path starts from is a choice;
+  implies: the price if Bitcoin earns exactly its required average return from the latest month-end
+  on, which is growth at that return less half the variance. The equation gives a growth rate and no level, so the price the path starts from is a choice;
   `levels` works out {len(doc['path']['levels'])} of them (the latest close and past peaks), and each trend has the path from the
   trend line's own level. `price_against_it` under a level is the latest close against that level, in
-  percent. The path's range widens with time; the trend line's bands do not. Neither is a forecast,
+  percent; under a trend line `price_against_it_sd` is the same distance in standard deviations of the line. The path's range widens with time; the trend line's bands do not. Neither is a forecast,
   and `range_at_horizon` is a spread at the latest volatility, not a prediction interval.
 - The identities among the period columns hold to within about one point in the early periods,
   because the required return is converted month by month and the premium is not.
@@ -526,7 +547,7 @@ files are under api/.
 - The band is a range of inputs, not a confidence interval.
 - The paper's headline for 2026, about 18% a year (90% range 15 to 22%), is the median when the
   uncertain inputs are drawn across their ranges. The midpoint here averages the two edges of the
-  band, which weights its corners equally, and stood near 20% at the paper's date. A midpoint here
+  band, which weights its corners equally, and stood at {paper_mid} at the paper's date. A midpoint here
   is comparable with the paper's monthly band, not with its 18%.
 - `latest` is the last complete month-end, not today.
 - The equity risk premium is the paper's fixed 4%. `midpoint_with_implied_equity_premium` shows the
@@ -536,7 +557,9 @@ files are under api/.
 ## Do not use this for
 
 - A forecast, a price target or a view on whether to hold Bitcoin. The site reports required returns.
-- Any asset other than the five listed, and tests of fit for any asset other than Bitcoin.
+- Any asset other than the five listed. Gold and the equity series are benchmarks for scale only.
+- Evidence that the equation holds for Ether, BNB, Solana or Tron: the comparison under `assets.tests` is not that.
+- A statement that the model is validated or that it beats the CAPM: neither model is rejected.
 - Cryptoasset deaths after {c['census_date']}.
 - Commercial reuse of the underlying Coin Metrics series: see the licence below.
 - What an investor earned, from `delivered`: use `delivered_compound`.

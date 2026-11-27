@@ -145,7 +145,8 @@ def build(data: Path, out: Path) -> dict:
             "asset": "btc", "name": "Bitcoin",
             "author": "Agisilaos Papadogiannis, https://github.com/apapadogiannis",
             "license": "CC BY 4.0 for the numbers in this file, https://creativecommons.org/licenses/by/4.0/. Cite the tool and the paper. "
-                       "The source data keep their own terms; Coin Metrics community data are CC BY-NC 4.0.",
+                       "The source data keep their own terms and CC BY 4.0 does not extend to them: Coin Metrics community data, which include the Bitcoin "
+                       "prices under state and path, are CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/), for non-commercial use.",
             "data_to": last_day.strftime("%Y-%m-%d"), "latest_month_end": band.index[-1].strftime("%Y-%m-%d"),
             # the update runs on the third of each month, for the month-end before it
             "next_update": (band.index[-1] + pd.offsets.MonthBegin(2) + pd.Timedelta(days=2)).strftime("%Y-%m-%d"),
@@ -203,8 +204,8 @@ def build(data: Path, out: Path) -> dict:
         "holders": _holders(data, cfg),
         "assets": _assets(data, btc, band, mkt, cfg),
         "volatility_sensitivity": state.sensitivity(band, cfg),
-        "state": state.state(btc, band),
-        "path": state.paths(btc, band),
+        "state": {**state.state(btc, band), "prices_licence": "Coin Metrics community data, CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/): non-commercial use with attribution. CC BY 4.0 does not extend to these prices."},
+        "path": {**state.paths(btc, band), "prices_licence": "Coin Metrics community data, CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/): non-commercial use with attribution. CC BY 4.0 does not extend to these prices."},
     }
     out.mkdir(parents=True, exist_ok=True)
     doc["vintages"] = _vintages(data, doc)
@@ -214,7 +215,7 @@ def build(data: Path, out: Path) -> dict:
     for d in ([ROOT / "api", out] if data == ROOT / "data" else [out]):
         (d / "data.json").write_text(json.dumps(doc, separators=(",", ":"), ensure_ascii=False))
     template = (ROOT / "site" / "template.html").read_text()
-    html = template.replace("__DATA__", json.dumps(_page_payload(doc), separators=(",", ":"), ensure_ascii=False))
+    html = template.replace("__DATA__", json.dumps(_page_payload(doc), separators=(",", ":"), ensure_ascii=False).replace("<", "\\u003c"))
     for mark, text in _static(doc).items():           # readable without JavaScript
         html = html.replace(mark, text)
     (out / "index.html").write_text(html)
@@ -280,7 +281,7 @@ def _static(doc: dict) -> dict:
           "dateModified": m["data_to"], "citation": publish.PAPER["doi"],
           "distribution": [{"@type": "DataDownload", "encodingFormat": f["format"], "contentUrl": f["file"],
                             "description": f["what"]} for f in m["files"]]}
-    return {"<!--STATIC-->": summary, "/*LD*/": json.dumps(ld, separators=(",", ":"), ensure_ascii=False)}
+    return {"<!--STATIC-->": summary, "/*LD*/": json.dumps(ld, separators=(",", ":"), ensure_ascii=False).replace("<", "\\u003c")}
 
 
 def _assets(data: Path, btc: pd.DataFrame, band: pd.DataFrame, mkt: pd.Series, cfg: dict) -> dict:
@@ -308,6 +309,8 @@ def _assets(data: Path, btc: pd.DataFrame, band: pd.DataFrame, mkt: pd.Series, c
 
     monthly = [record(code, d, b) for code, f in frames.items() for d, b in f.iterrows()]
     latest = [{**record(code, f.index[-1], f.iloc[-1]), "priced_since": f.index[0].strftime("%Y-%m")} for code, f in frames.items()]
+    if {r["month_end"] for r in latest} != {band.index[-1].strftime("%Y-%m-%d")}:
+        raise ValueError("the assets are not all priced at the same month-end: " + ", ".join(f"{r['asset']} {r['month_end']}" for r in latest))
     return {"month_end": band.index[-1].strftime("%Y-%m-%d"), "latest": latest, "monthly": monthly,
             "tests": [{**r, "name": names[r["asset"]]} for r in assets.tests(data, band, mkt, other)],
             "crypto_market": "value-weighted return of " + ", ".join(names.values()) + ", weights from the previous month-end's market values",
@@ -365,8 +368,8 @@ def _page_payload(doc: dict) -> dict:
                                        "mkt": r["market_term"], "conc": r["concentration_term"], "mort": r["mortality_term"], "vol": r["volatility"],
                                        "beta": r["beta_to_us_equities"], "kappa": r["kappa"], "whi": r["holder_weight_high"], "wlo": r["holder_weight_low"],
                                        "cmid": r["compound_required_return"], "clo": r["compound_required_low"], "chi": r["compound_required_high"]}
-                                      for r in doc["assets"]["monthly"] if r["asset"] == a] for a in {r["asset"] for r in doc["assets"]["latest"]} - {"btc"}},
-                       "hist": {a: [[r["month_end"][:7], r["required_return"]] for r in doc["assets"]["monthly"] if r["asset"] == a] for a in {r["asset"] for r in doc["assets"]["latest"]}}}, "holders": doc["holders"], "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
+                                      for r in doc["assets"]["monthly"] if r["asset"] == a] for a in [r["asset"] for r in doc["assets"]["latest"] if r["asset"] != "btc"]},
+                       "hist": {a: [[r["month_end"][:7], r["required_return"]] for r in doc["assets"]["monthly"] if r["asset"] == a] for a in [r["asset"] for r in doc["assets"]["latest"]]}}, "holders": doc["holders"], "n_elite": doc["census"]["ever_top_twenty"], "n_dead": doc["census"]["ever_top_twenty_deaths"], "census": doc["census"],
             "now": {"asof": ym(lt["month_end"]), "rf": w["risk_free"], "mkt": w["market"]["midpoint"], "conc": w["concentration"]["midpoint"],
                     "mort": w["mortality"]["midpoint"], "mid": lt["required"]["midpoint"], "lo": lt["required"]["lower"], "hi": lt["required"]["upper"],
                     "beta": w["market"]["beta"], "vol": w["concentration"]["volatility"], "wlo": w["concentration"]["weight_lower"],

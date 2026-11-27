@@ -129,15 +129,34 @@ def notes(band: pd.DataFrame, t: pd.DataFrame, btc: pd.DataFrame) -> dict:
             "monthly_correlation_required_delivered": round(float(np.corrcoef(t.required_mid, t.ret)[0, 1]), 2)}
 
 
-def period_table(t: pd.DataFrame) -> list[dict]:
+def period_spans(index: pd.DatetimeIndex, least: int = 6) -> list[tuple[int, int]]:
+    """Three-year periods from 2012 as (first year, last year), covering every month of `index`.
+
+    A period with fewer than `least` months (the first months of a new three-year period, or a record that
+    starts late in one) is joined to the period beside it."""
+    count = pd.Series(1, index=index).groupby(index.year).sum()
+    n = lambda a, b: int(count.loc[a:b].sum())
+    last = int(index[-1].year)
+    spans = [[y, min(y + 2, last)] for y in range(2012, last + 1, 3) if n(y, min(y + 2, last))]
+    i = 0
+    while len(spans) > 1 and i < len(spans):
+        if n(*spans[i]) >= least:
+            i += 1
+        elif i:                                                     # joined to the period before it
+            spans[i - 1][1] = spans.pop(i)[1]
+        else:                                                       # the first period: joined to the next
+            first = spans.pop(0)
+            spans[0][0] = first[0]
+    return [(a, b) for a, b in spans]
+
+
+def period_table(t: pd.DataFrame, least: int = 6) -> list[dict]:
     """Three-year periods from 2012, then the whole sample and the sample since 2018 (flagged summary)."""
     last = int(t.index[-1].year)
-    spans = [(y, min(y + 2, last), False) for y in range(2012, last + 1, 3)] + [(2012, last, True), (2018, last, True)]
+    spans = [(a, b, False) for a, b in period_spans(t.index, least)] + [(y, last, True) for y in (2012, 2018) if len(t[str(y):]) >= least]
     rows = []
     for a, b, is_summary in spans:
         x = t[str(a):str(b)]
-        if len(x) < 6:
-            continue
         rows.append({"period": f"{a}–{str(b)[2:]}", "from": x.index[0].strftime("%Y-%m"),
                      "to": x.index[-1].strftime("%Y-%m"), "summary": is_summary, **summarize(x)})
     return rows

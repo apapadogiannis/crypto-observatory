@@ -34,6 +34,8 @@ def required_returns(data: Path, btc: pd.DataFrame, band: pd.DataFrame, market_r
     cap = {"btc": btc["CapMrktCurUSD"]}
     for a in names:
         d = read(data, a)
+        if d.index[-1] < band.index[-1]:                            # else an earlier day would pass for the month-end close
+            raise ValueError(f"{a}: prices end {d.index[-1]:%Y-%m-%d}, before the month-end {band.index[-1]:%Y-%m-%d} being priced")
         px[a], cap[a] = d["PriceUSD"], d["MarketCapUSD"]
     P = pd.DataFrame(px).resample("ME").last().reindex(band.index.union(pd.DataFrame(px).resample("ME").last().index)).loc[:band.index[-1]]
     C = pd.DataFrame(cap).resample("ME").last().reindex(P.index)

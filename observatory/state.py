@@ -180,7 +180,7 @@ def paths(btc: pd.DataFrame, band: pd.DataFrame) -> dict:
         sd = float(np.std(y - (c + k * x), ddof=1))
         now, ahead = c + k * x[-1], c + k * (x[-1] + H / 12)
         trend[start] = {"fitted_from": month(i0), "growth": round(100 * (np.exp(k) - 1), 1), "sd_factor": round(float(np.exp(sd)), 2),
-                        "value_now": usd(now), "price_against_it": round(float((y[-1] - now) / sd), 2),
+                        "value_now": usd(now), "price_against_it_sd": round(float((y[-1] - now) / sd), 2),
                         "value_at_horizon": usd(ahead), "range_at_horizon": [usd(ahead - 2 * sd), usd(ahead + 2 * sd)],
                         "path_from_its_level": from_level(now)}
 
