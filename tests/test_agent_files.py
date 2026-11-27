@@ -166,7 +166,7 @@ for name in ("llms.txt", "latest.json", "assets.csv", "assets_monthly.csv", "dat
     assert name in api, name
 
 # The mark, the tab icon and the share card are linked from the page, and the card by its full address.
-assert 'href="favicon.svg"' in page and 'href="apple-touch-icon.png"' in page and credit["site"] + "social-card.png" in page
+assert 'href="favicon.svg' in page and 'href="apple-touch-icon.png' in page and page.count("Market Risk, Concentration and Mortality") >= 5 and credit["site"] + "social-card.png" in page
 
 # The page says the answer without JavaScript, and no placeholder is left in it.
 assert "<noscript>" in page and "<!--STATIC-->" not in page and "/*LD*/" not in page and "__DATA__" not in page

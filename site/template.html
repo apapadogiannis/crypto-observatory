@@ -6,8 +6,8 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://gc.zgo.at https://cdnjs.cloudflare.com; style-src 'unsafe-inline'; img-src 'self' data: https://apapadogiannis.goatcounter.com; connect-src https://apapadogiannis.goatcounter.com; base-uri 'none'; form-action 'none'">
 <title>Crypto Observatory: required returns, risks and survival</title>
 <meta name="description" content="What return should Bitcoin's holders require for the market, concentration and mortality risk they carry, and what did it deliver? Recomputed every month from public data.">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
@@ -208,6 +208,12 @@ footer{font-size:13px;color:var(--mut);margin-top:26px;max-width:820px}
 .acards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:6px 0 22px}
 .acard{display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px 12px;color:inherit;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.03)}
 a.acard:hover{border-color:var(--ink)}
+.ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:4px 26px;margin:-6px 0 24px;padding:14px 0 2px;border-top:1px solid var(--line)}
+.ways a{display:block;color:inherit;text-decoration:none;padding:4px 0 8px}
+.ways a b{display:block;font-size:14.5px}
+.ways a b::after{content:" →";color:var(--blue)}
+.ways a span{display:block;font-size:13px;color:var(--ink2);line-height:1.45;margin-top:2px}
+.ways a:hover b,.ways a:focus-visible b{text-decoration:underline}
 .acard .k{font-size:13.5px;color:var(--ink2);font-weight:600}
 .acard .v{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
 .acard .n{font-size:12.5px;color:var(--ink2)}
@@ -245,9 +251,15 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <h1>What return should a cryptoasset's holders require?</h1>
   <p class="lede">The return an investor should demand before holding each asset, given the risks it carries. It is a hurdle rate from one published equation, <b>not a forecast</b> of what the asset will deliver.</p>
   <div class="stamp" id="a-stamp"></div>
-  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="#data">data</a></p>
+  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="#data">data</a></p>
   <div class="stale" id="stale2" role="status"></div>
   <div class="acards" id="a-cards"></div>
+  <nav class="ways" aria-label="What else is here">
+    <a href="#overview"><b>Bitcoin in depth</b><span>The required return since 2012, tested against what Bitcoin delivered, with compounding, drawdowns and trend.</span></a>
+    <a href="#equation"><b>How it works</b><span>The equation term by term, with sliders to move each input and see the answer change.</span></a>
+    <a href="#census"><b>Deaths</b><span>A census of cryptoassets that died, and what that risk adds to the required return.</span></a>
+    <a href="#data"><b>Data</b><span>Every figure as files, with a guide written for AI assistants and the terms of reuse.</span></a>
+  </nav>
 
   <section class="card" id="sec-a-bars">
     <h2>What each required return is made of</h2>
@@ -302,7 +314,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <h1>What return should Bitcoin's holders require?</h1>
   <p class="lede" id="lede-btc">What Bitcoin's holders should require for the market, concentration and mortality risk they carry, set against what Bitcoin delivered.</p>
   <div class="stamp" id="stamp"></div>
-  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="#data">data</a></p>
+  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="#data">data</a></p>
   <div class="stale" id="stale" role="status"></div>
 
   <noscript>
@@ -637,7 +649,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <div class="view" id="view-equation">
   <h1>The MCM equation</h1>
   <p class="lede">Every required return on this site comes from one equation. It is the CAPM plus the two risks the CAPM assumes away: that the holder has a lot of her wealth in one asset, and that the asset can die.</p>
-  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
+  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
 
   <section class="card">
     <h2>The equation</h2>
@@ -705,7 +717,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <h1>The census of cryptoasset deaths</h1>
   <p class="lede">How often cryptoassets die, whether surviving makes them safer, and what protects them. The census is where the mortality term of the required return comes from.</p>
   <div class="stamp" id="census-stamp"></div>
-  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
+  <p class="method">By <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a> · Method: <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a> (working paper) · <a href="https://github.com/apapadogiannis/crypto-observatory" target="_blank" rel="noopener">code</a> · <a href="data.json" target="_blank" rel="noopener">data</a></p>
   <div class="tiles" id="census-tiles"></div>
 
   <section class="card" id="sec-c-age">
@@ -793,7 +805,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <footer>
     <div class="sig"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="var(--blue)"/><polygon points="13,32 54,9 54,55" fill="#fff" opacity=".38"/><line x1="13" y1="32" x2="54" y2="32" stroke="#fff" stroke-width="6" stroke-linecap="round"/><circle cx="14" cy="32" r="8" fill="#fff"/></svg>Crypto Observatory</div>
-    <p>To cite this page: A. Papadogiannis (2026), "Crypto Observatory: required returns, risks and survival", Zenodo, <a href="https://doi.org/10.5281/zenodo.24403325" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24403325</a>, together with the paper it implements, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return</a>.</p>
+    <p>To cite this page: A. Papadogiannis (2026), "Crypto Observatory: required returns, risks and survival", Zenodo, <a href="https://doi.org/10.5281/zenodo.24403325" target="_blank" rel="noopener">doi.org/10.5281/zenodo.24403325</a>, together with the paper it implements, <a href="https://doi.org/10.2139/ssrn.7705239" target="_blank" rel="noopener">Bitcoin's Required Return: Market Risk, Concentration and Mortality</a>.</p>
     <p>© <span id="copy-year">2026</span> Agisilaos Papadogiannis. The text, charts and numbers of this site, including <a href="data.json" target="_blank" rel="noopener">data.json</a>, may be reused with credit under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. The code is under the <a href="https://github.com/apapadogiannis/crypto-observatory/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>. The source data keep their own terms: Coin Metrics community data are CC BY-NC 4.0, for non-commercial use.</p>
     <p>Independent research, for informational and academic purposes only. Not financial, investment, tax or legal advice, and not a recommendation to buy or sell any financial instrument. Built and maintained by <a href="https://github.com/apapadogiannis" target="_blank" rel="noopener">Agisilaos Papadogiannis</a>. Method, sources and files: <a href="#data">Data</a>.</p>
   </footer>
