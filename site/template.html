@@ -317,10 +317,15 @@ window.goatcounter = {path: function () { return location.pathname; }};
 
   <section class="card" id="sec-band">
     <h2>The required return, and what Bitcoin delivered</h2>
-    <p class="sub">The band and its midpoint are the equation at each month-end. A single month's return is too noisy to set beside them, so the comparison is by three-year period, named along the top and separated by dotted lines. In each period the circle is the average delivered return and the thick blue bar is the average required return (midpoint) over the same months. The last period is shorter while it is still running. The dot at the right-hand end is the required return now, with its band. Percent a year, log scale.</p>
-    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i style="background:var(--blue);height:5px"></i>required, three-year average</span><span><i class="dot"></i>delivered, three-year average</span></div>
+    <p class="sub">The band and its midpoint are the equation at each month-end. A single month's return is too noisy to set beside them, so the comparison is by three-year period, named along the top and separated by dotted lines. In each period the circle is the average delivered return and the thick blue bar is the average required return (midpoint) over the same months. The grey bar through each circle is one standard error either side of the delivered average: where it reaches the blue bar, delivered and required cannot be told apart. Where the bar would run below the bottom of the scale it ends in an arrow, with the figure it reaches. The last period is shorter while it is still running. The dot at the right-hand end is the required return now, with its band. Percent a year, log scale.</p>
+    <p class="sub" id="band-line" style="color:var(--ink);font-weight:600"></p>
+    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i style="background:var(--blue);height:5px"></i>required, three-year average</span><span><i class="dot"></i>delivered, three-year average</span><span><i style="background:var(--mut);opacity:.45;width:5px;height:14px"></i>± one standard error</span></div>
     <div class="chart" id="c-band"></div>
     <div class="scroll"><table id="t-gap"></table></div>
+    <ul class="note" style="margin-top:12px">
+      <li><b>Reading the gap.</b> A gap smaller than its standard error is not evidence that Bitcoin paid more than required. Three years of monthly returns this volatile cannot settle a difference of that size.</li>
+      <li><b>Where the gap came from.</b> Bitcoin moves with stocks. When stocks pay more than the premium the equation assumes, Bitcoin's return rises with them, and that part of the gap is the stock market's surprise, not Bitcoin's. What remains is what the equation leaves unexplained. The two parts add up to the gap to within a point or two. <a href="#tests">The tests</a> show this period by period.</li>
+    </ul>
   </section>
 
   </div>
@@ -832,7 +837,7 @@ function table(id,head,rowsOf){
 function bandChart(){
   const el=document.getElementById("c-band"), wide=el.clientWidth>=520, f=frame(el,376,{l:44,r:wide?104:58,t:30,b:26}), d=rows(), P=periods();
   const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
-  const hiMax=Math.max(d3.max(d,r=>r.hi),d3.max(P,p=>p.real));
+  const hiMax=Math.max(d3.max(d,r=>r.hi),d3.max(P,p=>p.real+p.gse));
   const y=d3.scaleLog().domain([5,hiMax*1.12]).range([f.ih,0]).clamp(true);
   const g=axes(f,x,y,{yticks:[5,10,20,50,100,200,400].filter(v=>v<=hiMax*1.12),yfmt:v=>v+"%"});
   g.append("path").datum(d).attr("fill",css("--band")).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.lo)).y1(r=>y(r.hi)));
@@ -844,7 +849,12 @@ function bandChart(){
     pg.append("text").attr("x",xc).attr("y",-12).attr("text-anchor","middle").attr("font-size",12).attr("font-weight",600).attr("fill",css("--ink2")).text((narrow(f)?"’"+p.p.slice(2):p.p)+(p.n<36&&!narrow(f)?" ("+p.n+" months)":""));
     pg.append("line").attr("x1",x0).attr("x2",x1).attr("y1",y(p.mid)).attr("y2",y(p.mid)).attr("stroke",css("--surface")).attr("stroke-width",9).attr("stroke-linecap","round");
     pg.append("line").attr("x1",x0).attr("x2",x1).attr("y1",y(p.mid)).attr("y2",y(p.mid)).attr("stroke",css("--blue")).attr("stroke-width",5).attr("stroke-linecap","round");
-    pg.append("line").attr("x1",xc).attr("x2",xc).attr("y1",y(p.mid)).attr("y2",y(p.real)).attr("stroke",css("--ink")).attr("stroke-width",1.2).attr("stroke-dasharray","3 3");
+    // one standard error either side of the delivered average; open at the foot where it runs below the scale
+    { const top=p.real+p.gse, foot=p.real-p.gse, open=foot<=5, cap=v=>pg.append("line").attr("x1",xc-5).attr("x2",xc+5).attr("y1",y(v)).attr("y2",y(v)).attr("stroke",css("--mut")).attr("stroke-width",1.6);
+      pg.append("line").attr("x1",xc).attr("x2",xc).attr("y1",y(top)).attr("y2",open?f.ih-2:y(foot)).attr("stroke",css("--mut")).attr("stroke-width",4).attr("opacity",.45).attr("stroke-linecap","butt");
+      cap(top); if(!open) cap(foot);
+      else { pg.append("path").attr("d",`M${xc-5},${f.ih-7}L${xc},${f.ih-1}L${xc+5},${f.ih-7}`).attr("fill","none").attr("stroke",css("--mut")).attr("stroke-width",1.6);   // it runs below what a log scale can show
+        pg.append("text").attr("x",xc+9).attr("y",f.ih-6).attr("font-size",11).attr("fill",css("--mut")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text("to "+(foot<0?"−":"")+Math.abs(foot).toFixed(0)+"%"); } }
     pg.append("circle").attr("cx",xc).attr("cy",y(p.real)).attr("r",6).attr("fill",css("--surface")).attr("stroke",css("--ink")).attr("stroke-width",2);
     const lab=(yy,s,w)=>{pg.append("text").attr("x",xc+10).attr("y",yy).attr("dy","0.32em").attr("font-size",12).attr("font-weight",w).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(s);};
     const close=Math.abs(y(p.real)-y(p.mid))<15, up=y(p.real)<=y(p.mid);
@@ -859,7 +869,10 @@ function bandChart(){
   nt(y(L.mid)-15,wide?"now, "+fmtM(L.t):"now",11.5,600,"--ink2");
   nt(y(L.mid)+1,L.mid.toFixed(1)+"%",wide?15:13,700,"--ink");
   if(wide){ nt(y(L.hi)-9,L.hi.toFixed(1)+"%",11,400,"--mut"); nt(y(L.lo)+10,L.lo.toFixed(1)+"%",11,400,"--mut"); }
-  table("t-gap",["Period","Delivered","Required, midpoint","Gap","Standard error of the gap"],p=>[p.p,p.real.toFixed(0),p.mid.toFixed(0),sgn(p.gap),"±"+p.gse.toFixed(0)]);
+  const erp=DATA.meta.cmp.equity_risk_premium.toFixed(0);
+  table("t-gap",["Period","Delivered","Required, midpoint","Gap","Standard error of the gap","Of the gap: stocks beyond their "+erp+"% premium","Of the gap: left unexplained"],p=>[p.p,p.real.toFixed(0),p.mid.toFixed(0),sgn(p.gap),"±"+p.gse.toFixed(0),sgn(p.eq),sgn(p.alpha)]);
+  { const p=DATA.per.filter(q=>!q.sum).pop(), to=d3.timeFormat("%B %Y")(d3.timeMonth.offset(parse(p.b),1)), inside=Math.abs(p.gap)<=p.gse;
+    document.getElementById("band-line").textContent="In "+p.p+" (returns to "+to+") Bitcoin delivered "+p.real.toFixed(0)+"% a year against "+p.mid.toFixed(0)+"% required: a gap of "+sgn(p.gap)+" points, "+(inside?"inside":"outside")+" its standard error of ±"+p.gse.toFixed(0)+". Of that gap, "+sgn(p.eq)+" came with stocks paying "+(p.eq>=0?"more":"less")+" than the "+erp+"% premium the equation assumes, and "+sgn(p.alpha)+" is left unexplained."; }
 }
 function termsChart(){
   const el=document.getElementById("c-terms"), f=frame(el,320,{l:44,r:14,t:10,b:26}), d=rows();
