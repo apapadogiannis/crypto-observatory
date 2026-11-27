@@ -538,10 +538,10 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <div class="filters"><span>Asset</span><div class="seg" role="group" aria-label="Asset" id="alt-pick"></div></div>
   <div class="tiles" id="alt-tiles"></div>
 
-  <section class="card" id="sec-alt-band" data-nav="Through time">
-    <h2 id="alt-band-title">The required return through time</h2>
+  <section class="card" id="sec-alt-band" data-nav="Required and delivered">
+    <h2 id="alt-band-title">The required return, and what it delivered</h2>
     <p class="sub" id="alt-band-sub"></p>
-    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i class="ln" style="border-color:var(--mut);border-top-style:dashed"></i>Bitcoin, midpoint</span></div>
+    <div class="legend"><span><i style="background:var(--band)"></i>required band</span><span><i class="ln" style="border-color:var(--blue)"></i>required, midpoint</span><span><i style="background:var(--blue);height:5px"></i>required, average of the period</span><span><i class="dot"></i>delivered, average of the period</span><span><i style="background:var(--mut);opacity:.45;width:5px;height:14px"></i>± one standard error</span><span><i class="ln" style="border-color:var(--mut);border-top-style:dashed"></i>Bitcoin's required return, midpoint</span></div>
     <div class="chart" id="c-alt-band"></div>
   </section>
 
@@ -916,7 +916,7 @@ function axes(f,x,y,o){
   g.selectAll("line.g").data(ticks).join("line").attr("x1",0).attr("x2",iw).attr("y1",d=>y(d)).attr("y2",d=>y(d)).attr("stroke",css("--line")).attr("stroke-width",1);
   g.selectAll("text.y").data(ticks).join("text").attr("x",-8).attr("y",d=>y(d)).attr("dy","0.32em").attr("text-anchor","end").attr("font-size",11.5).attr("fill",css("--mut")).text(d=>(o.yfmt||(v=>v))(d));
   if(x.ticks){
-    const xt=x.ticks(Math.max(3,Math.min(8,Math.floor(iw/90))));
+    const xt=o.xticks||x.ticks(Math.max(3,Math.min(8,Math.floor(iw/90))));
     g.selectAll("text.x").data(xt).join("text").attr("x",d=>x(d)).attr("y",ih+18).attr("text-anchor","middle").attr("font-size",11.5).attr("fill",css("--mut")).text(d3.timeFormat("%Y"));
   }
   g.append("line").attr("x1",0).attr("x2",iw).attr("y1",ih).attr("y2",ih).attr("stroke",css("--axis"));
@@ -1293,22 +1293,38 @@ function altView(){
            ["What it is made of",f1(a.risk_free)+" + "+f1(a.market_term)+" + "+f1(a.concentration_term)+" + "+f1(a.mortality_term),"risk-free rate + market risk + concentration risk + mortality risk, in points a year"]];
   const TE=el("alt-tiles"); TE.textContent="";
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const e=document.createElement("div"); e.className=c+(c==="v"&&v.length>10?" long":""); e.textContent=t; d.appendChild(e);}); TE.appendChild(d);});
-  el("alt-band-title").textContent=a.name+": the required return through time";
-  el("alt-band-sub").textContent="Priced since "+fmtM(parse(a.priced_since))+", the month it had three years of returns. The band is the range the answer takes when risk aversion and the holder's weight are set low or high. Bitcoin's midpoint is drawn for reference. Percent a year.";
-  { const f=frame(el("c-alt-band"),300,{l:44,r:52,t:10,b:26});
+  el("alt-band-title").textContent=a.name+": the required return, and what it delivered";
+  const T0=A.tests.find(t=>t.asset===ALT);
+  el("alt-band-sub").textContent="Priced since "+fmtM(parse(a.priced_since))+", the month it had three years of returns. The band and its midpoint are the equation at each month-end. The comparison with what "+a.name+" delivered is by the same three-year periods as Bitcoin's, over the months it has: the circle is the average delivered return, the thick bar the average required return over the same months, and the grey bar one standard error either side. "+a.name+" is on this page because it survived, so a circle above its bar is what selection produces: see the notes under the table below. Percent a year, log scale.";
+  { const wide=el("c-alt-band").clientWidth>=520, f=frame(el("c-alt-band"),340,{l:44,r:wide?64:46,t:30,b:26}), P=T0?T0.periods:[];
     const x=d3.scaleTime().domain(d3.extent(D,r=>r.t)).range([0,f.iw]);
-    const y=d3.scaleLinear().domain([0,d3.max(D,r=>Math.max(r.hi,r.btc||0))]).nice(4).range([f.ih,0]);
-    const g=axes(f,x,y,{yticks:y.ticks(5),yfmt:v=>v+"%"});
-    g.append("path").datum(D).attr("fill",css("--band")).attr("opacity",.6).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.lo)).y1(r=>y(r.hi)));
-    g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(0)).attr("y2",y(0)).attr("stroke",css("--axis"));
-    const S=[{k:"mid",n:"required, midpoint",c:"--blue",y,w:2.4},{k:"btc",n:"Bitcoin, midpoint",c:"--mut",y,w:1.4,dash:"5 4"},{k:"hi",n:"band, upper edge",c:"--band"},{k:"lo",n:"band, lower edge",c:"--band"}];
+    const top=Math.max(d3.max(D,r=>Math.max(r.hi,r.btc||0)),d3.max(P,p=>p.delivered+p.gap_se)||0)*1.12, y=d3.scaleLog().domain([5,top]).range([f.ih,0]).clamp(true);
+    const g=axes(f,x,y,{yticks:[5,10,20,50,100,200,400].filter(v=>v<=top),yfmt:v=>v+"%",xticks:x.ticks(d3.timeYear.every(1))});
+    g.append("path").datum(D).attr("fill",css("--band")).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.lo)).y1(r=>y(r.hi)));
+    const S=[{k:"mid",n:"required, midpoint",c:"--blue",y,w:1.6},{k:"btc",n:"Bitcoin, midpoint",c:"--mut",y,w:1.4,dash:"5 4"},{k:"hi",n:"band, upper edge",c:"--band"},{k:"lo",n:"band, lower edge",c:"--band"}];
     S.filter(s=>s.w).forEach(s=>g.append("path").datum(D.filter(r=>r[s.k]!=null)).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",s.w).attr("stroke-dasharray",s.dash||null).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k]))));
-    const L=D[D.length-1], ends=[{y:y(L.mid),s:f1(L.mid)+"%"}];
-    ends.forEach(e=>g.append("text").attr("x",x(L.t)+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
-    hover(f,g,x,D,S,p1); }
+    hover(f,g,x,D,S,p1);
+    const pg=g.append("g").style("pointer-events","none"), small_=narrow(f);
+    P.forEach((p,i)=>{ const x0=Math.max(0,x(parse(p.from)))+3, x1=Math.min(f.iw,x(parse(p.to)))-3, xc=(x0+x1)/2;
+      if(i>0) pg.append("line").attr("x1",x0-3).attr("x2",x0-3).attr("y1",-18).attr("y2",f.ih).attr("stroke",css("--mut")).attr("stroke-width",1).attr("stroke-dasharray","2 4");
+      if(x1-x0>46) pg.append("text").attr("x",xc).attr("y",-12).attr("text-anchor","middle").attr("font-size",12).attr("font-weight",600).attr("fill",css("--ink2")).text((small_?"’"+p.period.slice(2):p.period)+(p.months<36&&!small_&&x1-x0>130?" ("+p.months+" months)":""));
+      pg.append("line").attr("x1",x0).attr("x2",x1).attr("y1",y(p.required_mid)).attr("y2",y(p.required_mid)).attr("stroke",css("--surface")).attr("stroke-width",9).attr("stroke-linecap","round");
+      pg.append("line").attr("x1",x0).attr("x2",x1).attr("y1",y(p.required_mid)).attr("y2",y(p.required_mid)).attr("stroke",css("--blue")).attr("stroke-width",5).attr("stroke-linecap","round");
+      { const hi=p.delivered+p.gap_se, lo=p.delivered-p.gap_se, open=lo<=5, cap=v=>pg.append("line").attr("x1",xc-5).attr("x2",xc+5).attr("y1",y(v)).attr("y2",y(v)).attr("stroke",css("--mut")).attr("stroke-width",1.6);
+        pg.append("line").attr("x1",xc).attr("x2",xc).attr("y1",y(hi)).attr("y2",open?f.ih-2:y(lo)).attr("stroke",css("--mut")).attr("stroke-width",4).attr("opacity",.45);
+        cap(hi); if(!open) cap(lo);
+        else { pg.append("path").attr("d",`M${xc-5},${f.ih-7}L${xc},${f.ih-1}L${xc+5},${f.ih-7}`).attr("fill","none").attr("stroke",css("--mut")).attr("stroke-width",1.6);
+          pg.append("text").attr("x",xc+9).attr("y",f.ih-6).attr("font-size",11).attr("fill",css("--mut")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text("to "+(lo<0?"−":"")+Math.abs(lo).toFixed(0)+"%"); } }
+      pg.append("line").attr("x1",xc).attr("x2",xc).attr("y1",y(p.required_mid)).attr("y2",y(p.delivered)).attr("stroke",css("--ink")).attr("stroke-width",1.2).attr("stroke-dasharray","3 3");
+      pg.append("circle").attr("cx",xc).attr("cy",y(p.delivered)).attr("r",6).attr("fill",css("--surface")).attr("stroke",css("--ink")).attr("stroke-width",2);
+      const close=Math.abs(y(p.delivered)-y(p.required_mid))<15, up=y(p.delivered)<=y(p.required_mid), lab=(xx,yy,s,w,anchor)=>pg.append("text").attr("x",xx).attr("y",yy).attr("dy","0.32em").attr("text-anchor",anchor).attr("font-size",12).attr("font-weight",w).attr("fill",css("--ink")).attr("stroke",css("--surface")).attr("stroke-width",3).attr("paint-order","stroke").text(s);
+      lab(xc+10,y(p.delivered)+(close&&!up?12:close?-6:0),p.delivered.toFixed(0)+"%",650,"start");
+      if(!small_&&x1-x0>60) lab(x1,y(p.required_mid)+(close&&!up?-9:15),p.required_mid.toFixed(0)+"%",400,"end"); });
+    const L=D[D.length-1]; g.append("circle").attr("cx",x(L.t)).attr("cy",y(L.mid)).attr("r",5).attr("fill",css("--blue")).attr("stroke",css("--surface")).attr("stroke-width",2);
+    g.append("text").attr("x",x(L.t)+9).attr("y",y(L.mid)).attr("dy","0.32em").attr("font-size",wide?14:12.5).attr("font-weight",700).attr("fill",css("--ink")).text(f1(L.mid)+"%"); }
   const small=(id,S,fmt,zero)=>{ const f=frame(el(id),170,{l:40,r:40,t:8,b:24});
     const x=d3.scaleTime().domain(d3.extent(D,r=>r.t)).range([0,f.iw]), all=D.flatMap(r=>S.map(s=>r[s.k])).filter(v=>v!=null);
-    const y=d3.scaleLinear().domain([zero?0:Math.min(0,d3.min(all)),d3.max(all)]).nice(3).range([f.ih,0]), g=axes(f,x,y,{yticks:y.ticks(3),yfmt:fmt}), L=D[D.length-1], ends=[];
+    const y=d3.scaleLinear().domain([zero?0:Math.min(0,d3.min(all)),d3.max(all)]).nice(3).range([f.ih,0]), g=axes(f,x,y,{yticks:y.ticks(3),yfmt:fmt,xticks:x.ticks(d3.timeYear.every(f.iw<260&&D.length>60?2:1))}), L=D[D.length-1], ends=[];
     S.forEach(s=>{ s.y=y; g.append("path").datum(D.filter(r=>r[s.k]!=null)).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",2).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k]))); ends.push({y:y(L[s.k]),s:fmt(L[s.k])}); });
     ends.sort((p,q)=>p.y-q.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<13) ends[i].y=ends[i-1].y+13;
     ends.forEach(e=>g.append("text").attr("x",x(L.t)+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));

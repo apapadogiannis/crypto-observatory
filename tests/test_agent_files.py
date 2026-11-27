@@ -146,6 +146,7 @@ assert list(at) == ["eth", "bnb", "sol", "trx"]
 for r in at.values():
     assert r["mcm_unexplained"] <= r["capm_unexplained"] and r["months"] >= 36 and r["mcm_unexplained_se"] > 0
     assert abs(r["gap"] - (r["delivered"] - r["required_mid"])) < 0.2
+    assert sum(p["months"] for p in r["periods"]) == r["months"] and all(p["gap_se"] > 0 for p in r["periods"])
 assert "survivors" in guide and "These four are survivors" in page
 # The sections: five, and every address the site has used opens one of them.
 for view in ("compare", "bitcoin", "altcoins", "method", "data"):

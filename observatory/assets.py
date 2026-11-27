@@ -97,5 +97,9 @@ def tests(data: Path, band: pd.DataFrame, market_return: pd.Series, other: dict)
                      "gap": round(year(t.ret - t.required_mid), 1), "gap_se": round(se(t.ret - t.required_mid), 1),
                      "capm_unexplained": round(year(t.capm_unexplained), 1), "capm_unexplained_se": round(se(t.capm_unexplained), 1),
                      "mcm_unexplained": round(year(t.mcm_unexplained), 1), "mcm_unexplained_se": round(se(t.mcm_unexplained), 1),
-                     "explained_capm": round(100 * market / excess, 1), "explained_mcm": round(100 * (market + extra) / excess, 1)})
+                     "explained_capm": round(100 * market / excess, 1), "explained_mcm": round(100 * (market + extra) / excess, 1),
+                     # the same three-year periods as Bitcoin's, over the months this asset has
+                     "periods": [{"period": p["period"], "from": p["from"], "to": p["to"], "months": p["months"], "delivered": round(p["delivered"], 1),
+                                  "required_mid": round(p["required_mid"], 1), "gap": round(p["gap"], 1), "gap_se": round(p["gap_se"], 1)}
+                                 for p in tf.period_table(t) if not p["summary"]]})
     return rows
