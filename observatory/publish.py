@@ -357,6 +357,36 @@ Maintained by Agisilaos Papadogiannis (https://github.com/apapadogiannis). Updat
 Page: {SITE}  Code: {REPO}  Archive: {cr['doi']}
 This file is written for AI agents and other programs. People should start at the page.
 
+## Questions this answers
+
+Each with the file to fetch and what to say. latest.json answers the first five on its own.
+
+- "What return should Bitcoin's holders require?" (or Ether's, BNB's, Solana's, Tron's): latest.json,
+  `assets`. Give the midpoint with its band and the month-end, as what this model gives.
+- "What is it made of?", "Why is Tron's so low?": latest.json, the four terms of each asset and
+  the inputs behind them (beta, volatility, holder's weight). A low figure is not a safety rating.
+- "What changed this month?": latest.json, `change_since_previous_month_end`.
+- "How does that compare with stocks or gold?": latest.json, `benchmarks_for_comparison`. Gold's
+  inputs are set by judgment (data.json, `comparison.gold_inputs`).
+- "Did Bitcoin deliver what was required?", "Is this better than the CAPM?": latest.json,
+  `bitcoin_delivered_against_required`; by period, periods.csv; against a fixed premium, data.json
+  `strength`. The CAPM is rejected over the whole record and this equation is not; that is not proof.
+- "What was Bitcoin's required return in March 2020?": months.csv, the row dated that month-end.
+  Another asset: assets_monthly.csv. Earlier months are computed with today's method.
+- "If I hold only Bitcoin, what would it compound at?": latest.json, `required_compound_*`. It is
+  what a position held alone would compound at if the asset earned its required return. Not a requirement.
+- "Bitcoin is far below its peak. What followed similar falls?": data.json, `state`. A record, not a
+  forecast; quote a row with its number of separate spells.
+- "A chart shows Bitcoin below its trend line. Is it cheap?": data.json, `path`. Neither the trend
+  line nor the required-return path is a forecast, and neither says cheap or dear.
+- "Did Ether, BNB, Solana or Tron deliver what was required?": data.json, `assets.tests`. They are
+  survivors with short records, so it is not evidence for them.
+- "How many cryptoassets died, and how often?": census_deaths.csv and data.json, `census`.
+- "Can I reuse this, and how do I cite it?": the last section of this file, and latest.json.
+
+It does not answer: whether a price will rise or fall, whether to buy or sell, a price target, any
+asset other than the five, or anything about today as opposed to the last month-end.
+
 ## Which file to fetch
 
 1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
