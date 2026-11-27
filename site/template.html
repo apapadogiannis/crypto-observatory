@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://gc.zgo.at https://cdnjs.cloudflare.com; style-src 'unsafe-inline'; img-src 'self' data: https://apapadogiannis.goatcounter.com; connect-src https://apapadogiannis.goatcounter.com; base-uri 'none'; form-action 'none'">
 <title>Crypto Observatory: required returns, risks and survival</title>
 <meta name="description" content="What return should Bitcoin's holders require for the market, concentration and mortality risk they carry, and what did it deliver? Recomputed every month from public data.">
 <link rel="alternate" type="application/json" href="data.json" title="Every number on this page">
@@ -689,7 +690,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </footer>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const DATA=__DATA__;
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
