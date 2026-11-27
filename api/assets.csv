@@ -1,6 +1,6 @@
-month_end,asset_id,asset_name,required_midpoint_pct_per_year,required_lower_pct_per_year,required_upper_pct_per_year,risk_free_pct_per_year,market_term_pct_per_year,concentration_term_pct_per_year,mortality_term_pct_per_year,volatility_pct_annualised,beta_to_us_equities,kappa,holder_weight_lower_pct,holder_weight_upper_pct,volatility_drag_pct_points,required_compound_pct_per_year,sharpe_ratio,sharpe_ratio_on_compound,share_of_crypto_market_pct
-2026-10-31,btc,Bitcoin,18.78,11.65,25.92,4.94,5.78,6.16,1.9,45.1,1.45,1.0,7.4,19.0,10.17,8.61,0.31,0.08,75.9
-2026-10-31,eth,Ether,24.6,14.85,34.35,4.94,8.71,9.04,1.9,66.3,2.18,0.68,5.0,12.9,21.95,2.65,0.3,-0.03,14.8
-2026-10-31,bnb,BNB,17.32,10.96,23.68,4.94,5.22,5.25,1.9,49.4,1.31,0.71,5.2,13.5,12.21,5.11,0.25,0.0,4.6
-2026-10-31,sol,Solana,24.45,16.39,32.51,4.94,11.32,6.29,1.9,74.0,2.83,0.38,2.8,7.2,27.4,-2.95,0.26,-0.11,3.1
-2026-10-31,trx,Tron,9.11,6.03,12.18,4.94,0.4,1.87,1.9,30.1,0.1,0.68,5.0,12.9,4.54,4.57,0.14,-0.01,1.4
+month_end,asset_id,asset_name,required_midpoint_pct_per_year,required_lower_pct_per_year,required_upper_pct_per_year,risk_free_pct_per_year,market_term_pct_per_year,concentration_term_pct_per_year,mortality_term_pct_per_year,volatility_pct_annualised,beta_to_us_equities,kappa,holder_weight_lower_pct,holder_weight_upper_pct,volatility_drag_pct_points,required_compound_pct_per_year,sharpe_ratio,sharpe_ratio_on_compound,share_of_crypto_market_pct,required_compound_lower_pct_per_year,required_compound_upper_pct_per_year
+2026-10-31,btc,Bitcoin,18.78,11.65,25.92,4.94,5.78,6.16,1.9,45.1,1.45,1.0,7.4,19.0,10.17,8.61,0.31,0.08,75.9,1.48,15.74
+2026-10-31,eth,Ether,24.6,14.85,34.35,4.94,8.71,9.04,1.9,66.3,2.18,0.68,5.0,12.9,21.95,2.65,0.3,-0.03,14.8,-7.1,12.4
+2026-10-31,bnb,BNB,17.32,10.96,23.68,4.94,5.22,5.25,1.9,49.4,1.31,0.71,5.2,13.5,12.21,5.11,0.25,0.0,4.6,-1.25,11.47
+2026-10-31,sol,Solana,24.45,16.39,32.51,4.94,11.32,6.29,1.9,74.0,2.83,0.38,2.8,7.2,27.4,-2.95,0.26,-0.11,3.1,-11.01,5.11
+2026-10-31,trx,Tron,9.11,6.03,12.18,4.94,0.4,1.87,1.9,30.1,0.1,0.68,5.0,12.9,4.54,4.57,0.14,-0.01,1.4,1.49,7.64

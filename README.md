@@ -70,18 +70,23 @@ equity series (US market, developed markets, US small caps) are priced the same 
 priced with the paper's equation for other cryptoassets: an asset's holder weight is the crypto
 owner's weight times the share of a crypto holding that moves with the asset (kappa).
 
-**Bitcoin** has the full history and the tests, in five tabs:
+**Bitcoin** has the full history and the tests, in six tabs:
 
 1. **Overview.** The required return and what was delivered, by three-year period.
 2. **Required return.** How the band is built, which holder sets each edge, and the three risks
    (market, concentration, mortality), each with its formula and the inputs that move it.
-3. **Holders.** Where the holder's weight in the concentration term comes from: the surveyed owner at
+3. **Volatility and drawdown.** What the required return compounds at, with its band; how much each
+   holder is paid for variance against the half that compounding takes, and the latest band at other
+   volatilities; and where Bitcoin stands (distance from its highest month-end close, volatility
+   against its own past) with the record of the twelve months that followed similar month-ends. A
+   record with the number of separate spells behind each row, not a forecast.
+4. **Holders.** Where the holder's weight in the concentration term comes from: the surveyed owner at
    19%, the surveys in the United Kingdom and Canada that show holdings per owner not following the
    price, the lower weight once fund and treasury investors are counted, and the early holder.
-4. **Tests.** How much of the delivered return the CAPM and the MCM equation each explain, why
+5. **Tests.** How much of the delivered return the CAPM and the MCM equation each explain, why
    delivered differed from required, and, folded away, the regression, the cumulative view and the
    rerun with the equity premium implied by stock prices.
-5. **Versus stocks and gold.** Bitcoin beside the US stock market, developed markets, US small caps and gold: average
+6. **Versus stocks and gold.** Bitcoin beside the US stock market, developed markets, US small caps and gold: average
    and compound required returns, drag and Sharpe ratios.
 
 **Data** lists the files, gives a prompt to paste into an AI assistant, and says what the site does
@@ -134,6 +139,7 @@ nothing else.
 observatory/mcm.py            the required-return band, month by month
 observatory/tests_of_fit.py   the monthly test, CAPM and MCM alpha, shares explained
 observatory/compare.py        Bitcoin beside equities: average and compound required returns
+observatory/state.py          the band on a compound basis, pay for variance, and the state with what followed
 observatory/build.py          builds the page and the data file from the stored data
 observatory/publish.py        writes the files for programs and AI agents (api/)
 api/                          those files: latest.json, assets.csv, assets_monthly.csv, months.csv, periods.csv, census_deaths.csv, vintages.csv, datapackage.json, llms.txt
@@ -159,7 +165,7 @@ can read it without scraping the page.
 |---|---|
 | `meta` | asset, date of the data, units, method, sources, and under `credit` the licence, the citation and the paper |
 | `latest` | the required return of the latest month, worked out term by term at both edges and the midpoint |
-| `months` | one entry per month-end: the band, the terms at the midpoint, the inputs, supply measures, and the next month's return with what each model leaves unexplained |
+| `months` | one entry per month-end: the band, the terms at the midpoint, the inputs, supply measures, the next month's return with what each model leaves unexplained, the band on a compound basis, the pay for variance and the drawdown |
 | `periods` | three-year periods and the two summary samples: delivered, required, the gap and its split, the part each model explains and leaves unexplained, the regression alphas, the average beta and correlation |
 | `comparison` | Bitcoin and three equity series at the latest month-end: beta, average and compound required return, volatility, drag, Sharpe ratios |
 | `notes` | the figures quoted under "What this page does not claim", recomputed at each update |
@@ -167,6 +173,8 @@ can read it without scraping the page.
 | `assets` | Bitcoin, Ether, BNB, Solana and Tron side by side: the latest month-end and every month each has been priced |
 | `holders` | what the holder's weight rests on: the owners' weight, the weight of fund and treasury investors, the ownership surveys behind the early holder's weight, and the British and Canadian survey waves shown under Holders |
 | `census` | the census of deaths: death rates by age and by size with their intervals, survival by size, deaths by year, the list of top-twenty deaths with the rule behind each, the counts by rule, and what is left out |
+| `volatility_sensitivity` | the latest band, average and compound, recomputed at other volatilities with the other inputs held, and the pay for variance at each edge against the one half that compounding takes |
+| `state` | where Bitcoin stood at the month-end (price, distance from its highest month-end close, volatility) and, for each of the two periods, what followed similar month-ends over the next twelve months, with the number of separate spells behind each row |
 | `vintages` | what was published for each month-end when it was first computed |
 | `meta.model` | the model's fixed settings (equity premium, risk aversion, scales, windows, caps) and `meta.anchors_age_months`, the age of the hand-entered inputs |
 

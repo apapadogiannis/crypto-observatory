@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import compare, inputs, mcm, tests_of_fit
+from . import compare, inputs, mcm, state, tests_of_fit
 
 ROOT = inputs.ROOT
 TRAILING = 36
@@ -69,6 +69,7 @@ def build(data: Path, out: Path) -> dict:
     roll = lambda s: 1200 * s.rolling(TRAILING).mean()
     trail = pd.DataFrame({"excess": roll(t.excess), "capm": roll(t.capm_unexplained), "mcm": roll(t.mcm_unexplained)})
 
+    comp, load, fall = state.compound(band), state.loadings(band, cfg), state.drawdown(btc, band)
     months = []
     for d, b in band.iterrows():
         has = d in t.index
@@ -84,6 +85,10 @@ def build(data: Path, out: Path) -> dict:
                        "weight_early_holder": _r(100 * b.w_early, 1),
                        "implied_equity_premium": None if implied is None or pd.isna(implied.get(d, np.nan)) else _r(100 * implied[d])},
             "midpoint_with_implied_equity_premium": None if mid_implied is None else _r(100 * mid_implied[d]),
+            "compound": {"drag": _r(100 * comp.drag[d]), "lower": _r(100 * comp.lower[d]), "midpoint": _r(100 * comp.midpoint[d]),
+                         "upper": _r(100 * comp.upper[d])},
+            "pay_for_variance": {"lower": _r(load.lower[d], 3), "midpoint": _r(load.midpoint[d], 3), "upper": _r(load.upper[d], 3)},
+            "drawdown": _r(fall[d], 1),
             "supply": {"issuance_rate": _r(100 * issuance.get(d, np.nan)), "fund_and_treasury_share": _r(100 * fund_share.get(d, np.nan))},
             "next_month": None if not has else {
                 "return": _r(100 * t.ret[d], 3), "capm_unexplained": _r(100 * t.capm_unexplained[d], 3),
@@ -142,6 +147,8 @@ def build(data: Path, out: Path) -> dict:
             "license": "CC BY 4.0 for the numbers in this file, https://creativecommons.org/licenses/by/4.0/. Cite the tool and the paper. "
                        "The source data keep their own terms; Coin Metrics community data are CC BY-NC 4.0.",
             "data_to": last_day.strftime("%Y-%m-%d"), "latest_month_end": band.index[-1].strftime("%Y-%m-%d"),
+            # the update runs on the third of each month, for the month-end before it
+            "next_update": (band.index[-1] + pd.offsets.MonthBegin(2) + pd.Timedelta(days=2)).strftime("%Y-%m-%d"),
             "units": "percent a year unless stated; next_month figures are percent a month",
             "method": "Papadogiannis (2026), Bitcoin's Required Return. https://doi.org/10.2139/ssrn.7705239",
             "equity_market_to": mkt.dropna().index[-1].strftime("%Y-%m"),
@@ -192,6 +199,8 @@ def build(data: Path, out: Path) -> dict:
         "census": census_doc,
         "holders": _holders(data, cfg),
         "assets": _assets(data, btc, band, mkt, cfg),
+        "volatility_sensitivity": state.sensitivity(band, cfg),
+        "state": state.state(btc, band),
     }
     out.mkdir(parents=True, exist_ok=True)
     doc["vintages"] = _vintages(data, doc)
@@ -288,6 +297,7 @@ def _assets(data: Path, btc: pd.DataFrame, band: pd.DataFrame, mkt: pd.Series, c
                 "mortality_term": _r(100 * b.mortality_term), "volatility": _r(vol, 1), "beta_to_us_equities": _r(b.beta),
                 "kappa": _r(b.kappa), "holder_weight_low": _r(100 * b.w_lower, 1), "holder_weight_high": _r(100 * b.w_upper, 1),
                 "volatility_drag": _r(drag), "compound_required_return": _r(mid - drag),
+                "compound_required_low": _r(100 * b.lower - drag), "compound_required_high": _r(100 * b.upper - drag),
                 "sharpe_ratio": _r((mid - rf) / vol), "sharpe_ratio_on_compound": _r((mid - drag - rf) / vol), "share_of_crypto_market": None if pd.isna(b.market_share) else _r(100 * b.market_share, 1)}
 
     monthly = [record(code, d, b) for code, f in frames.items() for d, b in f.iterrows()]
@@ -319,13 +329,16 @@ def _page_payload(doc: dict) -> dict:
     rows = []
     for m in doc["months"]:
         q, tm, i, s, n, tr = m["required"], m["terms_at_midpoint"], m["inputs"], m["supply"], m["next_month"] or {}, m["trailing_3y"] or {}
+        cp, pv = m["compound"], m["pay_for_variance"]
         rows.append({"d": nxt(m["month_end"]), "asof": ym(m["month_end"]), "rf": tm["risk_free"], "mkt": tm["market"], "conc": tm["concentration"],
                      "mort": tm["mortality"], "mid": q["midpoint"], "lo": q["lower"], "hi": q["upper"], "ua": q["upper_if_surveyed_owner"],
                      "ub": q["upper_if_early_holder"], "eb": int(q["upper_set_by"] == "early holder"),
                      "capm": n.get("capm_unexplained"), "mcm": n.get("mcm_unexplained"),
                      "tex": tr.get("excess"), "tcapm": tr.get("capm_unexplained"), "tmcm": tr.get("mcm_unexplained"),
                      "vol": i["volatility"], "beta": i["beta"], "corr": i["correlation"], "wlo": i["weight_with_funds"], "whi": i["weight_surveyed"],
-                     "we": i["weight_early_holder"], "erp": i["implied_equity_premium"], "mid2": m["midpoint_with_implied_equity_premium"], "iss": s["issuance_rate"], "inst": s["fund_and_treasury_share"]})
+                     "we": i["weight_early_holder"], "erp": i["implied_equity_premium"], "mid2": m["midpoint_with_implied_equity_premium"], "iss": s["issuance_rate"], "inst": s["fund_and_treasury_share"],
+                     "drag": cp["drag"], "clo": cp["lower"], "cmid": cp["midpoint"], "chi": cp["upper"],
+                     "plo": pv["lower"], "pmid": pv["midpoint"], "phi": pv["upper"], "dd": m["drawdown"]})
     per = [{"p": p["period"], "n": p["months"], "a": p["from"], "b": p["to"], "sum": p["summary"], "real": p["delivered"], "mid": p["required_mid"],
             "gap": p["gap"], "gse": p["gap_se"], "ex": p["excess"], "prem": p["required_premium"], "eq": p["equity_beyond_premium"], "mk": p["market_part"], "cm": p["concentration_mortality_part"],
             "alpha": p["mcm_alpha"], "se": p["mcm_alpha_se"], "calpha": p["capm_alpha"],
@@ -333,7 +346,8 @@ def _page_payload(doc: dict) -> dict:
             "s_capm": round(p["explained_capm"]), "s_mcm": round(p["explained_mcm"])} for p in doc["periods"]]
     w, lt = doc["latest"]["worked"], doc["latest"]
     tr_rows = [r for r in rows if r["tmcm"] is not None]
-    meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"],
+    meta = {"data_to": doc["meta"]["data_to"], "month_end": doc["meta"]["latest_month_end"], "next_update": doc["meta"]["next_update"],
+            "state": doc["state"], "vsens": doc["volatility_sensitivity"],
             "market_to": doc["meta"]["equity_market_to"], "anchors": doc["meta"]["anchors_to"], "anchors_age": doc["meta"]["anchors_age_months"], "anchors_overdue": doc["meta"]["anchors_overdue"], "notes": doc["notes"], "cmp": doc["comparison"], "erp": doc["equity_premium"],
             "band_lo": lt["required"]["lower"], "band_hi": lt["required"]["upper"], "band_mid": lt["required"]["midpoint"],
             "tmcm": tr_rows[-1]["tmcm"], "tcapm": tr_rows[-1]["tcapm"], "to": tr_rows[-1]["d"],

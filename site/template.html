@@ -47,6 +47,8 @@ h2{font-size:20px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
 .tile .v{font-size:30px;font-weight:680;letter-spacing:-.02em;line-height:1.25}
 .tile .n{font-size:13px;color:var(--ink2)}
 .tile .v.long{font-size:21px;line-height:1.78;white-space:nowrap}
+@media (min-width:900px){.tiles.five{grid-template-columns:repeat(6,1fr)}.tiles.five .tile{grid-column:span 2}.tiles.five .tile:nth-child(n+4){grid-column:span 3}}
+tr.here td{font-weight:700}
 .site{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;margin:0 0 22px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .site .brand{font-weight:700;font-size:15px;letter-spacing:.01em}
 .site .brand small{font-weight:400;color:var(--mut);font-size:12.5px;margin-left:8px}
@@ -294,6 +296,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button type="button" role="tab" data-tab="overview">Overview</button>
     <button type="button" role="tab" data-tab="required-return">Required return</button>
+    <button type="button" role="tab" data-tab="volatility">Volatility and drawdown</button>
     <button type="button" role="tab" data-tab="holders">Holders</button>
     <button type="button" role="tab" data-tab="tests">Tests</button>
     <button type="button" role="tab" data-tab="compared">Versus stocks and gold</button>
@@ -308,7 +311,7 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </div>
 
   <div class="pane" id="pane-overview">
-  <div class="tiles" id="tiles"></div>
+  <div class="tiles five" id="tiles"></div>
 
   <section class="card" id="sec-band">
     <h2>The required return, and what Bitcoin delivered</h2>
@@ -379,6 +382,45 @@ window.goatcounter = {path: function () { return location.pathname; }};
         <div class="legend"><span><i style="background:var(--aqua)"></i>abandonment or delisting</span><span><i style="background:var(--ink)"></i>sudden collapse</span></div>
         <div class="chart" id="m-deaths"></div></div>
     </div>
+  </section>
+  </div>
+
+  <div class="pane" id="pane-volatility">
+  <section class="card" id="sec-compound">
+    <h2>What the required return compounds at</h2>
+    <p class="sub">The required return is an average across years. Money that is left invested grows at the compound rate, which is lower by half the variance: the drag. The drag does not depend on who holds the asset, so the whole band moves down by it.</p>
+    <p class="sub" id="vol-headline" style="color:var(--ink);font-weight:600"></p>
+    <div class="grid2">
+      <div class="mini"><h3>Required return on a compound basis</h3><p>percent a year: the band and its midpoint, each less the drag</p>
+        <div class="legend"><span><i style="background:var(--band)"></i>band, compound</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint, compound</span><span><i class="ln" style="border-color:var(--orange)"></i>midpoint, average</span></div>
+        <div class="chart" id="c-comp"></div></div>
+      <div class="mini"><h3>Pay for variance, against the half that compounding takes</h3><p>risk aversion × holder's weight. Above the dashed line (one half) more volatility raises the compound requirement; below it, lowers it</p>
+        <div class="legend"><span><i class="ln" style="border-color:var(--blue)"></i>upper edge</span><span><i class="ln" style="border-color:var(--ink)"></i>midpoint</span><span><i class="ln" style="border-color:var(--magenta)"></i>lower edge</span></div>
+        <div class="chart" id="c-pay"></div></div>
+    </div>
+    <div class="mini" style="margin-top:14px"><h3 id="vsens-title">The latest band at other volatilities</h3><p>percent a year. Only volatility changes: the risk-free rate, beta, the holders' weights and mortality are those of the month-end</p>
+      <div class="scroll"><table id="t-vsens"></table></div></div>
+    <ul class="note" style="margin-top:14px">
+      <li><b>Who is paid for volatility.</b> <span id="vol-who"></span></li>
+      <li><b>Through time.</b> <span id="vol-time"></span></li>
+      <li><b>What the table is not.</b> It changes volatility and holds everything else. It does not say what volatility will be. The drag uses the volatility in the equation, which weights recent months more.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="sec-state">
+    <h2>Where Bitcoin stands, and what followed before</h2>
+    <p class="sub">Two descriptions of the month-end: how far the price is below its highest month-end close, and how the volatility in the equation compares with its own past. A fall in the price is not an input of the equation. It moves the required return only through volatility. The tables are the record of the twelve months that followed similar month-ends. <b>They are a record, not a forecast.</b></p>
+    <p class="sub" id="st-headline" style="color:var(--ink);font-weight:600"></p>
+    <div class="mini"><h3>By distance from the peak</h3><p id="st-dd-sub"></p>
+      <div class="scroll"><table id="t-st-dd"></table></div></div>
+    <div class="mini" style="margin-top:14px"><h3>By volatility</h3><p id="st-vol-sub"></p>
+      <div class="scroll"><table id="t-st-vol"></table></div></div>
+    <ul class="note" style="margin-top:14px">
+      <li><b>How much evidence.</b> <span id="st-evidence"></span></li>
+      <li><b>What the equation prices.</b> <span id="st-priced"></span></li>
+      <li><b>Average and median.</b> The average return is the mean monthly return times twelve, the same basis as the required return. The median twelve-month return is what holding for the year earned in the middle case.</li>
+      <li><b>Dates.</b> Month-end closes. A month in progress is left out, so a move in the price since the month-end is not in these figures.</li>
+    </ul>
   </section>
   </div>
 
@@ -1019,6 +1061,57 @@ function comparedTab(){
   set("cmp-sample","For the equity series, beta (to the US stock market) and volatility are measured on monthly returns from "+fmtM(parse(c.equity_sample.from))+" to "+fmtM(parse(c.equity_sample.to))+", and the required return uses the ten-year Treasury yield of "+c.risk_free.toFixed(2)+"%.");
 }
 const longDateOf=s=>d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(s));
+// the date of the next monthly update, while it is still ahead
+const nextUpdate=()=>{ const d=d3.timeParse("%Y-%m-%d")(DATA.meta.next_update); return d&&d.getTime()+864e5>Date.now()?"next update "+d3.timeFormat("%-d %B %Y")(d):"updated monthly"; };
+function volatilityTab(){
+  const m=DATA.meta, V=m.vsens, S=m.state, sm=S.samples[FROM], el=id=>document.getElementById(id), d=rows(), L=DATA.rows[DATA.rows.length-1];
+  const f1=v=>v.toFixed(1), p1=v=>(v<0?"−":"")+Math.abs(v).toFixed(1)+"%", p0=v=>v==null?"":(v<0?"−":"")+Math.abs(v).toFixed(0)+"%", usd=v=>"$"+d3.format(",.0f")(v);
+  const month=d3.timeFormat("%B %Y")(parse(m.now.asof)), monthOf=s=>d3.timeFormat("%B %Y")(parse(s));
+  el("vol-headline").textContent="At the end of "+month+": "+f1(L.mid)+"% a year required on average, "+f1(L.drag)+" points lost to volatility, "+p1(L.cmid)+" compound (band "+p1(L.clo)+" to "+p1(L.chi)+").";
+  { const f=frame(el("c-comp"),250,{l:44,r:46,t:10,b:26});
+    const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
+    const y=d3.scaleLinear().domain([Math.min(0,d3.min(d,r=>r.clo)),d3.max(d,r=>Math.max(r.chi,r.mid))]).nice(4).range([f.ih,0]);
+    const g=axes(f,x,y,{yticks:y.ticks(5),yfmt:v=>(v<0?"−":"")+Math.abs(v)+"%"});
+    g.append("path").datum(d).attr("fill",css("--band")).attr("opacity",.6).attr("d",d3.area().x(r=>x(r.t)).y0(r=>y(r.clo)).y1(r=>y(r.chi)));
+    g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(0)).attr("y2",y(0)).attr("stroke",css("--axis"));
+    const S2=[{k:"mid",n:"midpoint, average",c:"--orange",y},{k:"cmid",n:"midpoint, compound",c:"--ink",y},{k:"chi",n:"upper edge, compound",c:"--blue",y},{k:"clo",n:"lower edge, compound",c:"--magenta",y}];
+    S2.slice(0,2).forEach(s=>g.append("path").datum(d).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",s.k==="cmid"?2.2:1.5).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k]))));
+    const Ld=d[d.length-1], ends=[{y:y(Ld.mid),s:f1(Ld.mid)+"%"},{y:y(Ld.cmid),s:p1(Ld.cmid)}].sort((a,b)=>a.y-b.y); if(ends[1].y-ends[0].y<13) ends[1].y=ends[0].y+13;
+    ends.forEach(e=>g.append("text").attr("x",x(Ld.t)+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
+    hover(f,g,x,d,S2,v=>p1(v)); }
+  { const f=frame(el("c-pay"),250,{l:44,r:46,t:10,b:26});
+    const x=d3.scaleTime().domain(d3.extent(d,r=>r.t)).range([0,f.iw]);
+    const y=d3.scaleLinear().domain([0,Math.max(1,d3.max(d,r=>r.phi))]).range([f.ih,0]);
+    const g=axes(f,x,y,{yticks:[0,0.25,0.5,0.75,1],yfmt:v=>v.toFixed(2)});
+    g.append("line").attr("x1",0).attr("x2",f.iw).attr("y1",y(V.break_even_pay_for_variance)).attr("y2",y(V.break_even_pay_for_variance)).attr("stroke",css("--ink")).attr("stroke-width",1.2).attr("stroke-dasharray","5 4");
+    const S2=[{k:"phi",n:"upper edge",c:"--blue",y},{k:"pmid",n:"midpoint",c:"--ink",y},{k:"plo",n:"lower edge",c:"--magenta",y}];
+    S2.forEach(s=>g.append("path").datum(d).attr("fill","none").attr("stroke",css(s.c)).attr("stroke-width",s.k==="pmid"?2.2:1.8).attr("stroke-linejoin","round").attr("d",d3.line().x(r=>x(r.t)).y(r=>y(r[s.k]))));
+    const Ld=d[d.length-1], ends=S2.map(s=>({y:y(Ld[s.k]),s:Ld[s.k].toFixed(2)})).sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<13) ends[i].y=ends[i-1].y+13;
+    ends.forEach(e=>g.append("text").attr("x",x(Ld.t)+6).attr("y",e.y).attr("dy","0.32em").attr("font-size",11.5).attr("font-weight",650).attr("fill",css("--ink")).text(e.s));
+    hover(f,g,x,d,S2,v=>v.toFixed(2)); }
+  const fill=(id,head,body)=>{ const T=el(id); T.textContent=""; const hr=T.insertRow(); head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; hr.appendChild(th);});
+    body.forEach(([cells,cls])=>{const r=T.insertRow(); if(cls) r.className=cls; cells.forEach(v=>{r.insertCell().textContent=v;});}); };
+  el("vsens-title").textContent="The band of "+month+" at other volatilities";
+  fill("t-vsens",["Volatility","Lost to volatility","Average: lower edge","Average: midpoint","Average: upper edge","Compound: lower edge","Compound: midpoint","Compound: upper edge"],
+    V.rows.map(r=>[[r.volatility.toFixed(0)+"%"+(r.current?" (now)":""),f1(r.drag)+" pts",p1(r.average.lower),p1(r.average.midpoint),p1(r.average.upper),p1(r.compound.lower),p1(r.compound.midpoint),p1(r.compound.upper)],r.current?"here":""]));
+  { const P=V.pay_for_variance, h=V.break_even_pay_for_variance, side=v=>v>h?"raises":"lowers";
+    el("vol-who").textContent="Each edge of the band rises with variance by risk aversion times the holder's weight: "+P.lower.toFixed(2)+" at the lower edge, "+P.midpoint.toFixed(2)+" at the midpoint and "+P.upper.toFixed(2)+" at the upper edge. Compounding takes one half. So more volatility "+side(P.lower)+" the compound requirement at the lower edge, "+side(P.midpoint)+" it at the midpoint and "+side(P.upper)+" it at the upper edge: whether volatility helps or hurts the compound return a holder should require depends on how concentrated that holder is.";
+    const A=DATA.rows, lastEarly=[...A].reverse().find(r=>r.eb), lastMid=[...A].reverse().find(r=>r.pmid>=h);
+    el("vol-time").textContent=(lastEarly?"Until "+monthOf(lastEarly.asof)+" the early holder set the upper edge. While she held all her wealth in Bitcoin her pay for variance was 1, twice what compounding takes. ":"")
+      +(lastMid?"At the midpoint the pay was last at one half or more in "+monthOf(lastMid.asof)+". Since then, more volatility has meant a lower compound requirement at the midpoint, as more diversified investors hold Bitcoin.":"At the midpoint the pay has been below one half throughout."); }
+  // the state and its record
+  const since=FROM==="2018"?"since 2018":"since 2012";
+  el("st-headline").textContent="At the end of "+month+" Bitcoin closed at "+usd(S.price_usd)+(S.drawdown<0?", "+Math.abs(S.drawdown).toFixed(0)+"% below its highest month-end close ("+usd(S.peak_month_end_close_usd)+", "+monthOf(S.peak_month)+")":", its highest month-end close")+". Its volatility in the equation, "+S.volatility.toFixed(0)+"%, was lower than at "+sm.volatility_percentile.toFixed(0)+"% of month-ends "+since+".";
+  const span="month-ends from "+fmtM(parse(sm.outcomes_from))+" to "+fmtM(parse(sm.outcomes_to))+", each with the twelve months that followed; percent a year unless stated";
+  el("st-dd-sub").textContent=span; el("st-vol-sub").textContent="the same month-ends in thirds of the period's volatility (cuts at "+sm.volatility_thirds[0].toFixed(0)+"% and "+sm.volatility_thirds[1].toFixed(0)+"%)";
+  fill("t-st-dd",["Price at the month-end","Month-ends","Separate spells","Required return then","Average return, next 12 months","Median 12-month return","Volatility then","Volatility, next 12 months"],
+    sm.by_drawdown.map(r=>[[r.state+(r.current?" (now)":""),r.months,r.spells,p0(r.required),p0(r.next_average),p0(r.next_holding_median),p0(r.volatility),p0(r.next_volatility)],r.current?"here":""]));
+  fill("t-st-vol",["Volatility at the month-end","Month-ends","Separate spells","Volatility then","Volatility, next 12 months","Lost to volatility then","Lost, next 12 months","Required return then","Average return, next 12 months"],
+    sm.by_volatility.map(r=>[[r.state+(r.current?" (now)":""),r.months,r.spells,p0(r.volatility),p0(r.next_volatility),r.drag==null?"":r.drag.toFixed(0)+" pts",r.next_drag==null?"":r.next_drag.toFixed(0)+" pts",p0(r.required),p0(r.next_average)],r.current?"here":""]));
+  const B=sm.by_drawdown.filter(r=>r.months), most=d3.max(B,r=>r.spells), ext=k=>p0(d3.min(B,r=>r[k]))+" to "+p0(d3.max(B,r=>r[k]));
+  el("st-evidence").textContent=sm.months_with_outcome+" month-ends "+since+" have twelve months of outcome. Windows that start in neighbouring months share eleven of their twelve months, so a row rests on its separate spells, not on its month-ends, and no row has more than "+most+". Use the period buttons above: a pattern that holds in one period and not in the other is not established.";
+  el("st-priced").textContent="Across the rows by distance from the peak, the required return ranges from "+ext("required")+" and the average return that followed from "+ext("next_average")+". The equation does not price that difference. It prices volatility, beta, the holder's weight and mortality, and none of them is the distance from the peak.";
+}
 let EQN=null;
 function equationView(){
   const n=DATA.meta.now, old=DATA.rows.find(r=>r.asof==="2012-12"), $=id=>document.getElementById(id), ERP=4;
@@ -1164,8 +1257,9 @@ function notesText(){
 }
 function tiles(){
   const m=DATA.meta, a=DATA.per.find(p=>p.sum&&p.p.startsWith("2012")), b=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
-  const eq=m.cmp.rows.find(r=>r.priced_by==="CAPM"), n0=m.now;
+  const eq=m.cmp.rows.find(r=>r.priced_by==="CAPM"), n0=m.now, L0=DATA.rows[DATA.rows.length-1];
   const T=[["Required return, "+fmtM(parse(m.now.asof)),m.band_mid.toFixed(1)+"%","a year · band "+m.band_lo.toFixed(1)+"% to "+m.band_hi.toFixed(1)+"% · a hurdle rate, not a forecast"],
+           ["Left invested, it compounds at",(L0.cmid<0?"−":"")+Math.abs(L0.cmid).toFixed(1)+"%","a year · band "+L0.clo.toFixed(1)+"% to "+L0.chi.toFixed(1)+"% · after "+L0.drag.toFixed(1)+" points lost to volatility"],
            ["What it is made of",n0.rf.toFixed(1)+" + "+n0.mkt.toFixed(1)+" + "+n0.conc.toFixed(1)+" + "+n0.mort.toFixed(1),"risk-free rate + market risk + concentration risk + mortality risk, in points a year"],
            ["US stock market, for scale",eq.average.toFixed(1)+"%","a year · risk-free rate plus the "+m.cmp.equity_risk_premium.toFixed(0)+"% equity premium"],
            ["Did Bitcoin deliver it? Since 2018",b.s_mcm+"%","of Bitcoin's return over the risk-free rate is accounted for by these three risks · by market risk alone "+b.s_capm+"%"]];
@@ -1173,7 +1267,7 @@ function tiles(){
   T.forEach(([k,v,n])=>{const d=document.createElement("div"); d.className="tile"; [["k",k],["v",v],["n",n]].forEach(([c,t])=>{const s=document.createElement("div"); s.className=c+(c==="v"&&v.length>10?" long":""); s.textContent=t; d.appendChild(s);}); el.appendChild(d);});
   const day=d3.timeParse("%Y-%m-%d"), longDate=d3.timeFormat("%-d %B %Y"), monthEnd=day(m.month_end);
   document.getElementById("copy-year").textContent=DATA.meta.data_to.slice(0,4)==="2026"?"2026":"2026–"+DATA.meta.data_to.slice(0,4);
-  document.getElementById("stamp").textContent="Bitcoin · month-end "+longDate(monthEnd)+" · updated monthly";
+  document.getElementById("stamp").textContent="Set at the close of "+longDate(monthEnd)+" · Bitcoin $"+d3.format(",.0f")(m.state.price_usd)+" · volatility "+m.state.volatility.toFixed(0)+"% · "+nextUpdate();
   { const n=DATA.meta.now, s=DATA.per.find(p=>p.sum&&p.p.startsWith("2018"));
     document.getElementById("lede-btc").textContent=n.mid.toFixed(1)+"% a year at the end of "+d3.timeFormat("%B %Y")(parse(n.asof))+": the return an investor should demand for the three risks Bitcoin carries. It is a hurdle rate, not a forecast."; }
   const age=Math.floor((Date.now()-monthEnd.getTime())/864e5), stale=document.getElementById("stale");
@@ -1238,7 +1332,7 @@ const A_COL={btc:"--ink",eth:"--blue",bnb:"--yellow",sol:"--magenta",trx:"--aqua
 function compareView(){
   const A=DATA.meta.assets.latest, m=DATA.meta, eq=m.cmp.rows.find(r=>r.priced_by==="CAPM"), f1=v=>v.toFixed(1);
   const month=d3.timeFormat("%B %Y")(parse(m.now.asof)), el=id=>document.getElementById(id);
-  el("a-stamp").textContent="Month-end "+longDateOf(m.month_end)+" · "+A.length+" assets · updated monthly";
+  el("a-stamp").textContent="Set at the close of "+longDateOf(m.month_end)+" · "+A.length+" assets · "+nextUpdate();
   // cards
   const C=el("a-cards"); C.textContent="";
   const card=(name,big,band,parts,foot,href)=>{ const d=document.createElement(href?"a":"div"); d.className="acard"; if(href) d.href=href;
@@ -1306,7 +1400,7 @@ function dataView(){
   const F=[["latest.json","Start here. The latest required return of every asset with its terms and inputs, the comparison with stocks, the licence and the citation. One small file."],
     ["assets.csv","The same figures as a table: one row per asset at the latest month-end."],
     ["assets_monthly.csv","One row per asset and month-end, since each asset has been priced."],
-    ["months.csv","Bitcoin in full: the band, its four terms, the inputs and the next month's outcome, one row per month-end since 2012."],
+    ["months.csv","Bitcoin in full: the band, its four terms, the inputs, the next month's outcome, the band on a compound basis and the drawdown, one row per month-end since 2012."],
     ["periods.csv","Bitcoin by three-year period: delivered, required, and what each model explains."],
     ["census_deaths.csv","Every cryptoasset that was ever in the top twenty and died, with the rule that classified it."],
     ["vintages.csv","Bitcoin's required return as first published each month. Rows are added and never rewritten."],
@@ -1325,10 +1419,10 @@ function draw(){
   mini("m-vol",[{k:"vol",n:"volatility",c:"--orange"}],v=>v.toFixed(0)+"%");
   mini("m-w",[{k:"we",n:"early holder",c:"--yellow"},{k:"whi",n:"average surveyed owner",c:"--blue"},{k:"wlo",n:"counting fund and treasury investors",c:"--magenta"}],v=>v.toFixed(0)+"%",230);
   holdersTab(); edgesChart(); deathsChart(); eqStrip(); notesText(); comparedTab(); censusView(); equationView(); premiumCard(); markScroll();
-  compareView(); dataView();
+  compareView(); dataView(); volatilityTab();
 }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{FROM=b.dataset.from; b.parentNode.querySelectorAll("button").forEach(o=>o.setAttribute("aria-pressed",o===b)); draw();}));
-const TABS=["overview","required-return","holders","tests","compared"], VIEWS=["compare","bitcoin","equation","census","data"];
+const TABS=["overview","required-return","volatility","holders","tests","compared"], VIEWS=["compare","bitcoin","equation","census","data"];
 function showTab(){
   const h=location.hash.slice(1), view=TABS.includes(h)||h==="bitcoin"?"bitcoin":VIEWS.includes(h)?h:"compare";
   VIEWS.forEach(v=>document.getElementById("view-"+v).classList.toggle("on",v===view));

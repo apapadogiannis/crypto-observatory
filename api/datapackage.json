@@ -187,6 +187,46 @@
       "name": "trailing_3y_mcm_unexplained",
       "type": "number",
       "description": "The part of it the MCM equation leaves unexplained, percent a year"
+     },
+     {
+      "name": "volatility_drag",
+      "type": "number",
+      "description": "Half the variance, in points a year: what volatility takes from an average return to give a compound one. The same at every edge of the band"
+     },
+     {
+      "name": "required_compound_lower",
+      "type": "number",
+      "description": "Lower edge of the band on a compound basis, percent a year: required_lower less volatility_drag"
+     },
+     {
+      "name": "required_compound_midpoint",
+      "type": "number",
+      "description": "Midpoint on a compound basis, percent a year: required_midpoint less volatility_drag. What a holder who receives the required return can expect to compound at"
+     },
+     {
+      "name": "required_compound_upper",
+      "type": "number",
+      "description": "Upper edge on a compound basis, percent a year: required_upper less volatility_drag"
+     },
+     {
+      "name": "pay_for_variance_lower",
+      "type": "number",
+      "description": "Change in the lower edge for a unit change in variance: risk aversion times the holder's weight, a plain number. The compound requirement rises with volatility when this is above 0.5 and falls when it is below, because compounding takes half the variance"
+     },
+     {
+      "name": "pay_for_variance_midpoint",
+      "type": "number",
+      "description": "The same at the midpoint: the average of the two edges"
+     },
+     {
+      "name": "pay_for_variance_upper",
+      "type": "number",
+      "description": "The same at the upper edge: risk aversion times the surveyed owner's weight, or the early holder's weight where that holder sets the edge"
+     },
+     {
+      "name": "drawdown",
+      "type": "number",
+      "description": "Percent by which the month-end close stands below the highest month-end close up to that date; zero at a new high. Context, not an input of the equation (computed from Coin Metrics prices)"
      }
     ],
     "missingValues": [
@@ -564,6 +604,16 @@
       "name": "share_of_crypto_market_pct",
       "type": "number",
       "description": "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"
+     },
+     {
+      "name": "required_compound_lower_pct_per_year",
+      "type": "number",
+      "description": "Lower edge of the band less the volatility drag, percent a year"
+     },
+     {
+      "name": "required_compound_upper_pct_per_year",
+      "type": "number",
+      "description": "Upper edge of the band less the volatility drag, percent a year. With required_compound_lower_pct_per_year, the band of the compound figure"
      }
     ],
     "missingValues": [
@@ -677,6 +727,16 @@
       "name": "share_of_crypto_market_pct",
       "type": "number",
       "description": "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"
+     },
+     {
+      "name": "required_compound_lower_pct_per_year",
+      "type": "number",
+      "description": "Lower edge of the band less the volatility drag, percent a year"
+     },
+     {
+      "name": "required_compound_upper_pct_per_year",
+      "type": "number",
+      "description": "Upper edge of the band less the volatility drag, percent a year. With required_compound_lower_pct_per_year, the band of the compound figure"
      }
     ],
     "missingValues": [

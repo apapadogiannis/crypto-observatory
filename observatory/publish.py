@@ -58,6 +58,14 @@ MONTH_FIELDS = [
     ("trailing_3y_excess", "number", "Average monthly return over the risk-free rate in the three years ending the following month, times twelve; percent a year, not compounded"),
     ("trailing_3y_capm_unexplained", "number", "The part of it the CAPM leaves unexplained, percent a year"),
     ("trailing_3y_mcm_unexplained", "number", "The part of it the MCM equation leaves unexplained, percent a year"),
+    ("volatility_drag", "number", "Half the variance, in points a year: what volatility takes from an average return to give a compound one. The same at every edge of the band"),
+    ("required_compound_lower", "number", "Lower edge of the band on a compound basis, percent a year: required_lower less volatility_drag"),
+    ("required_compound_midpoint", "number", "Midpoint on a compound basis, percent a year: required_midpoint less volatility_drag. What a holder who receives the required return can expect to compound at"),
+    ("required_compound_upper", "number", "Upper edge on a compound basis, percent a year: required_upper less volatility_drag"),
+    ("pay_for_variance_lower", "number", "Change in the lower edge for a unit change in variance: risk aversion times the holder's weight, a plain number. The compound requirement rises with volatility when this is above 0.5 and falls when it is below, because compounding takes half the variance"),
+    ("pay_for_variance_midpoint", "number", "The same at the midpoint: the average of the two edges"),
+    ("pay_for_variance_upper", "number", "The same at the upper edge: risk aversion times the surveyed owner's weight, or the early holder's weight where that holder sets the edge"),
+    ("drawdown", "number", "Percent by which the month-end close stands below the highest month-end close up to that date; zero at a new high. Context, not an input of the equation (computed from Coin Metrics prices)"),
 ]
 PERIOD_FIELDS = [
     ("period", "string", "Label of the period (years joined by an en dash)"),
@@ -133,13 +141,16 @@ ASSET_FIELDS = [
     ("sharpe_ratio", "number", "Required return at the midpoint less the risk-free rate, divided by volatility"),
     ("sharpe_ratio_on_compound", "number", "The same ratio on the compound required return. Descriptive: the Sharpe ratio is defined on average returns"),
     ("share_of_crypto_market_pct", "number", "The asset's weight in the crypto market used for kappa (the five assets), percent, from the previous month-end's market values"),
+    ("required_compound_lower_pct_per_year", "number", "Lower edge of the band less the volatility drag, percent a year"),
+    ("required_compound_upper_pct_per_year", "number", "Upper edge of the band less the volatility drag, percent a year. With required_compound_lower_pct_per_year, the band of the compound figure"),
 ]
 
 
 def _asset_row(r: dict) -> list:
     return [r["month_end"], r["asset"], r["name"], r["required_return"], r["required_low"], r["required_high"], r["risk_free"], r["market_term"],
             r["concentration_term"], r["mortality_term"], r["volatility"], r["beta_to_us_equities"], r["kappa"], r["holder_weight_low"],
-            r["holder_weight_high"], r["volatility_drag"], r["compound_required_return"], r["sharpe_ratio"], r["sharpe_ratio_on_compound"], r["share_of_crypto_market"]]
+            r["holder_weight_high"], r["volatility_drag"], r["compound_required_return"], r["sharpe_ratio"], r["sharpe_ratio_on_compound"], r["share_of_crypto_market"],
+            r["compound_required_low"], r["compound_required_high"]]
 
 
 def latest_file(doc: dict) -> dict:
@@ -159,10 +170,12 @@ def latest_file(doc: dict) -> dict:
     eq = next(x for x in doc["comparison"]["rows"] if x["priced_by"] == "CAPM")
     s18 = next((p for p in doc["periods"] if p["summary"] and p["period"].startswith("2018")), None)
     mo, h = m["model"], doc["holders"]
+    st, vs = doc["state"], doc["volatility_sensitivity"]
+    since = st["samples"]["2018"]
     return {
         "what_this_is": "The return holders of each cryptoasset should require for the market, concentration and mortality risk they carry, "
                         "from the MCM equation of the paper \"Bitcoin's Required Return\". A required return, not a forecast.",
-        "as_of_month_end": L["month_end"], "source_data_to": m["data_to"], "updated": "third of each month",
+        "as_of_month_end": L["month_end"], "source_data_to": m["data_to"], "updated": "third of each month", "next_update_expected": m["next_update"],
         "units_note": "Names ending _pct_per_year are percent a year; _pct are percent; _pct_points are percentage points a year. Betas, kappa and Sharpe ratios are plain numbers.",
         "how_to_quote": "Quote the midpoint with its band, as 'this model gives', and credit the tool and the paper. The band is a range of inputs, not a confidence interval.",
         "equation": "required return = risk-free rate + beta x equity premium + risk aversion x variance x holder's weight + mortality",
@@ -185,6 +198,17 @@ def latest_file(doc: dict) -> dict:
             "gap_pct_points": s18["gap"], "gap_standard_error_pct_points": s18["gap_se"],
             "share_of_excess_return_explained_by_mcm_pct": s18["explained_mcm"], "share_explained_by_capm_pct": s18["explained_capm"],
             "note": "Averages of monthly returns times twelve, not what a holder earned. The test has little power: see the standard error."},
+        "bitcoin_volatility_and_compounding": {
+            "pay_for_variance_lower": vs["pay_for_variance"]["lower"], "pay_for_variance_midpoint": vs["pay_for_variance"]["midpoint"],
+            "pay_for_variance_upper": vs["pay_for_variance"]["upper"], "break_even": vs["break_even_pay_for_variance"],
+            "note": "Pay for variance is risk aversion times the holder's weight. Compounding takes half the variance, so the compound "
+                    "requirement rises with volatility only for a holder whose pay for variance is above 0.5. The band's compound figures "
+                    "at other volatilities are in data.json under volatility_sensitivity."},
+        "bitcoin_state_at_month_end": {
+            "price_usd": st["price_usd"], "drawdown_from_highest_month_end_close_pct": st["drawdown"], "highest_month_end_close_month": st["peak_month"],
+            "volatility_pct_annualised": st["volatility"], "share_of_month_ends_since_2018_with_lower_volatility_pct": since["volatility_percentile"],
+            "note": "Context, not an input of the equation and not a forecast. The record of what followed similar states, with the number of "
+                    "separate spells behind each row, is in data.json under state. The price restates Coin Metrics data."},
         "holder_weight_in_brief": f"The surveyed owner keeps {h['owner_weight']:.0f}% of financial assets in crypto (US household survey of 2021, similar in 2025: Weber, Candia, "
                                   "Coibion and Gorodnichenko 2026), held at every date because repeated surveys in the UK and Canada show holdings per owner "
                                   f"not following the price. Counting investors in funds and in companies that hold Bitcoin, taken at {h['fund_investor_weight']}% of their wealth, "
@@ -253,7 +277,9 @@ def publish(doc: dict, dirs: list[Path]) -> list[dict]:
                        i["weight_surveyed"], i["weight_early_holder"], i["implied_equity_premium"],
                        x["midpoint_with_implied_equity_premium"], s["issuance_rate"], s["fund_and_treasury_share"],
                        n.get("return"), n.get("capm_unexplained"), n.get("mcm_unexplained"),
-                       tr.get("excess"), tr.get("capm_unexplained"), tr.get("mcm_unexplained")])
+                       tr.get("excess"), tr.get("capm_unexplained"), tr.get("mcm_unexplained"),
+                       x["compound"]["drag"], x["compound"]["lower"], x["compound"]["midpoint"], x["compound"]["upper"],
+                       x["pay_for_variance"]["lower"], x["pay_for_variance"]["midpoint"], x["pay_for_variance"]["upper"], x["drawdown"]])
     periods = []
     for p in doc["periods"]:
         reg = p.get("regression") or {}
@@ -264,6 +290,8 @@ def publish(doc: dict, dirs: list[Path]) -> list[dict]:
                d["feed_last_day"]] for d in c["ever_top_twenty_deaths_list"]]
     vintages = [[v[k] for k, _, _ in VINTAGE_FIELDS] for v in doc["vintages"]]
     mo, age = m["model"], m["anchors_age_months"]
+    st, vs = doc["state"], doc["volatility_sensitivity"]
+    since = st["samples"]["2018"]
     rule_n = c["deaths_by_rule"]
 
     w = L["worked"]
@@ -309,14 +337,14 @@ This file is written for AI agents and other programs. People should start at th
 ## Which file to fetch
 
 1. The latest figure of any asset, its breakdown, its inputs, the comparison with US equities, the
-   licence and the citation: latest.json (about 11 KB). It also has the Sharpe ratios and, priced the
+   licence and the citation: latest.json (about 12 KB). It also has the Sharpe ratios and, priced the
    same way for scale, gold and three equity series. For most questions, fetch nothing else.
 2. A past month of Bitcoin: months.csv. Use the row dated the month-end at which the requirement is
    set; the return it faces is the following month's. A past month of any asset: assets_monthly.csv.
 3. Did Bitcoin deliver what was required: periods.csv. Compare `delivered` with `required_mid`.
 4. Deaths of cryptoassets: census_deaths.csv; the totals are in latest.json.
 5. The meaning of every column: datapackage.json.
-6. data.json is everything behind the page (about 350 KB). Do not fetch it for a single figure.
+6. data.json is everything behind the page (about 430 KB). Do not fetch it for a single figure.
 7. Every figure is percent a year unless its name says otherwise; holder weights are in percent.
 8. Quote the midpoint with its band, as what this model gives, and credit the tool and the paper.
 
@@ -402,9 +430,11 @@ These are choices, not measurements. They are in config/model.toml and in data.j
 - assets.csv and assets_monthly.csv: the same fields as a table, at the latest month-end and for every
   month-end since each asset has been priced.
 - data.json: everything behind the page. Keys: meta, latest, months, periods, comparison, notes,
-  equity_premium, census, holders, assets, vintages; the README of the repository describes each.
+  equity_premium, census, holders, assets, volatility_sensitivity, state, vintages; the README of the
+  repository describes each.
   `census.deaths_by_year` counts top-twenty deaths only. Weights under `meta.model` and `holders` are in percent.
-- months.csv: the band, its four terms, the inputs and the next month's outcome, one row per month-end.
+- months.csv: the band, its four terms, the inputs, the next month's outcome, the band on a compound
+  basis and the drawdown, one row per month-end.
 - periods.csv: three-year periods and the two summary samples: delivered, required, the gap, and
   what the CAPM and the MCM equation each explain and leave unexplained.
 - census_deaths.csv: the {len(deaths)} assets that were ever in the top twenty by trading volume and died,
@@ -439,6 +469,19 @@ files are under api/.
 - The required return on a compound basis is `required_compound_pct_per_year` in latest.json and the
   assets files (and `compound` in data.json under `comparison.rows`): the midpoint less half the
   variance. It is what a holder who receives the required return can expect to compound at.
+  Its band is `required_compound_lower_pct_per_year` to `required_compound_upper_pct_per_year`; the
+  drag is the same at every edge. months.csv has the same for every Bitcoin month-end.
+- `pay_for_variance_*` in months.csv is risk aversion times the holder's weight: how much the
+  required return rises for a unit of variance. Compounding takes half the variance, so the compound
+  requirement rises with volatility where the pay is above 0.5 and falls where it is below. At the
+  latest month-end it is {vs['pay_for_variance']['lower']} at the lower edge, {vs['pay_for_variance']['midpoint']} at the midpoint and {vs['pay_for_variance']['upper']} at the upper edge.
+  `volatility_sensitivity` in data.json recomputes the latest band at other volatilities, the other
+  inputs held. This follows from the equation; it is not an estimate of what volatility will be.
+- `state` in data.json says where Bitcoin stood at the month-end ({-st['drawdown']:g}% below its highest
+  month-end close; volatility lower than at {since['volatility_percentile']:.0f}% of month-ends since 2018) and what followed similar
+  states over the next {st['horizon_months']} months, by sample. It is a record, not a forecast. Windows that start in
+  neighbouring months overlap, so quote a row with its `spells`: the number of separate spells behind it.
+  A drawdown is not an input of the equation; it moves the requirement only through volatility.
 - The identities among the period columns hold to within about one point in the early periods,
   because the required return is converted month by month and the premium is not.
 - "Died" in the census is a definition (feed ended, price or volume collapsed without recovery),
@@ -480,6 +523,8 @@ files are under api/.
 - Cryptoasset deaths after {c['census_date']}.
 - Commercial reuse of the underlying Coin Metrics series: see the licence below.
 - What an investor earned, from `delivered`: use `delivered_compound`.
+- An expected return from `state`. No row rests on more than {max(r['spells'] for x in st['samples'].values() for r in x['by_drawdown'])} separate spells, the rows
+  differ between the two samples, and the equation does not price the difference between them.
 - A mismatch between files: latest.json and data.json of one build state the same `source_data_to`
   date. If the two you fetched disagree on it, one is a cached copy; fetch again. vintages.csv is
   meant to differ (see above).
@@ -494,7 +539,7 @@ an answer, a report or a data set, name the tool and the paper.
 
 {LICENCE['source_data']}
 In months.csv the required returns, their terms and the unexplained figures are computed here. The
-columns volatility, beta, correlation, issuance_rate and next_month_return restate Coin Metrics
+columns volatility, beta, correlation, issuance_rate, next_month_return and drawdown, and the price under `state`, restate Coin Metrics
 prices and supply closely; anyone who needs them for commercial use should take them from a source
 whose terms allow it.
 

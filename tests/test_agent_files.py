@@ -85,6 +85,40 @@ assert c["by_period"]["all assets"]["rate_to_2024"] < c["by_period"]["all assets
 from observatory.census import FIAT  # noqa: E402
 assert "ltl" in FIAT and "usd" in FIAT
 
+# Compounding and the state. The compound band is the band less the drag in every month, and agrees with
+# the assets file; the pay for variance times variance is the concentration term at the latest month; the
+# sensitivity table reproduces the latest band at the month's own volatility; one row of each record is "now".
+btc_monthly = {r["month_end"]: r for r in assets_all if r["asset_id"] == "btc"}
+for row, m in zip(months, doc["months"]):
+    drag = float(row["volatility_drag"])
+    for edge in ("lower", "midpoint", "upper"):
+        assert abs(float(row[f"required_compound_{edge}"]) - (float(row[f"required_{edge}"]) - drag)) < 0.02, row["month_end"]
+    assert float(row["required_compound_midpoint"]) == float(btc_monthly[row["month_end"]]["required_compound_pct_per_year"])
+    assert float(row["required_compound_lower"]) == float(btc_monthly[row["month_end"]]["required_compound_lower_pct_per_year"])
+    assert 0 < float(row["pay_for_variance_lower"]) <= float(row["pay_for_variance_midpoint"]) <= float(row["pay_for_variance_upper"]) <= 1
+    assert -100 < float(row["drawdown"]) <= 0
+vs, st, last = doc["volatility_sensitivity"], doc["state"], doc["months"][-1]
+variance = 2 * last["compound"]["drag"]                                   # points a year
+if last["required"]["upper_set_by"] == "average surveyed owner":
+    assert abs(vs["pay_for_variance"]["midpoint"] * variance - last["terms_at_midpoint"]["concentration"]) < 0.05
+now = [r for r in vs["rows"] if r["current"]]
+assert len(now) == 1 and now[0]["average"] == {k: last["required"][k] for k in ("lower", "midpoint", "upper")}
+assert now[0]["compound"] == {k: last["compound"][k] for k in ("lower", "midpoint", "upper")}
+assert [r["volatility"] for r in vs["rows"]] == sorted(r["volatility"] for r in vs["rows"])
+for r in vs["rows"]:                                                      # below one half the compound figure falls with volatility, above it rises
+    for edge, prev in zip(("lower", "upper"), (vs["rows"][0]["compound"]["lower"], vs["rows"][0]["compound"]["upper"])):
+        if r is not vs["rows"][0] and r["upper_set_by"] == "average surveyed owner":
+            assert (r["compound"][edge] > prev) == (vs["pay_for_variance"][edge] > vs["break_even_pay_for_variance"]), (edge, r["volatility"])
+assert st["month_end"] == doc["latest"]["month_end"] == latest_json["as_of_month_end"] and st["drawdown"] == last["drawdown"]
+assert abs(st["drawdown"] - 100 * (st["price_usd"] / st["peak_month_end_close_usd"] - 1)) < 0.06
+for sample in st["samples"].values():
+    for rows in (sample["by_drawdown"], sample["by_volatility"]):
+        assert sum(r["current"] for r in rows) == 1 and sum(r["months"] for r in rows) == sample["months_with_outcome"]
+        assert all(1 <= r["spells"] <= r["months"] for r in rows if r["months"])
+assert latest_json["next_update_expected"] > latest_json["as_of_month_end"] and latest_json["next_update_expected"][8:] == "03"
+assert latest_json["bitcoin_state_at_month_end"]["price_usd"] == st["price_usd"]
+assert "record, not a forecast" in guide and "record, not a forecast" in page
+
 # The record of what was first published: one row per month-end, the latest month in it, and stored
 # rows unchanged by a build.
 stored = list(csv.DictReader((ROOT / "data" / "vintages.csv").open(encoding="utf-8")))

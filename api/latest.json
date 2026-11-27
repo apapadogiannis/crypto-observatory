@@ -3,6 +3,7 @@
  "as_of_month_end": "2026-10-31",
  "source_data_to": "2026-11-19",
  "updated": "third of each month",
+ "next_update_expected": "2026-12-03",
  "units_note": "Names ending _pct_per_year are percent a year; _pct are percent; _pct_points are percentage points a year. Betas, kappa and Sharpe ratios are plain numbers.",
  "how_to_quote": "Quote the midpoint with its band, as 'this model gives', and credit the tool and the paper. The band is a range of inputs, not a confidence interval.",
  "equation": "required return = risk-free rate + beta x equity premium + risk aversion x variance x holder's weight + mortality",
@@ -28,6 +29,8 @@
    "sharpe_ratio": 0.31,
    "sharpe_ratio_on_compound": 0.08,
    "share_of_crypto_market_pct": 75.9,
+   "required_compound_lower_pct_per_year": 1.48,
+   "required_compound_upper_pct_per_year": 15.74,
    "priced_since_month": "2012-01",
    "upper_edge_set_by": "average surveyed owner",
    "first_published_midpoint_pct_per_year": 20.12,
@@ -54,6 +57,8 @@
    "sharpe_ratio": 0.3,
    "sharpe_ratio_on_compound": -0.03,
    "share_of_crypto_market_pct": 14.8,
+   "required_compound_lower_pct_per_year": -7.1,
+   "required_compound_upper_pct_per_year": 12.4,
    "priced_since_month": "2018-08"
   },
   {
@@ -77,6 +82,8 @@
    "sharpe_ratio": 0.25,
    "sharpe_ratio_on_compound": 0.0,
    "share_of_crypto_market_pct": 4.6,
+   "required_compound_lower_pct_per_year": -1.25,
+   "required_compound_upper_pct_per_year": 11.47,
    "priced_since_month": "2020-07"
   },
   {
@@ -100,6 +107,8 @@
    "sharpe_ratio": 0.26,
    "sharpe_ratio_on_compound": -0.11,
    "share_of_crypto_market_pct": 3.1,
+   "required_compound_lower_pct_per_year": -11.01,
+   "required_compound_upper_pct_per_year": 5.11,
    "priced_since_month": "2023-04"
   },
   {
@@ -123,6 +132,8 @@
    "sharpe_ratio": 0.14,
    "sharpe_ratio_on_compound": -0.01,
    "share_of_crypto_market_pct": 1.4,
+   "required_compound_lower_pct_per_year": 1.49,
+   "required_compound_upper_pct_per_year": 7.64,
    "priced_since_month": "2021-06"
   }
  ],
@@ -210,6 +221,21 @@
   "share_of_excess_return_explained_by_mcm_pct": 89.2,
   "share_explained_by_capm_pct": 40.6,
   "note": "Averages of monthly returns times twelve, not what a holder earned. The test has little power: see the standard error."
+ },
+ "bitcoin_volatility_and_compounding": {
+  "pay_for_variance_lower": 0.074,
+  "pay_for_variance_midpoint": 0.303,
+  "pay_for_variance_upper": 0.532,
+  "break_even": 0.5,
+  "note": "Pay for variance is risk aversion times the holder's weight. Compounding takes half the variance, so the compound requirement rises with volatility only for a holder whose pay for variance is above 0.5. The band's compound figures at other volatilities are in data.json under volatility_sensitivity."
+ },
+ "bitcoin_state_at_month_end": {
+  "price_usd": 77401.0,
+  "drawdown_from_highest_month_end_close_pct": -33.2,
+  "highest_month_end_close_month": "2025-07",
+  "volatility_pct_annualised": 45.1,
+  "share_of_month_ends_since_2018_with_lower_volatility_pct": 7.0,
+  "note": "Context, not an input of the equation and not a forecast. The record of what followed similar states, with the number of separate spells behind each row, is in data.json under state. The price restates Coin Metrics data."
  },
  "holder_weight_in_brief": "The surveyed owner keeps 19% of financial assets in crypto (US household survey of 2021, similar in 2025: Weber, Candia, Coibion and Gorodnichenko 2026), held at every date because repeated surveys in the UK and Canada show holdings per owner not following the price. Counting investors in funds and in companies that hold Bitcoin, taken at 1.5% of their wealth, gives the lower weight. Another asset's weight is kappa times these.",
  "top_twenty_deaths": {
