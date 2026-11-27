@@ -306,8 +306,8 @@ window.goatcounter = {path: function () { return location.pathname; }};
   </section>
 
   <section class="card" id="sec-cmp" data-nav="Stocks and gold">
-    <h2>Bitcoin beside stocks and gold</h2>
-    <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. Bitcoin and gold are priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
+    <h2>The cryptoassets beside stocks and gold</h2>
+    <p class="sub">What a holder should require from each asset at the latest month-end, on the same inputs. The equity series are priced by the CAPM: the ten-year Treasury yield plus beta times the 4% equity premium. The cryptoassets and gold are priced by the MCM equation. These are required returns. They are not histories and not forecasts.</p>
     <p class="sub" id="cmp-headline" style="color:var(--ink);font-weight:600"></p>
     <div class="grid2">
       <div class="mini"><h3>Required return, and what a position held alone compounds at</h3><p>percent a year</p>
@@ -319,9 +319,9 @@ window.goatcounter = {path: function () { return location.pathname; }};
     </div>
     <ul class="note" style="margin-top:14px">
       <li><b>Average and compound.</b> The required return is an average across years. A position that is bought alone and never rebalanced grows at the compound rate, which is lower by the drag: half the variance. For a volatile asset the drag is large. The equation's holders, who keep a small share of their wealth in the asset, bear a small part of it.</li>
-      <li><b>While it survives.</b> Bitcoin's figures are what holders require in the years the asset lives. <span id="cmp-death"></span></li>
-      <li><b>How each column is measured.</b> <span id="cmp-sample"></span> Bitcoin's beta and volatility are the ones used in its required return, with recent months weighted more. The Sharpe ratio on the compound return is descriptive: the measure is defined on average returns.</li>
-      <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Gold is a gold ETF to May 2026 and the month-end price of a gold token after. The other cryptoassets are under Compare. The Nasdaq-100, which the paper also shows, is not here.</li>
+      <li><b>While they survive.</b> A cryptoasset's figures are what holders require in the years the asset lives. <span id="cmp-death"></span></li>
+      <li><b>How each column is measured.</b> <span id="cmp-sample"></span> Each cryptoasset's beta and volatility are the ones used in its required return, with recent months weighted more. The Sharpe ratio on the compound return is descriptive: the measure is defined on average returns.</li>
+      <li><b>Which series.</b> The paper sets Bitcoin beside the S&amp;P 500, a global index and the Russell 2000. This page uses the closest series it can download on a schedule, from the Kenneth R. French data library: the US stock market, developed markets, and the smallest 30% of US companies by size. Gold is a gold ETF to May 2026 and the month-end price of a gold token after. The Nasdaq-100, which the paper also shows, is not here.</li>
     </ul>
   </section>
 
@@ -1200,11 +1200,14 @@ function dumbbell(id,rows,a,b,fmt,ref,refLabel){
 }
 function comparedTab(){
   const c=DATA.meta.cmp, R=c.rows, b=R.find(r=>r.name==="Bitcoin"), e=R[0], when=longDateOf(c.month_end);
-  dumbbell("c-cmp-ret",R,"average","compound",v=>v.toFixed(v%1?1:0)+"%",c.risk_free,"risk-free "+c.risk_free.toFixed(1)+"%");
-  dumbbell("c-cmp-sh",R,"sharpe_average","sharpe_compound",v=>v.toFixed(2),null);
+  // the equity series and gold, then every cryptoasset, Bitcoin first
+  const all=R.filter(r=>r.name!=="Bitcoin").concat(DATA.meta.assets.latest.map(a=>({name:a.name,priced_by:"MCM",beta:a.beta_to_us_equities,average:a.required_return,volatility:a.volatility,
+    drag:a.volatility_drag,compound:a.compound_required_return,sharpe_average:a.sharpe_ratio,sharpe_compound:a.sharpe_ratio_on_compound})));
+  dumbbell("c-cmp-ret",all,"average","compound",v=>v.toFixed(v%1?1:0)+"%",c.risk_free,"risk-free "+c.risk_free.toFixed(1)+"%");
+  dumbbell("c-cmp-sh",all,"sharpe_average","sharpe_compound",v=>v.toFixed(2),null);
   const set=(id,s)=>{document.getElementById(id).textContent=s;};
   set("cmp-headline","At "+when+": Bitcoin requires "+b.average.toFixed(1)+"% a year on average, against "+e.average.toFixed(1)+"% for the "+e.name+". Held alone and never rebalanced, they would compound at "+b.compound.toFixed(1)+"% and "+e.compound.toFixed(1)+"%, and the Sharpe ratio on the compound return is "+b.sharpe_compound.toFixed(2)+" for Bitcoin against "+e.sharpe_compound.toFixed(2)+".");
-  set("cmp-death","Averaged over the chance of death as well, which costs "+(b.average-b.average_net_of_death).toFixed(1)+" points a year, they are "+b.average_net_of_death.toFixed(1)+"% on average and "+b.compound_net_of_death.toFixed(1)+"% compounded.");
+  set("cmp-death","Averaged over the chance of death as well, which costs "+(b.average-b.average_net_of_death).toFixed(1)+" points a year for each of them, Bitcoin's are "+b.average_net_of_death.toFixed(1)+"% required and "+b.compound_net_of_death.toFixed(1)+"% for a position held alone.");
   set("cmp-sample","For the equity series, beta (to the US stock market) and volatility are measured on monthly returns from "+fmtM(parse(c.equity_sample.from))+" to "+fmtM(parse(c.equity_sample.to))+", and the required return uses the ten-year Treasury yield of "+c.risk_free.toFixed(2)+"%.");
 }
 const longDateOf=s=>d3.timeFormat("%-d %B %Y")(d3.timeParse("%Y-%m-%d")(s));
